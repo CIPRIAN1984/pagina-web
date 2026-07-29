@@ -1,9 +1,15 @@
 ---
 name: flujo-de-trabajo
-description: Ramas, pull requests, migraciones de base de datos y puesta en producción. Úsala antes de crear una rama, abrir o fusionar un PR, aplicar una migración o publicar en producción, y siempre justo después de que se fusione un PR.
+description: Ramas, pull requests y publicación de la web. Úsala antes de crear una rama, abrir o fusionar un PR, subir archivos pesados (fotos, vídeos) o publicar la web, y siempre justo después de que se fusione un PR.
 ---
 
 # Flujo de trabajo
+
+## Estado actual del repositorio
+
+⚠️ **Todavía no hay rama `main`.** El repositorio se creó vacío y la rama de trabajo
+(`claude/new-session-oa3wjo`) es la única que existe, así que no se puede abrir un pull
+request contra nada. En cuanto exista `main`, aplica todo lo de abajo.
 
 ## Ramas — la trampa que más tiempo cuesta
 
@@ -22,33 +28,33 @@ ya estaban fusionados y aparecen conflictos que no tienen ninguna causa real.
 
 ## Pull requests
 
-- Uno por cambio con sentido propio. Un PR gigante no se puede revisar ni revertir.
-- Título en castellano, claro, describiendo el efecto: *"El usuario bloqueado ya no ve sus datos"*.
-- En el cuerpo: qué cambia, qué tiene que probar el dueño a mano, qué queda pendiente.
+- Uno por cambio con sentido propio. Un PR gigante no se puede revisar ni deshacer.
+- Título en castellano, describiendo el efecto: *"El horario ya se ve entero en el móvil"*.
+- En el cuerpo: qué cambia, qué tiene que probar Cipri a mano, qué queda pendiente.
 
-⚠️ **Si un PR tiene conflicto de fusión, GitHub NO ejecuta el control automático y no avisa.**
+⚠️ **Si un PR tiene conflicto de fusión, GitHub NO ejecuta ningún control y no avisa.**
 El PR parece "sin problemas" porque no hay nada en rojo — pero es que no se ha ejecutado nada.
 Comprueba `mergeable_state` antes de dar nada por verde.
 
-## Migraciones de base de datos
+## Fotos y vídeos
 
-1. SQL **no destructivo**: `IF NOT EXISTS`, `DROP ... IF EXISTS`, `ADD COLUMN IF NOT EXISTS`.
-2. Nada de `DROP TABLE` ni `DROP COLUMN` sin confirmación explícita del dueño.
-3. El SQL se entrega **listo para copiar y pegar**, diciendo dónde se pega
-   (Supabase → SQL Editor → New query → pegar → Run). Nunca "aplica la migración".
-4. Si toca permisos → primero la skill `seguridad-datos`.
-5. En el mismo cambio se actualiza la tabla del §3 de `CLAUDE.md`. Una memoria
-   desactualizada hace que la IA decida sobre una realidad que ya no existe.
+Los vídeos ocupan mucho y Git no los maneja bien: una vez subido un archivo pesado, se
+queda en el historial para siempre aunque lo borres después.
 
-## Puesta en producción
+- **Antes de subir un vídeo, comprímelo.** Un vídeo de portada por encima de 5 MB hace
+  que la web tarde en cargar en el móvil y consuma datos del visitante.
+- Las fotos, en `.webp` y a la medida en la que se ven; no subir originales de la cámara.
+- Si algún vídeo pasa de ~50 MB, para y habla con Cipri antes de subirlo: probablemente
+  convenga alojarlo fuera del repositorio.
 
-Orden, sin saltarse pasos:
+## Publicación
 
-1. `npm run lint` · `npm run typecheck` · `npm test` · `npm run build` — los cuatro en verde.
-2. Preview desplegada y probada a mano.
-3. Migraciones aplicadas **antes** de que salga el código que las necesita.
-4. Fusionar a `main`.
-5. Comprobar en producción lo que se pueda comprobar; lo que no, decirle al dueño
-   exactamente qué debe abrir y qué debe ver.
+La web todavía no está publicada en ningún sitio. Cuando se decida dónde:
+
+1. Abrirla en local y comprobarla entera (ver la skill `calidad`).
+2. Comprobarla en móvil, no solo en escritorio.
+3. Publicar.
+4. Abrir la dirección real y comprobar lo que se pueda; lo que no, decirle a Cipri
+   exactamente qué abrir y qué debe ver.
 
 **Trabajo terminado = probado.** Si no se ha comprobado, no está terminado, y se dice así.
