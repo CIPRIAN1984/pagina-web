@@ -1,0 +1,22 @@
+# dependencias
+node_modules/
+
+# builds
+.next/
+out/
+dist/
+build/
+
+# entorno — nunca se suben claves al repositorio
+.env
+.env.*
+!.env.example
+
+# sistema y editores
+.DS_Store
+*.log
+.vscode/
+.idea/
+
+# ajustes locales de Claude (los compartidos van en .claude/settings.json)
+.claude/settings.local.json
