@@ -346,6 +346,8 @@
             overflow: hidden;
             color: var(--bg-white);
             text-align: center;
+            /* Fondo oscuro mientras carga el vídeo: sin esto se ve un rectángulo gris */
+            background-color: var(--text-dark);
         }
 
         .hero-video {
@@ -662,12 +664,20 @@
             right: 0;
             padding: 32px 20px 20px;
             background: linear-gradient(to top, rgba(0, 0, 0, .72), transparent);
-            transform: translateY(100%);
+            transform: translateY(0);
             transition: transform .38s cubic-bezier(.23, 1, .32, 1);
         }
 
-        .card.is-center:hover .card-label {
-            transform: translateY(0);
+        /* Con ratón la etiqueta se esconde y aparece al pasar por encima.
+           En un móvil no hay ratón, así que se queda siempre visible. */
+        @media (hover: hover) and (pointer: fine) {
+            .card-label {
+                transform: translateY(100%);
+            }
+
+            .card.is-center:hover .card-label {
+                transform: translateY(0);
+            }
         }
 
         .card-label span {
@@ -705,7 +715,7 @@
             transition: opacity .3s;
         }
 
-        .card.is-center:hover .scroll-hint {
+        .card.is-center .scroll-hint {
             opacity: 1;
         }
 
@@ -746,6 +756,8 @@
 
         #zoomOverlay.on {
             opacity: 1;
+            /* Sin esto el fondo no recibe clics y no se podría cerrar pulsando fuera. */
+            pointer-events: auto;
         }
 
         #zoomBackdrop {
@@ -915,6 +927,13 @@
             opacity: 1;
         }
 
+        /* Sin ratón el botón de sonido no aparecería nunca. */
+        @media (hover: none) {
+            .reel-mute-btn {
+                opacity: 1;
+            }
+        }
+
         .reel-mute-btn:hover {
             background: rgba(0, 0, 0, 0.8);
             transform: scale(1.1);
@@ -948,14 +967,23 @@
             height: 100%;
             object-fit: cover;
             transition: all 0.6s ease;
-            opacity: 0.8;
-            filter: grayscale(20%);
+            /* Sin ratón la ficha se ve entera desde el principio, así que la foto
+               va más apagada para que el texto encima se lea. */
+            opacity: 0.35;
+            filter: grayscale(0%);
         }
 
-        .instructor-card:hover img {
-            opacity: 0.3;
-            transform: scale(1.05);
-            filter: grayscale(0%);
+        @media (hover: hover) and (pointer: fine) {
+            .instructor-card img {
+                opacity: 0.8;
+                filter: grayscale(20%);
+            }
+
+            .instructor-card:hover img {
+                opacity: 0.3;
+                transform: scale(1.05);
+                filter: grayscale(0%);
+            }
         }
 
         .instructor-content {
@@ -983,18 +1011,27 @@
             font-weight: 500;
             color: #ffffff;
             text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
-            opacity: 0;
-            transform: translateY(20px);
+            opacity: 1;
+            transform: translateY(0);
             transition: all 0.4s ease;
         }
 
-        .instructor-card:hover p {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        /* El texto solo se esconde donde hay ratón para descubrirlo. En móvil
+           se ve siempre: si no, la mitad de los visitantes nunca lo leería. */
+        @media (hover: hover) and (pointer: fine) {
+            .instructor-card p {
+                opacity: 0;
+                transform: translateY(20px);
+            }
 
-        .instructor-card:hover h3 {
-            transform: translateY(-10px);
+            .instructor-card:hover p {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .instructor-card:hover h3 {
+                transform: translateY(-10px);
+            }
         }
 
         /* Schedule */
@@ -1367,11 +1404,17 @@
             background-color: rgba(0, 0, 0, 0.7);
             z-index: 2000;
             display: flex;
-            align-items: center;
+            /* `flex-start` + `margin: auto` en el hijo: centrado cuando cabe, y
+               desplazable cuando no. Con `align-items: center` a secas, en una
+               pantalla de móvil el botón de enviar quedaba fuera y no se podía pulsar. */
+            align-items: flex-start;
             justify-content: center;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            padding: 1.5rem 1rem;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .modal-overlay.active {
@@ -1386,8 +1429,9 @@
             max-width: 600px;
             padding: 4rem 3rem;
             position: relative;
+            margin: auto;
             transform: translateY(20px);
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
@@ -1534,6 +1578,84 @@
             color: var(--text-dark);
         }
 
+        .contact-form .submit-btn:disabled {
+            opacity: 0.55;
+            cursor: default;
+            background-color: var(--text-dark);
+            color: var(--bg-white);
+        }
+
+        /* Consentimiento */
+        .consent-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            text-align: left;
+        }
+
+        .consent-group input[type="checkbox"] {
+            width: auto;
+            margin: 0.25rem 0 0;
+            padding: 0;
+            flex-shrink: 0;
+            accent-color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .consent-group label {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-gray);
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .consent-group a {
+            color: var(--text-dark);
+            text-decoration: underline;
+        }
+
+        .form-note {
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: var(--text-gray);
+            text-align: left;
+            margin: 0;
+        }
+
+        /* Aviso de resultado del envío */
+        .form-status {
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            padding: 1rem;
+            text-align: left;
+            display: none;
+        }
+
+        .form-status.visible {
+            display: block;
+        }
+
+        .form-status.ok {
+            background-color: #eef3ee;
+            border-left: 3px solid #2f6b3f;
+            color: #23512f;
+        }
+
+        .form-status.error {
+            background-color: #fbeeed;
+            border-left: 3px solid #b3261e;
+            color: #8c1d18;
+        }
+
+        .form-status a {
+            color: inherit;
+            text-decoration: underline;
+        }
+
         @media (max-width: 600px) {
             .form-row {
                 flex-direction: column;
@@ -1541,8 +1663,8 @@
             }
 
             .modal-container {
-                padding: 3rem 1.5rem;
-                margin: 1rem;
+                padding: 2.5rem 1.5rem;
+                margin: auto;
             }
 
             .modal-title {
@@ -1588,8 +1710,11 @@
 
     <!-- Hero -->
     <section class="hero" id="home">
-        <!-- RUTA DEL VÍDEO -->
-        <video class="hero-video" id="hero-video" autoplay loop playsinline>
+        <!-- RUTA DEL VÍDEO
+             `muted` es obligatorio: ningún navegador reproduce solo un vídeo con sonido.
+             `poster` es la foto que se ve mientras el vídeo carga. -->
+        <video class="hero-video" id="hero-video" autoplay loop playsinline muted preload="metadata"
+            poster="images/Itaca/Portada.jpg">
             <source src="videos/Itaca_Hero_Video.mp4" type="video/mp4">
         </video>
         <div class="hero-overlay"></div>
@@ -1606,13 +1731,13 @@
 
         <button class="video-control" id="mute-btn" aria-label="Toggle Sound">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" id="sound-icon-muted" style="display: none;">
+                stroke-linecap="round" stroke-linejoin="round" id="sound-icon-muted">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                 <line x1="23" y1="9" x2="17" y2="15"></line>
                 <line x1="17" y1="9" x2="23" y2="15"></line>
             </svg>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" id="sound-icon-unmuted">
+                stroke-linecap="round" stroke-linejoin="round" id="sound-icon-unmuted" style="display: none;">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                 <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
             </svg>
@@ -1951,26 +2076,34 @@
         <div class="modal-container">
             <button class="modal-close" id="closeModal" aria-label="Cerrar">&times;</button>
             <h2 class="modal-title">CONTACTO</h2>
-            <form class="contact-form" id="contactForm" action="mailto:itacajiujitsu@gmail.com" method="post"
-                enctype="text/plain">
+            <form class="contact-form" id="contactForm" novalidate>
                 <div class="form-group">
-                    <label>NOMBRE Y APELLIDOS <span>*</span></label>
-                    <input type="text" name="Nombre" placeholder="NOMBRE" required>
+                    <label for="contactNombre">NOMBRE Y APELLIDOS <span>*</span></label>
+                    <input type="text" id="contactNombre" name="Nombre" placeholder="NOMBRE" required
+                        autocomplete="name">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>EMAIL <span>*</span></label>
-                        <input type="email" name="Email" placeholder="EMAIL" required>
+                        <label for="contactEmail">EMAIL <span>*</span></label>
+                        <input type="email" id="contactEmail" name="Email" placeholder="EMAIL" required
+                            autocomplete="email">
                     </div>
                     <div class="form-group">
-                        <label>TELÉFONO</label>
-                        <input type="tel" name="Telefono" placeholder="TELÉFONO">
+                        <label for="contactTelefono">TELÉFONO</label>
+                        <input type="tel" id="contactTelefono" name="Telefono" placeholder="TELÉFONO"
+                            autocomplete="tel">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>MENSAJE <span>*</span></label>
-                    <textarea name="Mensaje" rows="4" placeholder="MENSAJE" required></textarea>
+                    <label for="contactMensaje">MENSAJE <span>*</span></label>
+                    <textarea id="contactMensaje" name="Mensaje" rows="4" placeholder="MENSAJE" required></textarea>
                 </div>
+                <div class="form-group consent-group">
+                    <input type="checkbox" id="contactConsent" name="Consentimiento" required>
+                    <label for="contactConsent">He leído y acepto la <a href="#" class="privacy-trigger">política de
+                            privacidad</a>. Usaremos tus datos únicamente para responderte.</label>
+                </div>
+                <div class="form-status" id="contactStatus" role="status" aria-live="polite"></div>
                 <button type="submit" class="submit-btn" id="submitFormBtn">ENVIAR MENSAJE</button>
             </form>
         </div>
@@ -1981,19 +2114,21 @@
         <div class="modal-container">
             <button class="modal-close" id="closeTrialModal" aria-label="Cerrar">&times;</button>
             <h2 class="modal-title" style="font-size: 3rem;">CLASE DE PRUEBA</h2>
-            <form class="contact-form" id="trialForm">
+            <form class="contact-form" id="trialForm" novalidate>
+                <p class="form-note">Si la clase es para un niño o una niña, este formulario lo rellena su padre,
+                    madre o tutor legal.</p>
                 <div class="form-group">
-                    <label>NOMBRE Y APELLIDOS <span>*</span></label>
-                    <input type="text" id="trialNombre" placeholder="NOMBRE" required>
+                    <label for="trialNombre">NOMBRE Y APELLIDOS <span>*</span></label>
+                    <input type="text" id="trialNombre" placeholder="NOMBRE" required autocomplete="name">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>EMAIL <span>*</span></label>
-                        <input type="email" id="trialEmail" placeholder="EMAIL" required>
+                        <label for="trialEmail">EMAIL <span>*</span></label>
+                        <input type="email" id="trialEmail" placeholder="EMAIL" required autocomplete="email">
                     </div>
                     <div class="form-group">
-                        <label>TELÉFONO <span>*</span></label>
-                        <input type="tel" id="trialTelefono" placeholder="TELÉFONO" required>
+                        <label for="trialTelefono">TELÉFONO <span>*</span></label>
+                        <input type="tel" id="trialTelefono" placeholder="TELÉFONO" required autocomplete="tel">
                     </div>
                 </div>
 
@@ -2023,17 +2158,25 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>FECHA <span>*</span></label>
+                        <label for="trialDate">FECHA <span>*</span></label>
                         <input type="date" id="trialDate" required>
                     </div>
                     <div class="form-group">
-                        <label>CLASE DISPONIBLE <span>*</span></label>
+                        <label for="trialClassSelect">CLASE DISPONIBLE <span>*</span></label>
                         <select id="trialClassSelect" required>
                             <option value="">Selecciona modalidad y fecha</option>
                         </select>
                     </div>
                 </div>
 
+                <div class="form-group consent-group">
+                    <input type="checkbox" id="trialConsent" required>
+                    <label for="trialConsent">He leído y acepto la <a href="#" class="privacy-trigger">política de
+                            privacidad</a>. Si la solicitud es para un menor, confirmo que soy su padre, madre o tutor
+                        legal y autorizo el tratamiento de sus datos para gestionar la clase de prueba.</label>
+                </div>
+
+                <div class="form-status" id="trialStatus" role="status" aria-live="polite"></div>
                 <button type="submit" class="submit-btn" id="submitTrialBtn">SOLICITAR CLASE</button>
             </form>
         </div>
@@ -2097,24 +2240,58 @@
         <div class="modal-container" style="max-height: 80vh; overflow-y: auto;">
             <button class="modal-close" id="closePrivacyModal" aria-label="Cerrar">&times;</button>
             <h2 class="modal-title" style="font-size: 2.5rem;">POLÍTICA DE PRIVACIDAD</h2>
+            <!-- PENDIENTE: añadir la razón social completa y el NIF del titular del negocio.
+                 Sin ese dato la identificación del responsable está incompleta a efectos legales. -->
             <div
                 style="text-align: left; padding: 2rem 0; font-family: var(--font-body); font-size: 1rem; color: var(--text-gray);">
-                <p style="margin-bottom: 1rem;">En cumplimiento de lo dispuesto en la normativa vigente sobre Protección
-                    de Datos Personales, le informamos de lo siguiente:</p>
+                <p style="margin-bottom: 1rem;">En cumplimiento del Reglamento (UE) 2016/679 (RGPD) y de la Ley Orgánica
+                    3/2018 de Protección de Datos Personales y garantía de los derechos digitales, le informamos de lo
+                    siguiente:</p>
                 <h3
                     style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
-                    Responsable del Tratamiento</h3>
-                <p style="margin-bottom: 1rem;">Identidad: ITACA JIU JITSU<br>Email: itacajiujitsu@gmail.com</p>
+                    Responsable del tratamiento</h3>
+                <p style="margin-bottom: 1rem;">ITACA JIU JITSU<br>Polígono Cantabria, C. Barriguelo, 4<br>26009 Logroño,
+                    La Rioja<br>Email: itacajiujitsu@gmail.com<br>Teléfono: 664 78 41 21</p>
                 <h3
                     style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
                     Finalidad</h3>
-                <p style="margin-bottom: 1rem;">Tratamos la información para gestionar su inscripción, responder a sus
-                    consultas de contacto y enviarle información relevante sobre horarios o modalidades.</p>
+                <p style="margin-bottom: 1rem;">Tratamos los datos que nos facilita en los formularios de la web
+                    únicamente para responder a su consulta y para gestionar la solicitud de una clase de prueba. No
+                    los usamos para enviarle publicidad ni los cedemos a terceros con fines comerciales.</p>
                 <h3
                     style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
-                    Derechos del Usuario</h3>
-                <p style="margin-bottom: 1rem;">Tiene derecho a acceder a sus datos personales, solicitar la
-                    rectificación o eliminación de los mismos contactándonos a través de nuestro email.</p>
+                    Base legal</h3>
+                <p style="margin-bottom: 1rem;">Su consentimiento, que nos otorga al marcar la casilla correspondiente
+                    antes de enviar el formulario. Puede retirarlo en cualquier momento escribiéndonos, sin que ello
+                    afecte a la licitud del tratamiento anterior.</p>
+                <h3
+                    style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
+                    Datos de menores</h3>
+                <p style="margin-bottom: 1rem;">El formulario de clase de prueba permite indicar la categoría y la edad
+                    de un menor. En ese caso el formulario debe ser cumplimentado por su padre, madre o tutor legal,
+                    que es quien presta el consentimiento. No recogemos datos de menores por ninguna otra vía.</p>
+                <h3
+                    style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
+                    Conservación</h3>
+                <p style="margin-bottom: 1rem;">Conservamos los datos el tiempo necesario para atender su solicitud y,
+                    después, durante el plazo legalmente exigible para atender posibles responsabilidades. Si no llega
+                    a producirse una relación con la escuela, se eliminan en el plazo máximo de un año.</p>
+                <h3
+                    style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
+                    Destinatarios y servicios de terceros</h3>
+                <p style="margin-bottom: 1rem;">Para el envío de los formularios utilizamos el servicio Web3Forms, que
+                    hace de intermediario para entregarnos el mensaje por correo electrónico. Esta web también carga
+                    tipografías de Google Fonts y muestra un mapa de Google Maps; al hacerlo, su navegador se conecta a
+                    servidores de Google, que puede registrar su dirección IP. No utilizamos cookies, analítica ni
+                    ningún sistema de seguimiento publicitario.</p>
+                <h3
+                    style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
+                    Sus derechos</h3>
+                <p style="margin-bottom: 1rem;">Puede acceder a sus datos, rectificarlos, suprimirlos, oponerse a su
+                    tratamiento, limitarlo o solicitar su portabilidad escribiendo a itacajiujitsu@gmail.com. Si
+                    considera que no hemos atendido correctamente su solicitud, puede presentar una reclamación ante la
+                    Agencia Española de Protección de Datos (www.aepd.es).</p>
+                <p>Fecha de actualización: julio de 2026</p>
             </div>
         </div>
     </div>
@@ -2124,6 +2301,21 @@
 
     <!-- JavaScript -->
     <script>
+        // ─────────────────────────────────────────────────────────────────────────────
+        //  ENVÍO DE FORMULARIOS
+        //
+        //  Pega aquí la clave de acceso (Access Key) que te da web3forms.com y los dos
+        //  formularios empezarán a enviarse de verdad al correo del gimnasio.
+        //
+        //  Mientras esté vacío, los formularios siguen abriendo el programa de correo
+        //  del visitante, como hacían antes. No es una contraseña: esta clave solo sirve
+        //  para que los mensajes lleguen a itacajiujitsu@gmail.com y nada más.
+        // ─────────────────────────────────────────────────────────────────────────────
+        const WEB3FORMS_ACCESS_KEY = '';
+
+        const EMAIL_ITACA = 'itacajiujitsu@gmail.com';
+        const TELEFONO_ITACA = '664 78 41 21';
+
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- Poem Logic ---
@@ -2254,6 +2446,11 @@ entenderás ya qué significan las Ítacas.`;
             const trialClassSelect = document.getElementById('trialClassSelect');
             const trialForm = document.getElementById('trialForm');
 
+            // No se puede pedir una clase de prueba para un día que ya ha pasado.
+            const hoy = new Date();
+            const hoyISO = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+            trialDate.min = hoyISO;
+
             trialTriggers.forEach(trigger => {
                 trigger.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -2287,11 +2484,13 @@ entenderás ya qué significan las Ítacas.`;
             if (closeTermsModal) closeTermsModal.addEventListener('click', () => { termsModal.classList.remove('active'); });
             if (termsModal) termsModal.addEventListener('click', (e) => { if (e.target === termsModal) termsModal.classList.remove('active'); });
 
-            const privacyTrigger = document.querySelector('.privacy-trigger');
+            // Ojo: hay varios enlaces a la política (pie de página y los dos formularios),
+            // así que hay que engancharlos todos, no solo el primero.
+            const privacyTriggers = document.querySelectorAll('.privacy-trigger');
             const privacyModal = document.getElementById('privacyModal');
             const closePrivacyModal = document.getElementById('closePrivacyModal');
 
-            if (privacyTrigger) privacyTrigger.addEventListener('click', (e) => { e.preventDefault(); privacyModal.classList.add('active'); });
+            privacyTriggers.forEach(t => t.addEventListener('click', (e) => { e.preventDefault(); privacyModal.classList.add('active'); }));
             if (closePrivacyModal) closePrivacyModal.addEventListener('click', () => { privacyModal.classList.remove('active'); });
             if (privacyModal) privacyModal.addEventListener('click', (e) => { if (e.target === privacyModal) privacyModal.classList.remove('active'); });
 
@@ -2371,33 +2570,144 @@ entenderás ya qué significan las Ítacas.`;
                 }
             }
 
-            trialForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                if (!trialClassSelect.value) {
-                    alert("Por favor, selecciona una combinación de fecha válida que contenga clases.");
+            // ── Envío de formularios ──────────────────────────────────────────────
+            //
+            // Antes los dos formularios usaban `mailto:`, que abre el programa de correo
+            // del visitante. En un móvil, o en un ordenador que use Gmail en el navegador,
+            // eso no envía nada: el mensaje se pierde y el gimnasio no se entera.
+            //
+            // Ahora se envían por detrás con fetch y el visitante ve una confirmación.
+            // Si todavía no hay clave configurada, se cae al comportamiento antiguo para
+            // no dejar la web peor de lo que estaba.
+
+            function mostrarEstado(el, tipo, mensaje) {
+                el.className = 'form-status visible ' + tipo;
+                el.innerHTML = mensaje;
+            }
+
+            function ocultarEstado(el) {
+                el.className = 'form-status';
+                el.innerHTML = '';
+            }
+
+            const MENSAJE_ERROR = 'No hemos podido enviar tu mensaje. Escríbenos a ' +
+                `<a href="mailto:${EMAIL_ITACA}">${EMAIL_ITACA}</a> o llámanos al ${TELEFONO_ITACA}.`;
+
+            function abrirCorreo(asunto, cuerpo) {
+                window.location.href = `mailto:${EMAIL_ITACA}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
+            }
+
+            async function enviarFormulario({ form, boton, estado, asunto, datos, textoBoton, cuerpoCorreo, exito }) {
+                // El navegador ya sabe avisar de los campos obligatorios: se lo pedimos.
+                if (!form.reportValidity()) return;
+
+                ocultarEstado(estado);
+
+                // Sin clave configurada todavía: se abre el programa de correo, como antes.
+                if (!WEB3FORMS_ACCESS_KEY) {
+                    abrirCorreo(asunto, cuerpoCorreo);
                     return;
                 }
-                const email = document.getElementById('trialEmail').value;
-                const nombre = document.getElementById('trialNombre').value;
-                const telefono = document.getElementById('trialTelefono').value;
-                const cat = tipoAdulto.checked ? "Adulto" : "Niño (" + (nino4a6.checked ? "4 a 6 años" : "7 a 10 años") + ")";
-                const date = trialDate.value;
+
+                boton.disabled = true;
+                const textoOriginal = boton.textContent;
+                boton.textContent = 'ENVIANDO…';
+
+                try {
+                    const respuesta = await fetch('https://api.web3forms.com/submit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                        body: JSON.stringify({
+                            access_key: WEB3FORMS_ACCESS_KEY,
+                            subject: asunto,
+                            from_name: 'Web de Itaca Jiu Jitsu',
+                            ...datos
+                        })
+                    });
+                    const resultado = await respuesta.json();
+
+                    if (respuesta.ok && resultado.success) {
+                        form.reset();
+                        mostrarEstado(estado, 'ok', exito);
+                    } else {
+                        mostrarEstado(estado, 'error', MENSAJE_ERROR);
+                    }
+                } catch (err) {
+                    mostrarEstado(estado, 'error', MENSAJE_ERROR);
+                } finally {
+                    boton.disabled = false;
+                    boton.textContent = textoBoton || textoOriginal;
+                }
+            }
+
+            // Formulario de contacto
+            const contactForm = document.getElementById('contactForm');
+            const contactStatus = document.getElementById('contactStatus');
+            const submitFormBtn = document.getElementById('submitFormBtn');
+
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const nombre = document.getElementById('contactNombre').value.trim();
+                const email = document.getElementById('contactEmail').value.trim();
+                const telefono = document.getElementById('contactTelefono').value.trim();
+                const mensaje = document.getElementById('contactMensaje').value.trim();
+
+                enviarFormulario({
+                    form: contactForm,
+                    boton: submitFormBtn,
+                    estado: contactStatus,
+                    asunto: 'Consulta desde la web: ' + nombre,
+                    textoBoton: 'ENVIAR MENSAJE',
+                    datos: {
+                        Nombre: nombre,
+                        Email: email,
+                        'Teléfono': telefono || '(no indicado)',
+                        Mensaje: mensaje,
+                        Consentimiento: 'Aceptada la política de privacidad'
+                    },
+                    cuerpoCorreo: `Hola Itaca Jiu Jitsu,\n\nNombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}\n\n${mensaje}\n\nUn saludo.`,
+                    exito: '<strong>Mensaje enviado.</strong> Te contestamos lo antes posible, normalmente en menos de 24 horas.'
+                });
+            });
+
+            // Formulario de clase de prueba
+            const trialStatus = document.getElementById('trialStatus');
+            const submitTrialBtn = document.getElementById('submitTrialBtn');
+
+            trialForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                if (!trialClassSelect.value) {
+                    mostrarEstado(trialStatus, 'error',
+                        'Ese día no hay clases para la categoría que has elegido. Prueba con otra fecha.');
+                    return;
+                }
+
+                const nombre = document.getElementById('trialNombre').value.trim();
+                const email = document.getElementById('trialEmail').value.trim();
+                const telefono = document.getElementById('trialTelefono').value.trim();
+                const cat = tipoAdulto.checked ? 'Adulto' : 'Niño (' + (nino4a6.checked ? '4 a 6 años' : '7 a 10 años') + ')';
+                const fecha = trialDate.value;
                 const clase = trialClassSelect.value;
 
-                const subject = encodeURIComponent("Reserva de Clase de Prueba: " + nombre);
-                const body = encodeURIComponent(
-                    "Hola Itaca Jiu Jitsu,\n\n" +
-                    "Me gustaría asistir a una clase de prueba. Estos son mis datos:\n\n" +
-                    "Nombre: " + nombre + "\n" +
-                    "Email: " + email + "\n" +
-                    "Teléfono: " + telefono + "\n" +
-                    "Categoría: " + cat + "\n" +
-                    "Fecha Seleccionada: " + date + "\n" +
-                    "Clase: " + clase + "\n\n" +
-                    "Un saludo."
-                );
-
-                window.location.href = `mailto:itacajiujitsu@gmail.com?subject=${subject}&body=${body}`;
+                enviarFormulario({
+                    form: trialForm,
+                    boton: submitTrialBtn,
+                    estado: trialStatus,
+                    asunto: 'Reserva de clase de prueba: ' + nombre,
+                    textoBoton: 'SOLICITAR CLASE',
+                    datos: {
+                        Nombre: nombre,
+                        Email: email,
+                        'Teléfono': telefono,
+                        'Categoría': cat,
+                        Fecha: fecha,
+                        Clase: clase,
+                        Consentimiento: 'Aceptada la política de privacidad. En caso de menor, consentimiento del tutor legal.'
+                    },
+                    cuerpoCorreo: `Hola Itaca Jiu Jitsu,\n\nMe gustaría asistir a una clase de prueba. Estos son mis datos:\n\nNombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}\nCategoría: ${cat}\nFecha: ${fecha}\nClase: ${clase}\n\nUn saludo.`,
+                    exito: '<strong>Solicitud enviada.</strong> Te confirmamos la plaza por teléfono o por email antes de la clase.'
+                });
             });
 
             // Header Scroll & Back to Top behavior
@@ -2559,6 +2869,19 @@ entenderás ya qué significan las Ítacas.`;
                     userHasMuted = false;
                 });
 
+                // En un móvil no hay "pasar el ratón por encima": sin esto los cuatro
+                // vídeos se quedarían siempre quietos.
+                if (window.matchMedia('(hover: none)').matches) {
+                    reel.addEventListener('click', () => {
+                        if (video.paused) {
+                            video.muted = userHasMuted;
+                            video.play().catch(e => console.log("Play interrupted", e));
+                        } else {
+                            video.pause();
+                        }
+                    });
+                }
+
                 if (btnMute) {
                     btnMute.addEventListener('click', (e) => {
                         e.stopPropagation(); // Evitar otros clicks
@@ -2608,6 +2931,7 @@ entenderás ya qué significan las Ítacas.`;
                     card.dataset.idx = i;
                     card.innerHTML = `
                         <img src="${p.src}" alt="${p.label}" loading="lazy" draggable="false">
+                        <div class="scroll-hint">Pulsa para ampliar</div>
                         <div class="card-label"><span>${p.label}</span><small>${p.sub}</small></div>`;
                     newTrack.appendChild(card);
                 });
@@ -2634,13 +2958,8 @@ entenderás ya qué significan las Ítacas.`;
 
                 let zoomLevel = 0;
                 let zoomTgt = 0;
-                let overCenter = false;
                 let zoomFor = -1;
                 let zoomLocked = false;
-                let mouseX = -999;
-                let mouseY = -999;
-
-                window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
 
                 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
                 const lerp = (a, b, t) => a + (b - a) * t;
@@ -2662,7 +2981,6 @@ entenderás ya qué significan las Ítacas.`;
                     carTgt = clamp(-i * STEP, minOff, maxOff);
                     zoomTgt = 0;
                     zoomLocked = false;
-                    overCenter = false;
                 }
 
                 btnLeft.addEventListener('click', () => goTo(centerIdx - 1));
@@ -2709,34 +3027,39 @@ entenderás ya qué significan las Ítacas.`;
                         syncUI();
                     }
 
-                    const centerCard = cards[centerIdx];
-                    if (centerCard) {
-                        const r = centerCard.getBoundingClientRect();
-                        overCenter = mouseX >= r.left && mouseX <= r.right && mouseY >= r.top && mouseY <= r.bottom;
-                        if (!overCenter && zoomTgt > 0 && !zoomLocked) { zoomTgt = 0; }
-                    }
-
-                    zoomLevel = lerp(zoomLevel, zoomTgt, 0.09);
-                    if (Math.abs(zoomLevel - zoomTgt) < 0.001) zoomLevel = zoomTgt;
+                    // Abrir con calma queda bien; cerrar despacio se percibe como que
+                    // la web no responde. Al cerrar se va más rápido.
+                    zoomLevel = lerp(zoomLevel, zoomTgt, zoomTgt === 0 ? 0.22 : 0.09);
+                    if (Math.abs(zoomLevel - zoomTgt) < 0.006) zoomLevel = zoomTgt;
                     renderZoom();
 
                     requestAnimationFrame(tick);
                 }
 
-                window.addEventListener('wheel', function (e) {
-                    if (!overCenter && !zoomLocked) return;
-                    e.preventDefault();
-                    const direction = e.deltaY < 0 ? 0.25 : -0.25;
-                    if (zoomLocked && direction > 0) return;
-                    if (zoomLocked && direction < 0) zoomLocked = false;
-                    zoomTgt = clamp(zoomTgt + direction, 0, 1);
-                }, { passive: false });
+                // El zoom se abre con un CLIC, no con la rueda del ratón.
+                //
+                // Antes la rueda sobre la foto central hacía zoom y bloqueaba el scroll de
+                // la página: quien bajaba con la rueda y pasaba por encima se quedaba
+                // atrapado, y lo que percibía es que la web se había colgado.
 
-                zoomClose.addEventListener('click', () => { zoomLocked = false; zoomTgt = 0; });
+                function cerrarZoom() {
+                    zoomLocked = false;
+                    zoomTgt = 0;
+                }
+
+                zoomClose.addEventListener('click', cerrarZoom);
+                document.getElementById('zoomBackdrop').addEventListener('click', cerrarZoom);
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarZoom(); });
 
                 cards.forEach((card, i) => {
                     card.addEventListener('mouseenter', () => {
                         if (i !== centerIdx) goTo(i);
+                    });
+                    card.addEventListener('click', () => {
+                        // Una foto de los lados primero se coloca en el centro; la del
+                        // centro se amplía.
+                        if (i !== centerIdx) { goTo(i); return; }
+                        zoomTgt = 1;
                     });
                 });
 
@@ -2792,6 +3115,13 @@ entenderás ya qué significan las Ítacas.`;
 
             sectionsForNav.forEach(section => {
                 scrollSpyObserver.observe(section);
+            });
+
+            // La tecla Escape cierra cualquier ventana abierta. Es lo que todo el mundo
+            // intenta antes de buscar la X.
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape') return;
+                document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
             });
         });
     </script>

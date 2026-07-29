@@ -35,6 +35,7 @@ La web de un gimnasio de Brazilian Jiu Jitsu en Logroño (La Rioja). Una sola p�
 - ❌ **Precios en la web** — no aparecen por ninguna parte. La conversación de precio se tiene en persona o por correo.
 - ❌ **Framework o generador de sitios** (React, Next, Astro, WordPress) — es un único `index.html` sin dependencias ni compilación. Se abre con doble clic y funciona. No se cambia sin un motivo de peso.
 - ❌ **Cookies, analítica y píxeles de seguimiento** — la web no lleva ninguno. Eso es lo que le ahorra el cartelito de consentimiento de cookies.
+- ❌ **Formularios por `mailto:`** — descartado en julio de 2026. Abría el programa de correo del visitante, que en un móvil o con Gmail en el navegador no envía nada: los mensajes se perdían sin que nadie se enterara. Ahora se envían por Web3Forms.
 
 > Esta lista es de las partes más valiosas de este archivo. Cada vez que se descarte
 > algo, se apunta aquí para no perder tiempo reproponiéndolo dentro de tres meses.
@@ -46,7 +47,8 @@ La web de un gimnasio de Brazilian Jiu Jitsu en Logroño (La Rioja). Una sola p�
 - **Framework:** ninguno. HTML, CSS y JavaScript a pelo, todo dentro de `index.html` (~2.800 líneas: estilos en un `<style>`, lógica en un `<script>` al final).
 - **UI:** CSS propio con variables en `:root`. Tipografías **Bebas Neue** (títulos) y **Montserrat** (texto), más **Special Elite** y **Crimson Pro** solo para el poema. Se cargan desde Google Fonts.
 - **Auth + BD:** **no hay.** Ni base de datos, ni cuentas, ni servidor propio. Es una web estática.
-- **Servicios externos:** Google Fonts (tipografías) · Google Maps (mapa incrustado en un `iframe`) · `mailto:` (los dos formularios abren el programa de correo del visitante).
+- **Servicios externos:** Google Fonts (tipografías) · Google Maps (mapa incrustado en un `iframe`) · **Web3Forms** (envío de los dos formularios).
+  - ⚠️ La constante `WEB3FORMS_ACCESS_KEY`, al principio del `<script>`, **está vacía**. Mientras lo esté, los formularios se caen al comportamiento antiguo (abrir el programa de correo). En cuanto Cipri pegue su clave, se envían de verdad. No es una contraseña: es un identificador público que solo sirve para entregar el mensaje en itacajiujitsu@gmail.com.
 - **Deploy:** **pendiente de decidir.** Todavía no está publicada en ningún sitio.
 - **Pruebas:** no hay pruebas automáticas todavía. La comprobación se hace abriendo la web (§7).
 - **Control automático:** no hay GitHub Actions. Los automatismos locales sí están puestos (§8).
@@ -71,7 +73,8 @@ No hay base de datos. Lo que hace las veces de "modelo de datos" son los archivo
 | Toda la web | `index.html` | Estilos y JavaScript incluidos. Un solo archivo. |
 | Fotos del gimnasio | `images/Itaca/Gym1.webp` … `Gym10.webp` | Las lee el array `photos` del JS (línea ~2582). Si añades una foto, hay que añadirla **también** ahí o no sale. |
 | Fotos de instructores | `images/Profesores/Cipri.png`, `Boris.png`, `Marta_Pozo.png` | Puestas a mano en el HTML. |
-| Vídeo de portada | `videos/Itaca_Hero_Video.mp4` | Sin imagen de respaldo (`poster`): mientras carga se ve gris. |
+| Vídeo de portada | `videos/Itaca_Hero_Video.mp4` | Lleva `muted` (obligatorio para que arranque solo) y `poster="images/Itaca/Portada.jpg"`. |
+| Imagen de respaldo de portada | `images/Itaca/Portada.jpg` | Lo que se ve mientras carga el vídeo. **Todavía no existe.** |
 | Vídeos verticales | `videos/Boris_instagram.mp4`, `Cipri_instagram.mp4`, `Marta_instagram.mp4`, `Boris2_instagram.mp4` | Solo se reproducen al pasar el ratón por encima. |
 | **Horarios** | **duplicados en dos sitios** | La tabla visible (HTML, ~línea 1820) **y** el objeto `classesForAdult` / `classesForNino46` / `classesForNino710` del JS (~línea 2324). ⚠️ Si cambias un horario en un sitio y no en el otro, el formulario de clase de prueba ofrece clases que ya no existen. |
 | Textos legales | dentro de `index.html`, modales `#termsModal` y `#privacyModal` | |
@@ -92,13 +95,17 @@ No hay base de datos. Lo que hace las veces de "modelo de datos" son los archivo
 
 | Formulario | Qué pide | A dónde va |
 |---|---|---|
-| Contacto (`#contactForm`) | Nombre, email, teléfono, mensaje | `mailto:itacajiujitsu@gmail.com` |
-| Clase de prueba (`#trialForm`) | Nombre, email, teléfono, categoría (adulto/niño), **edad del niño**, fecha, clase | `mailto:itacajiujitsu@gmail.com` |
+| Contacto (`#contactForm`) | Nombre, email, teléfono, mensaje, consentimiento | Web3Forms → itacajiujitsu@gmail.com |
+| Clase de prueba (`#trialForm`) | Nombre, email, teléfono, categoría (adulto/niño), **edad del niño**, fecha, clase, consentimiento | Web3Forms → itacajiujitsu@gmail.com |
+
+Los dos tienen **casilla de consentimiento obligatoria** con enlace a la política de privacidad, y el de clase de prueba avisa de que lo rellena el padre, madre o tutor.
 
 **Reglas que no se tocan:**
 - **El formulario de clase de prueba recoge datos de menores** (4-6 y 7-10 años). Eso exige consentimiento del padre, madre o tutor. No se toca ese formulario sin pasar por la skill `seguridad-datos`.
 - **Ningún formulario nuevo sin casilla de consentimiento y enlace a la política de privacidad.**
+- **Si se quita o se relaja el consentimiento, es un retroceso legal.** No se hace.
 - **Nada de analítica, cookies ni píxeles** sin avisar antes: en cuanto entra uno, hace falta el aviso de cookies.
+- ⏳ **Pendiente:** falta la razón social completa y el NIF en la política de privacidad. Hay un comentario en el HTML marcándolo.
 
 ---
 

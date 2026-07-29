@@ -43,7 +43,9 @@ Los cuatro verticales son de proporción 9:16 (formato Instagram).
 
 ## Además falta
 
-- **Una imagen de respaldo para la portada** (`poster`), que es lo que se ve mientras el
-  vídeo carga. Hoy se ve un rectángulo gris. Vale un fotograma bonito del propio vídeo.
+- **`images/Itaca/Portada.jpg`** — la imagen que se ve mientras carga el vídeo de portada.
+  La web ya la busca con ese nombre exacto. Vale un fotograma bonito del propio vídeo,
+  horizontal y de buena calidad (por ejemplo 1920 × 1080).
 - **Un favicon**, el iconito de la pestaña del navegador.
-- **Una imagen de vista previa** para cuando se comparta el enlace por WhatsApp o Instagram.
+- **Una imagen de vista previa** para cuando se comparta el enlace por WhatsApp o Instagram
+  (1200 × 630, horizontal).
