@@ -81,7 +81,9 @@ No hay base de datos. Lo que hace las veces de "modelo de datos" son los archivo
 
 ⚠️ **Los archivos de `images/` y `videos/` no están en el repositorio todavía.** Están en el ordenador de Cipri. Ver `docs/PENDIENTE-archivos.md`.
 
-**Secciones de la página, en orden:** portada (`#home`) · filosofía y poema (`#about`) · carrusel de fotos (`#academy`) · vídeos verticales (`#reels`) · instructores (`#instructors`) · horarios (`#schedule`) · ubicación (`#location`) · llamada final (`#join`) · pie (`#contact`).
+**Secciones de la página, en orden:** portada (`#home`) · filosofía y poema (`#about`) · carrusel de fotos (`#academy`) · vídeos verticales (`#reels`) · instructores (`#instructors`) · horarios y leyenda (`#schedule`) · tu primer día (`#firstday`) · niños (`#kids`) · ubicación (`#location`) · llamada final (`#join`) · pie (`#contact`).
+
+⚠️ **Los textos de `#firstday`, `#kids` y la leyenda del horario los redactó la IA a partir de lo que es habitual en un gimnasio de BJJ, no de datos que diera Cipri.** Están pendientes de que él los confirme o los corrija: qué clases admiten a alguien sin experiencia, si hay kimonos de préstamo, si los padres pueden ver la clase. Hasta entonces, tratarlos como borrador.
 
 **Modales:** contacto (`#contactModal`) · clase de prueba (`#trialModal`) · datos de contacto (`#infoContactModal`) · términos (`#termsModal`) · privacidad (`#privacyModal`).
 
@@ -124,7 +126,9 @@ Los dos tienen **casilla de consentimiento obligatoria** con enlace a la políti
 
 **Es una sola página.** No hay rutas: la navegación son anclas (`#about`, `#academy`, `#reels`, `#instructors`, `#schedule`) que hacen scroll dentro de la misma página.
 
-**Cómo se comporta la cabecera:** transparente sobre la portada; al bajar de 50 píxeles se vuelve blanca, encoge, el logo se va a la izquierda y aparece el menú. En móvil (menos de 768 px) el menú son las tres rayas.
+**Cómo se comporta la cabecera:** transparente sobre la portada; al bajar de 50 píxeles se vuelve blanca, encoge, el logo se va a la izquierda y aparece el menú.
+
+⚠️ **El menú de enlaces va centrado en posición absoluta, así que no empuja al logo ni al botón: si no cabe, se les monta encima.** Por eso encoge en dos escalones (1550 px y 1330 px) y por debajo de **1180 px** desaparece y manda el menú de las tres rayas. Si añades un enlace más, hay que volver a comprobar todos los anchos. La maquetación del resto (instructores, vídeos) sigue cambiando en 1024 px y 768 px, que es independiente.
 
 **Los dos caminos que importan:**
 1. "HAZTE MIEMBRO" (portada, cabecera, menú móvil y llamada final) → abre el modal de **contacto**.
@@ -190,7 +194,9 @@ Si no, la rama arrastra commits duplicados y provoca conflictos. Ver la skill `f
 | FILOSOFÍA | sección `#about` |
 | SOMOS ITACA | sección `#academy` (carrusel de fotos) |
 | MOVIMIENTO | sección `#reels` (vídeos verticales) |
-| HORARIOS | sección `#schedule` |
+| HORARIOS | sección `#schedule` (incluye la leyenda de niveles) |
+| TU PRIMER DÍA | sección `#firstday` |
+| NIÑOS | sección `#kids` |
 | Hazte Miembro | `.modal-trigger` → `#contactModal` |
 | Clase de Prueba | `.trial-trigger` → `#trialModal` |
 | Gi | con kimono |

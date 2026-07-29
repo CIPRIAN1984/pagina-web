@@ -249,6 +249,32 @@
             transition: all 0.3s ease;
         }
 
+        /* El menú va centrado en absoluto, así que no "empuja" al logo ni al botón:
+           si no encoge, se les mete encima. En pantallas de portátil se aprieta. */
+        @media (max-width: 1550px) {
+            .nav-links {
+                gap: 0.4rem;
+            }
+
+            .nav-links a {
+                font-size: 0.78rem;
+                letter-spacing: 0.06em;
+                padding: 0.5rem 0.7rem;
+            }
+        }
+
+        @media (max-width: 1330px) {
+            .nav-links {
+                gap: 0.1rem;
+            }
+
+            .nav-links a {
+                font-size: 0.72rem;
+                letter-spacing: 0.02em;
+                padding: 0.5rem 0.45rem;
+            }
+        }
+
         .nav-links a.active {
             background-color: var(--text-dark) !important;
             color: var(--bg-white) !important;
@@ -1083,6 +1109,152 @@
             display: block;
         }
 
+        /* Leyenda del horario: sin esto, "Gi", "No Gi" u "Open Mat" no le dicen
+           nada a quien no ha entrenado nunca, que es justo a quien queremos convencer. */
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            margin-top: 3.5rem;
+            text-align: left;
+        }
+
+        .legend-block h4 {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            letter-spacing: 0.05em;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .legend-block p {
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .legend-block .legend-classes {
+            font-size: 0.85rem;
+            color: var(--accent-dark);
+            font-weight: 600;
+            line-height: 1.7;
+        }
+
+        .legend-terms {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem 2.5rem;
+            text-align: left;
+        }
+
+        .legend-terms p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .legend-terms strong {
+            font-family: var(--font-heading);
+            font-size: 1.15rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            color: var(--text-dark);
+            display: block;
+        }
+
+        /* Bloques informativos: "tu primer día" y la sección para padres */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3.5rem;
+            text-align: left;
+        }
+
+        .info-card {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 12px;
+            border-top: 3px solid var(--accent);
+            box-shadow: 0 2px 14px rgba(0, 0, 0, 0.04);
+        }
+
+        .info-card h4 {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            letter-spacing: 0.04em;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .info-card p {
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .section-intro {
+            max-width: 760px;
+            margin: 0 auto;
+            font-size: 1.15rem;
+        }
+
+        .kids-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 3rem;
+            text-align: left;
+        }
+
+        .kids-ages {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .age-card {
+            /* La sección de niños ya es blanca: la tarjeta va en el gris claro
+               para que se distinga del fondo. */
+            background: var(--bg-light);
+            padding: 1.5rem 1.75rem;
+            border-left: 3px solid var(--text-dark);
+            border-radius: 2px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .age-card span {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .age-card small {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-dark);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .age-card p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        @media (max-width: 900px) {
+            .kids-layout {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+        }
+
         /* Location */
         .location-details {
             display: flex;
@@ -1312,7 +1484,9 @@
             }
         }
 
-        @media (max-width: 768px) {
+        /* Por debajo de 1180 px el menú de enlaces ya no cabe entre el logo y el
+           botón sin montarse encima: a partir de aquí manda el de las tres rayas. */
+        @media (max-width: 1180px) {
 
             .nav-links,
             .header-cta {
@@ -1359,6 +1533,9 @@
                 pointer-events: auto;
                 color: var(--text-dark);
             }
+        }
+
+        @media (max-width: 768px) {
 
             .hero-buttons {
                 flex-direction: column;
@@ -1685,6 +1862,7 @@
             <a href="#reels" class="nav-item">MOVIMIENTO</a>
             <a href="#instructors" class="nav-item">INSTRUCTORES</a>
             <a href="#schedule" class="nav-item">HORARIOS</a>
+            <a href="#kids" class="nav-item">NIÑOS</a>
         </nav>
         <div class="header-cta-wrapper">
             <a href="#" class="btn btn-primary btn-header header-cta modal-trigger">Hazte Miembro</a>
@@ -1703,6 +1881,8 @@
         <a href="#reels" class="menu-link">MOVIMIENTO</a>
         <a href="#instructors" class="menu-link">INSTRUCTORES</a>
         <a href="#schedule" class="menu-link">HORARIOS</a>
+        <a href="#firstday" class="menu-link">PRIMER DÍA</a>
+        <a href="#kids" class="menu-link">NIÑOS</a>
         <a href="#" class="menu-link modal-trigger"
             style="color: var(--bg-white); background-color: var(--text-dark); padding: 0.5rem 1rem; border-radius: 4px; text-transform: uppercase;">HAZTE
             MIEMBRO</a>
@@ -2010,6 +2190,131 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="legend reveal delay-1">
+                <div class="legend-block">
+                    <h4>Para empezar de cero</h4>
+                    <p>No hace falta ninguna experiencia previa. Se trabaja técnica desde el principio y a tu
+                        ritmo. Si nunca has entrenado, tu sitio está aquí.</p>
+                    <p class="legend-classes">Iniciación Gi · Iniciación No Gi · Fundamentos · Fundamentos (Gi) ·
+                        Fundamentos No Gi</p>
+                </div>
+                <div class="legend-block">
+                    <h4>Con algo de rodaje</h4>
+                    <p>Clases abiertas a todos los niveles en las que ya se entrena a ritmo normal. Recomendadas
+                        cuando llevas unos meses y te manejas con lo básico.</p>
+                    <p class="legend-classes">BJJ Gi · Grappling No Gi · No Gi Grappling</p>
+                </div>
+                <div class="legend-block">
+                    <h4>Avanzados</h4>
+                    <p>Para alumnos con experiencia. Se entra por criterio del profesor: si tienes dudas,
+                        pregúntanos y te decimos por dónde empezar.</p>
+                    <p class="legend-classes">Avanzados Gi · Avanzados No Gi · Avanzado Gi · Específico Sparring</p>
+                </div>
+                <div class="legend-block">
+                    <h4>Niños</h4>
+                    <p>Grupos separados por edad, con su propio ritmo y su propia forma de enseñar.</p>
+                    <p class="legend-classes">Kids 4/6 Años · Kids 7/10 Años · BJJ Kids Gi 7/10 Años</p>
+                </div>
+                <div class="legend-block">
+                    <h4>Entrenamiento libre</h4>
+                    <p>Sin clase dirigida: se entrena lo que cada uno necesita. Mejor cuando ya llevas un tiempo y
+                        sabes en qué quieres trabajar.</p>
+                    <p class="legend-classes">BJJ Gi Libre · Open Mat</p>
+                </div>
+            </div>
+
+            <div class="legend-terms reveal delay-1">
+                <p><strong>Gi</strong>Con kimono. Es el jiu jitsu clásico: se usa la tela para agarrar y controlar.</p>
+                <p><strong>No Gi</strong>Sin kimono, con camiseta ajustada y mallas. Más rápido y más resbaladizo.</p>
+                <p><strong>Open Mat</strong>Tatami abierto. Vienes y entrenas libremente con quien quieras.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Primera clase: lo que frena a la gente no es el precio, es no saber
+         qué se van a encontrar. Esta sección existe para quitar ese miedo. -->
+    <section class="section" id="firstday">
+        <div class="container">
+            <h2 class="text-center reveal">Tu primer día</h2>
+            <p class="section-intro text-center reveal">Todo el mundo ha tenido un primer día. Esto es lo que pasa
+                en el tuyo, para que vengas sabiendo a qué atenerte.</p>
+
+            <div class="info-grid reveal delay-1">
+                <div class="info-card">
+                    <h4>¿Necesito experiencia?</h4>
+                    <p>Ninguna. Las clases de iniciación y fundamentos están pensadas exactamente para quien nunca
+                        ha pisado un tatami. Nadie espera que sepas nada.</p>
+                </div>
+                <div class="info-card">
+                    <h4>¿Hay que estar en forma?</h4>
+                    <p>No. Se entrena a tu ritmo y paras cuando lo necesitas. La forma física llega entrenando,
+                        no al revés.</p>
+                </div>
+                <div class="info-card">
+                    <h4>¿Qué me pongo?</h4>
+                    <p>Ropa deportiva cómoda y ajustada, chanclas para andar fuera del tatami y una botella de
+                        agua. Para tu primera clase no necesitas kimono: ya te contaremos.</p>
+                </div>
+                <div class="info-card">
+                    <h4>¿Me van a hacer daño?</h4>
+                    <p>No. En las clases de iniciación se trabaja técnica y se va por pasos. Aquí nadie tiene que
+                        demostrar nada a costa del que acaba de llegar.</p>
+                </div>
+                <div class="info-card">
+                    <h4>¿Cuánto dura?</h4>
+                    <p>Alrededor de una hora. Ven diez minutos antes para cambiarte con calma y para que te
+                        expliquemos cuatro cosas antes de empezar.</p>
+                </div>
+                <div class="info-card">
+                    <h4>Dos normas del tatami</h4>
+                    <p>Uñas de manos y pies cortas, y pies limpios: se entrena descalzo y muy cerca de los demás.
+                        Con eso vas sobrado.</p>
+                </div>
+            </div>
+
+            <div class="text-center reveal delay-2" style="margin-top: 3.5rem;">
+                <a href="#" class="btn btn-primary trial-trigger">Reservar clase de prueba</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Niños: un padre decide con otros criterios que un adulto que se apunta él. -->
+    <section class="section bg-white" id="kids">
+        <div class="container">
+            <h2 class="text-center reveal">Jiu Jitsu para niños</h2>
+            <p class="section-intro text-center reveal">Empezamos por lo que preocupa a un padre o una madre, no por
+                la técnica.</p>
+
+            <div class="kids-layout reveal delay-1">
+                <div>
+                    <p>El jiu jitsu infantil no va de pegar. No hay golpes: se trabaja el control, el equilibrio y
+                        la manera de salir de una situación incómoda sin hacer daño a nadie. Es de los pocos
+                        deportes en los que un niño aprende a defenderse sin aprender a golpear.</p>
+                    <p>Lo que más se nota fuera del tatami es otra cosa: la confianza de saber que puede con algo
+                        difícil, la costumbre de intentarlo otra vez cuando sale mal y el respeto por el compañero
+                        con el que acaba de entrenar.</p>
+                    <p>Las clases son en grupos reducidos, separadas por edad, y siempre con un instructor
+                        delante. Si quieres ver una clase antes de decidir, ven y la ves.</p>
+                    <div style="margin-top: 2.5rem;">
+                        <a href="#" class="btn btn-dark-outline trial-trigger">Pedir clase de prueba</a>
+                    </div>
+                </div>
+                <div class="kids-ages">
+                    <div class="age-card">
+                        <span>4 a 6 años</span>
+                        <small>Jueves · 16:45 - 17:45</small>
+                        <p>A esta edad se trabaja sobre todo el movimiento, el equilibrio y aprender a estar en
+                            grupo. Se juega mucho y se aprende sin darse cuenta.</p>
+                    </div>
+                    <div class="age-card">
+                        <span>7 a 10 años</span>
+                        <small>Martes y viernes · 16:45 - 17:45</small>
+                        <p>Ya entran la técnica de verdad y las primeras posiciones. Es la edad en la que empiezan
+                            a ver que el esfuerzo de hoy se nota dentro de unos meses.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

@@ -16,6 +16,20 @@
 >   botón de sonido de los vídeos ya se ven sin ratón; los vídeos se reproducen al tocarlos.
 > - **nº 7 Fechas pasadas** — resuelto de paso, era una línea.
 >
+> ### Además, tras mirar artofjiujitsu.com (29 de julio)
+>
+> Añadido lo que allí funciona y aquí faltaba, adaptado a Ítaca:
+>
+> - **Leyenda del horario** — qué es Gi, No Gi y Open Mat, y a quién va dirigida cada clase.
+> - **Sección "Tu primer día"** (`#firstday`) — las seis preguntas que frenan a un principiante.
+> - **Sección "Jiu Jitsu para niños"** (`#kids`) — escrita para un padre, no para un practicante.
+>
+> ⚠️ **Esos textos son un borrador escrito por la IA**, no información que diera Cipri.
+> Pendiente de que los confirme o los corrija.
+>
+> Descartado por decisión suya: plataforma de vídeo de pago, masterclass y tienda.
+> Queda pendiente decidir si la clase de prueba es gratuita y decirlo en el botón.
+>
 > Además aparecieron y se arreglaron dos fallos que esta revisión no había detectado:
 >
 > - **En el móvil no se podía enviar la clase de prueba**: el formulario era más alto que la
