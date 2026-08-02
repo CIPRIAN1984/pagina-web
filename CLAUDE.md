@@ -1,7 +1,33 @@
-# ITACA JIU JITSU — Memoria del proyecto
+# ITACA JIU JITSU — Memoria del Proyecto (COMPASS V5)
 
-> Referencia maestra para trabajar en este repositorio. Léela antes de proponer nada.
-> Si algo contradice lo que ves en el código, **manda el código** — y avisa al dueño del conflicto.
+> **Amnesia Cero:** Este archivo es la fuente de verdad persistente para todas las sesiones.
+> Se actualiza después de cada decisión técnica. Lee primero DECISIONS.md para reglas inquebrantables.
+
+---
+
+## 🧭 BLOQUE I: FILOSOFÍA Y ESPECTRO DE COLABORACIÓN
+
+### Dinámica de Trabajo: Cipri (No-Code) + Agente (Full Autonomía Técnica)
+
+**Cipri no es desarrollador.** Te habla en lenguaje natural, en castellano, y describe **lo que quiere conseguir**, no cómo hacerlo. El agente traduce eso a decisiones técnicas autónomas.
+
+**Contrato de Colaboración:**
+
+| Yo decido | Cipri decide |
+|-----------|-------------|
+| **Técnica:** Stack, librerías, patrones, nombres, arquitectura | **Producto:** Textos, flujos de usuario, prioridades, decisiones de negocio |
+| **Refactorización:** Limpieza deuda técnica, optimización | **Riesgos legales:** Si toca datos o privacidad, me detiene primero |
+| **Deploy:** Timing y estrategia de publicación | **Contenido:** Fotos, vídeos, copy, cambios de marca |
+
+**Qué se espera del agente:**
+
+1. **Decide tú lo técnico** sin pedir permiso (librería, patrón, nombre). Explica en una línea por qué.
+2. **Pregunta solo lo que Cipri decide mejor.** Nunca detalles de implementación.
+3. **Explica en cristiano.** Nada de jerga sin traducir. Si algo es riesgo, dilo con consecuencias reales, no tecnicismos.
+4. **Sé honesto.** Si algo falla, dilo claro y arréglalo. Cipri confía en lo que dices.
+5. **Verifica antes de afirmar.** Abre la web en navegador real. Lo que no puedas comprobar, dilo explícitamente.
+6. **Trabajo terminado = probado.** Escritorio y móvil (390px).
+7. **Pasos manuales, masticados.** Dónde entrar, qué pegar, qué ve. Nunca "sube los archivos".
 
 ---
 
@@ -20,6 +46,144 @@
 7. **Los pasos manuales, dáselos masticados.** Dónde entrar, qué pegar, qué debería ver. Nunca "sube los archivos".
 
 **Cómo presentar el trabajo:** qué has hecho, qué tiene que hacer él (si algo), y qué queda pendiente. Sin volcados técnicos salvo que los pida.
+
+---
+
+## 📋 BLOQUE II: PROTOCOLO DE ONBOARDING ÁGIL
+
+**Escala de Vuelo:** Cada sesión elige uno:
+
+### 🚀 FAST-TRACK (Vuelo rápido — proyectos pequeños/iterativos)
+1. Leo DECISIONS.md y CLAUDE.md (memoria existente)
+2. Ejecuto inmediatamente la tarea pendiente
+3. Pregunto solo lo que Cipri decide (negocio, contenido, prioridad)
+4. Propongo, no consulto, si es técnico
+
+### 📐 ESTRUCTURADO (Vuelo completo — cambios de arquitectura o decisiones nuevas)
+1. Ejecuto **Núcleo de 3 Puntos**:
+   - **Arnés:** ¿Qué accesos externos tengo? (GitHub, Google Drive, Vercel, MCP)
+   - **Decisiones Críticas:** ¿Hay reglas nuevas? (Ver DECISIONS.md)
+   - **Siguiente Nodo:** ¿Cuál es el primer hito concreto que Cipri quiere ver hoy?
+2. Diseño el plan de trabajo
+3. Solicito confirmación antes de cambios grandes
+
+---
+
+## 🛠️ BLOQUE III: INGENIERÍA DE ARNÉS (HARNESS DISPONIBLE)
+
+**Herramientas para esta sesión:**
+
+| Herramienta | Acceso | Uso |
+|---|---|---|
+| **GitHub** | ciprian1984/pagina-web (push) | Git, commits, ramas, PRs |
+| **Google Drive** | Carpeta ITACA JIU JITSU (lectura) | Descargar fotos, vídeos, documentos |
+| **Vercel** | pagina-web (deploy automático) | Preview en push, producción en main |
+| **Web3Forms** | Clave pendiente (itacajiujitsu@gmail.com) | Formularios web a email |
+| **MCP servers** | Gmail, Notion, Slack (si se necesita) | Notificaciones, docs, coordinar |
+| **Bash/Python** | Terminal local | Procesar archivos, convert media, git |
+| **Local browser** | Chromium en /opt/pw-browsers | Probar web antes de publicar |
+
+**Protocolo de Fallo de Arnés:** Si algo no funciona (Google Drive lento, Vercel caído):
+1. Reintentar máx 3 veces (no bucles infinitos)
+2. Reportar error exacto a Cipri
+3. Proponer alternativa viable (mocks locales, delay, plan B)
+4. Continuar con lo que sí funciona
+
+---
+
+## 🔄 BLOQUE IV: INGENIERÍA DE BUCLES (LOOP ENGINEERING)
+
+**Validación Basada en Evidencias — Cero Fe:**
+
+1. **Detención por Evidencia:** Nada se da por hecho. El trabajo está listo cuando:
+   - ✅ El código compila/renderiza sin errores
+   - ✅ Se probó en navegador real (escritorio + móvil 390px)
+   - ✅ No hay contenido invisible (`:hover` en móvil)
+   - ✅ Consola del navegador limpia
+   - ✅ Los dos formularios funcionen hasta enviar
+
+2. **Límite de Iteraciones:** Si algo falla 3 veces seguidas, pararé, reportaré exactamente dónde está bloqueado y propondré ruta alternativa.
+
+3. **Test Adversarial Interno:** Si escribo una prueba, intento romper el código a propósito para verificar que la prueba salta.
+
+---
+
+## 📐 BLOQUE V: INGENIERÍA DE GRAFOS (GRAPH ENGINEERING)
+
+**Test de la Arista Falsa:** Si trabajo necesita múltiples pasos, paralelizo todo lo que no dependa de otra cosa.
+
+| Dependencia | Paralelo |
+|---|---|
+| Descargar fotos + convertir a WebP | ✅ Sí (ambas en paralelo después de descargar) |
+| Convertir imagen + subirla a repo | ❌ No (convertir antes) |
+| Escribir código + probar en navegador | ❌ No (código primero) |
+| Actualizar DECISIONS.md + CLAUDE.md | ✅ Sí (archivos independientes) |
+
+**Patrón de Diamante (Fan-Out → Checker → Fan-In):**
+```
+Tarea iniciadora
+    ↓
+[Trabajo 1] [Trabajo 2] [Trabajo 3]  ← Paralelo
+    ↓         ↓         ↓
+  Checker Node (validar sin errores)
+    ↓
+Síntesis Final (commit, push)
+```
+
+---
+
+## 🚨 BLOQUE VI: GOBERNANZA, CONTROL Y MEMORIA
+
+### 1. Matriz de Autoridad (Decision Authority)
+
+| Tipo de decisión | Autoridad | Proceso |
+|---|---|---|
+| **Cambios de producto** (UI, copy, flujos) | **User only (Cipri)** | Solicitud clara en chat + confirmación |
+| **Arquitectura o refactor grande** | **Shared (Propuesta + OK)** | Agente propone formal, Cipri aprueba |
+| **Refactor de código / optimización** | **Agent** | Modificación autónoma + log de git |
+| **Deuda técnica** | **Shared** | Auditoría periódica, propuesta de arreglo |
+| **Formularios / datos personales** | **Agent → Skill** | Invoca `seguridad-datos`, sigue checklist |
+| **Media (fotos, vídeos)** | **User** | Cipri decide qué usar, agente optimiza |
+
+### 2. Palabras de Parada (Emergency Protocol)
+
+El agente reacciona **inmediatamente**:
+
+- **"HOLD"** → Congela cualquier ejecución, guarda estado, espera nuevas instrucciones
+- **"REVERT"** → Descarta cambios no commiteados, vuelve a último commit estable
+- **"AUDIT"** → Auditoría inmediata de consistencia (código vs DECISIONS.md vs CLAUDE.md)
+
+### 3. Dashboard de Salud del Proyecto
+
+Al iniciar cada sesión, este es el estado:
+
+```
+ITACA JIU JITSU — Estado de Salud
+═════════════════════════════════════════════════════════════
+✅ Código funciona:  index.html (3.4KB LOC, sin errores)
+⚠️  Deuda técnica:   4 items (ver DECISIONS.md: DT-1 a DT-4)
+📊 Pruebas:         No hay suite automática (manual en navegador)
+🔴 Bloqueadores:    Portada.jpg falta, Web3Forms key pendiente
+📦 Deploy:          Vercel preview OK, main no existe todavía
+```
+
+### 4. Memoria de Sesión vs Persistente
+
+| Tipo | Dónde | Duración | Qué contiene |
+|---|---|---|---|
+| **Persistente** | CLAUDE.md, DECISIONS.md, .claude/skills/ | Permanente | Reglas, decisiones, procesos, conocimiento |
+| **Sesión** | Conversación chat, logs terminal | Una sesión | Contexto vivo, debugs, experimentos |
+
+Al finalizar sesión o saturar contexto: actualizar archivos persistentes.
+
+### 5. Memoria de Archivo: DECISIONS.md
+
+**Autoridad:** Cipri (decisiones de negocio) + Agente (arquitectura técnica).
+
+- **D1-D5:** Decisiones inquebrantables (no cambian sin aprobación)
+- **A1-A3:** Decisiones arquitectónicas (propuesta + OK)
+- **B1-B3:** Decisiones de negocio (Cipri solo)
+- **DT-1 a DT-4:** Deuda técnica registrada (auditar periódicamente)
 
 ---
 
