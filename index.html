@@ -4109,6 +4109,19 @@ entenderás ya qué significan las Ítacas.`;
                     'rel="noopener">' + rotulo + '</a>';
             }
 
+            // Enlace listo para responder por WhatsApp, que viaja DENTRO del correo
+            // que recibe la escuela. Sin esto hay que copiar el número a mano cada
+            // vez; con esto se contesta de un toque desde el propio correo.
+            function enlaceRespuesta(telefono, respuesta) {
+                // wa.me quiere el número sin +, sin espacios y con prefijo de país.
+                let num = (telefono || '').replace(/[^\d]/g, '');
+                if (!num) return '';
+                if (num.length === 9) num = '34' + num;            // móvil español sin prefijo
+                else if (num.startsWith('0034')) num = num.slice(2);
+                if (num.length < 11) return '';
+                return 'https://wa.me/' + num + '?text=' + encodeURIComponent(respuesta);
+            }
+
             function textoCanal(canal) {
                 if (canal === 'WhatsApp') return 'por WhatsApp';
                 if (canal === 'Llamada') return 'por teléfono';
@@ -4218,6 +4231,8 @@ entenderás ya qué significan las Ítacas.`;
                 const telefono = document.getElementById('contactTelefono').value.trim();
                 const mensaje = document.getElementById('contactMensaje').value.trim();
                 const canal = canalElegido('ContactoPreferido');
+                const responder = enlaceRespuesta(telefono,
+                    'Hola ' + nombre + ', soy de Itaca Jiu Jitsu. Te escribo por tu consulta desde la web.');
 
                 enviarFormulario({
                     form: contactForm,
@@ -4231,6 +4246,7 @@ entenderás ya qué significan las Ítacas.`;
                         Email: email,
                         'Teléfono': telefono || '(no indicado)',
                         'Contestar por': canal,
+                        ...(responder ? { 'Responder por WhatsApp': responder } : {}),
                         Mensaje: mensaje,
                         Consentimiento: 'Aceptada la política de privacidad'
                     },
@@ -4263,6 +4279,9 @@ entenderás ya qué significan las Ítacas.`;
                 const fecha = trialDate.value;
                 const clase = trialClassSelect.value;
                 const canal = canalElegido('ContactoPreferidoPrueba');
+                const responder = enlaceRespuesta(telefono,
+                    'Hola ' + nombre + ', soy de Itaca Jiu Jitsu. Te confirmo tu clase de prueba del ' +
+                    fecha + ' (' + clase + '). ¡Nos vemos!');
 
                 enviarFormulario({
                     form: trialForm,
@@ -4275,6 +4294,7 @@ entenderás ya qué significan las Ítacas.`;
                         Email: email,
                         'Teléfono': telefono,
                         'Contestar por': canal,
+                        ...(responder ? { 'Responder por WhatsApp': responder } : {}),
                         'Categoría': cat,
                         Fecha: fecha,
                         Clase: clase,
