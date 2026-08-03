@@ -7,18 +7,21 @@ contactado, si vino y si se apuntó.
 **El correo sigue llegando igual.** La hoja es un extra para el seguimiento, no
 sustituye a nada. Si la hoja falla algún día, los mensajes te siguen llegando.
 
-Son unos 10 minutos y hay que hacerlo desde tu cuenta de Google.
+Son unos 5 minutos y hay que hacerlo desde tu cuenta de Google.
 
 ---
 
-## Paso 1 — Crear la hoja
+## Paso 1 — Crear la hoja ✅ YA HECHO
 
-1. Entra en <https://sheets.google.com> con la cuenta `itacajiujitsu@gmail.com`.
-2. Pulsa **Hoja de cálculo en blanco**.
-3. Arriba a la izquierda, donde pone *Hoja de cálculo sin título*, escribe:
-   **Solicitudes web Itaca**
+La hoja ya está creada en tu Drive, dentro de la carpeta *Material Pagina Web*:
 
-Déjala abierta.
+**<https://docs.google.com/spreadsheets/d/173ENlzBSRImQHj_yV2rPmarzNdhdUzoXkN_uGjNzuik/edit>**
+
+Ábrela con ese enlace y sigue en el paso 2.
+
+> Los pasos 2 y 3 los tienes que hacer tú por narices: publicar un script es dar
+> un permiso sobre tu cuenta de Google, y eso solo lo puede autorizar su dueño
+> desde su navegador.
 
 ---
 
