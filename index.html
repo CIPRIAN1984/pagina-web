@@ -2694,6 +2694,17 @@
         }
 
         /* Aviso de resultado del envío */
+        /* Campo trampa para robots: fuera de la pantalla en vez de display:none,
+           porque algunos programas de spam saltan lo que está oculto del todo. */
+        .hp-field {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
         .form-status {
             font-family: var(--font-body);
             font-size: 0.95rem;
@@ -3432,6 +3443,12 @@
                         </label>
                     </div>
                 </div>
+                <!-- Trampa para robots ("honeypot"). Va oculta y ninguna persona la ve
+                     ni la puede rellenar; los programas que envían spam sí la rellenan.
+                     Web3Forms descarta el mensaje si viene marcada. Hace falta porque la
+                     clave de acceso está a la vista en el código, como exige su API. -->
+                <input type="checkbox" name="botcheck" class="hp-field" tabindex="-1" autocomplete="off"
+                    aria-hidden="true">
                 <div class="form-group consent-group">
                     <input type="checkbox" id="contactConsent" name="Consentimiento" required>
                     <label for="contactConsent">He leído y acepto la <a href="#" class="privacy-trigger">política de
@@ -3520,6 +3537,12 @@
                     </div>
                 </div>
 
+                <!-- Trampa para robots ("honeypot"). Va oculta y ninguna persona la ve
+                     ni la puede rellenar; los programas que envían spam sí la rellenan.
+                     Web3Forms descarta el mensaje si viene marcada. Hace falta porque la
+                     clave de acceso está a la vista en el código, como exige su API. -->
+                <input type="checkbox" name="botcheck" class="hp-field" tabindex="-1" autocomplete="off"
+                    aria-hidden="true">
                 <div class="form-group consent-group">
                     <input type="checkbox" id="trialConsent" required>
                     <label for="trialConsent">He leído y acepto la <a href="#" class="privacy-trigger">política de
@@ -3750,7 +3773,7 @@
         //  del visitante, como hacían antes. No es una contraseña: esta clave solo sirve
         //  para que los mensajes lleguen a itacajiujitsu@gmail.com y nada más.
         // ─────────────────────────────────────────────────────────────────────────────
-        const WEB3FORMS_ACCESS_KEY = '';
+        const WEB3FORMS_ACCESS_KEY = 'e6a72e8e-1963-4d39-b6d8-cad84ad95cae';
 
         // ─────────────────────────────────────────────────────────────────────────────
         //  COPIA EN HOJA DE CÁLCULO (opcional)
@@ -4125,6 +4148,8 @@ entenderás ya qué significan las Ítacas.`;
                             access_key: WEB3FORMS_ACCESS_KEY,
                             subject: asunto,
                             from_name: 'Web de Itaca Jiu Jitsu',
+                            // Si viene marcada, lo ha rellenado un robot: Web3Forms lo tira.
+                            botcheck: form.querySelector('[name="botcheck"]')?.checked || false,
                             ...datos
                         })
                     });
