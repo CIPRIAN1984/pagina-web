@@ -362,6 +362,10 @@
         /* Hero */
         .hero {
             position: relative;
+            /* z-index crea un contexto de apilamiento propio: sin esto, el
+               background-color de aquí abajo se pintaba ENCIMA de la imagen/vídeo
+               con z-index negativo en vez de detrás. Causa del "hero en negro". */
+            z-index: 0;
             height: 100vh;
             height: 100svh;
             /* Ajuste perfecto para móviles, ignorando la barra del navegador */
@@ -1890,8 +1894,10 @@
 
     <!-- Hero -->
     <section class="hero" id="home">
-        <!-- Hero background image (video was corrupted - only audio, no visual track) -->
-        <img class="hero-video" src="images/Itaca/hero-bg.jpg" alt="ITACA JIU JITSU">
+        <!-- El vídeo que había (Itaca_Hero_Video.mp4) es un stock genérico (animación
+             cósmica), no imagen real del gimnasio: se sustituye por foto real hasta
+             que haya vídeo propio que subir. -->
+        <img class="hero-video" src="images/Itaca/Gym1.webp" alt="Instalaciones Itaca Jiu Jitsu">
         <div class="hero-overlay"></div>
 
         <div class="hero-content reveal active">
@@ -1903,21 +1909,6 @@
                 <a href="#" class="btn btn-outline trial-trigger">Clase de Prueba</a>
             </div>
         </div>
-
-        <button class="video-control" id="mute-btn" aria-label="Toggle Sound">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" id="sound-icon-muted">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <line x1="23" y1="9" x2="17" y2="15"></line>
-                <line x1="17" y1="9" x2="23" y2="15"></line>
-            </svg>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" id="sound-icon-unmuted" style="display: none;">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-            </svg>
-        </button>
-
     </section>
 
     <!-- Editorial Presentation -->
@@ -3056,54 +3047,6 @@ entenderás ya qué significan las Ítacas.`;
                     if (mobileMenu.classList.contains('open')) toggleMenu();
                 });
             });
-
-            // Video Mute/Unmute Logic
-            const heroVideo = document.getElementById('hero-video');
-            const muteBtn = document.getElementById('mute-btn');
-            const iconMuted = document.getElementById('sound-icon-muted');
-            const iconUnmuted = document.getElementById('sound-icon-unmuted');
-
-            // Force play just in case auto-play policy blocks it silently
-            heroVideo.play().catch(e => {
-                console.log("Autoplay con sonido prevenido por el navegador. Forzando mute temporalmente para reproducir.");
-                // Si el navegador impide el autoplay de videos con sonido, lo muteamos de forma automática para que no se quede la pantalla congelada
-                heroVideo.muted = true;
-                iconMuted.style.display = 'block';
-                iconUnmuted.style.display = 'none';
-                heroVideo.play().catch(err => console.log("Final fallback falló", err));
-            });
-
-            muteBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Toggle without pausing
-                heroVideo.muted = !heroVideo.muted;
-
-                if (heroVideo.muted) {
-                    iconMuted.style.display = 'block';
-                    iconUnmuted.style.display = 'none';
-                } else {
-                    iconMuted.style.display = 'none';
-                    iconUnmuted.style.display = 'block';
-                }
-            });
-
-            // Hero Video Intersection Observer (Pause when out of view, Play when in view)
-            const heroSection = document.getElementById('home');
-            const heroObserverOptions = {
-                threshold: 0.8 // Se activa solo cuando al menos el 80% de la sección es visible
-            };
-
-            const heroObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (!entry.isIntersecting) {
-                        heroVideo.pause(); // Pausa reproducción y sonido
-                    } else {
-                        heroVideo.play().catch(e => console.log("Play interrupted: ", e)); // Reanuda reproducción y sonido
-                    }
-                });
-            }, heroObserverOptions);
-
-            if (heroSection) heroObserver.observe(heroSection);
 
             // Reveal on Scroll (Intersection Observer)
             const revealElements = document.querySelectorAll('.reveal');
