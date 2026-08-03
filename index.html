@@ -15,15 +15,43 @@
         rel="stylesheet">
     <style>
         :root {
-            --bg-light: #f8f8f8;
+            --bg-light: #f6f5f2;
             --bg-white: #ffffff;
-            --text-dark: #1a1a1a;
-            --text-gray: #4a4a4a;
+            --text-dark: #141414;
+            --text-gray: #55534e;
             --accent: #d4cfb6;
             --accent-dark: #b8b29c;
+            /* El beige claro no llega al contraste mínimo sobre blanco: para
+               texto pequeño se usa esta versión oscura (6:1, cumple AA). */
+            --accent-ink: #6b6448;
+            --surface-dark: #101010;
+            --hairline: rgba(20, 20, 20, 0.10);
             --font-heading: 'Bebas Neue', Impact, sans-serif;
             --font-body: 'Montserrat', Helvetica, sans-serif;
             --nav-height: 80px;
+
+            /* Escala tipográfica fluida: un solo valor sirve de móvil a escritorio
+               sin necesidad de redefinir tamaños en cada media query. */
+            --step-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.82rem);
+            --step-sm: clamp(0.87rem, 0.84rem + 0.16vw, 0.95rem);
+            --step-0: clamp(1rem, 0.97rem + 0.18vw, 1.09rem);
+            --step-1: clamp(1.12rem, 1.06rem + 0.3vw, 1.3rem);
+            --step-2: clamp(1.5rem, 1.3rem + 1vw, 2.1rem);
+            --step-3: clamp(2rem, 1.5rem + 2.4vw, 3.4rem);
+            --step-4: clamp(2.6rem, 1.7rem + 4.2vw, 5rem);
+
+            /* Escala de espaciado: evita el "cada sección con su propio margen". */
+            --space-2xs: clamp(0.5rem, 0.45rem + 0.25vw, 0.75rem);
+            --space-xs: clamp(0.75rem, 0.65rem + 0.5vw, 1.25rem);
+            --space-sm: clamp(1.25rem, 1rem + 1vw, 2rem);
+            --space-md: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+            --space-lg: clamp(3rem, 2rem + 4vw, 6rem);
+            --space-xl: clamp(4rem, 2.5rem + 6vw, 8rem);
+
+            --gutter: clamp(1.15rem, 5vw, 4rem);
+            --measure: 62ch;
+            --radius: 14px;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
@@ -34,6 +62,12 @@
 
         html {
             scroll-behavior: smooth;
+        }
+
+        /* Sin esto, al pulsar un enlace del menú la cabecera fija tapa el título
+           de la sección a la que se acaba de saltar. */
+        section[id] {
+            scroll-margin-top: var(--nav-height);
         }
 
         body {
@@ -59,22 +93,58 @@
         }
 
         h1 {
-            font-size: clamp(3.5rem, 8vw, 7rem);
+            font-size: clamp(3.2rem, 11vw, 7rem);
         }
 
         h2 {
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            margin-bottom: 1.5rem;
+            font-size: var(--step-3);
+            margin-bottom: var(--space-sm);
+            /* Reparte las líneas de un titular en vez de dejar una palabra suelta. */
+            text-wrap: balance;
         }
 
         h3 {
-            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-size: var(--step-2);
         }
 
         p {
-            font-size: 1.1rem;
+            font-size: var(--step-0);
             color: var(--text-gray);
-            font-weight: 300;
+            font-weight: 400;
+            text-wrap: pretty;
+        }
+
+        /* Etiqueta pequeña sobre los titulares: da jerarquía y sitúa al lector
+           sin gastar una línea entera de texto. */
+        .eyebrow {
+            display: block;
+            font-family: var(--font-body);
+            font-size: var(--step-xs);
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent-ink);
+            margin-bottom: var(--space-2xs);
+        }
+
+        .eyebrow::before {
+            content: '';
+            display: inline-block;
+            width: 26px;
+            height: 1px;
+            background: currentColor;
+            vertical-align: middle;
+            margin-right: 0.6em;
+        }
+
+        .text-center .eyebrow::after {
+            content: '';
+            display: inline-block;
+            width: 26px;
+            height: 1px;
+            background: currentColor;
+            vertical-align: middle;
+            margin-left: 0.6em;
         }
 
         a {
@@ -85,7 +155,28 @@
 
         /* Layout Utilities */
         .section {
-            padding: 6rem 5%;
+            padding: var(--space-xl) var(--gutter);
+        }
+
+        /* Sección oscura: rompe la sucesión de fondos claros y da ritmo visual.
+           Invierte los colores de texto de sus hijos de una sola vez. */
+        .section-dark {
+            background-color: var(--surface-dark);
+            color: var(--bg-white);
+        }
+
+        .section-dark h2,
+        .section-dark h3,
+        .section-dark h4 {
+            color: var(--bg-white);
+        }
+
+        .section-dark p {
+            color: #a8a5a0;
+        }
+
+        .section-dark .eyebrow {
+            color: var(--accent);
         }
 
         .bg-white {
@@ -148,19 +239,32 @@
             color: var(--bg-white);
         }
 
-        /* Animation utilities */
+        /* Animation utilities.
+           Sin blur ni scale: en un móvil de gama media esos dos repintan toda la
+           capa en cada fotograma y es lo que hacía que la página "fuera lenta". */
         .reveal {
             opacity: 0;
-            transform: translateY(60px) scale(0.95);
-            filter: blur(8px);
-            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: opacity, transform, filter;
+            transform: translateY(24px);
+            transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
         }
 
         .reveal.active {
             opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0);
+            transform: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .reveal,
+            .reveal.active {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
         }
 
         .delay-1 {
@@ -400,7 +504,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.5) 100%);
+            /* Más oscuro en el centro que antes: ahí es donde va el texto y el
+               vídeo tiene fotogramas claros (kimonos blancos) que se lo comían. */
+            background:
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.42) 45%, rgba(0, 0, 0, 0.72) 100%);
             z-index: -1;
         }
 
@@ -409,6 +516,33 @@
             max-width: 900px;
             padding: 0 1rem;
             margin-top: 50px;
+        }
+
+        .hero-kicker {
+            display: block;
+            font-family: var(--font-body);
+            font-size: var(--step-xs);
+            font-weight: 600;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: var(--space-xs);
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+        }
+
+        /* El texto va encima de un vídeo que cambia todo el rato: sin sombra
+           propia, hay fotogramas claros en los que no se lee nada. */
+        .hero-content h1 {
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.55);
+        }
+
+        .hero-content p {
+            color: rgba(255, 255, 255, 0.92);
+            font-size: var(--step-1);
+            font-weight: 400;
+            max-width: 54ch;
+            margin: 0 auto;
+            text-shadow: 0 2px 16px rgba(0, 0, 0, 0.75);
         }
 
         .hero-subtitle {
@@ -562,21 +696,35 @@
             transition: opacity 1s ease;
         }
 
-        /* Carousel Content */
+        /* Carousel Content.
+           El ancho de tarjeta vive aquí y lo lee el JS: si se cambia, el paso del
+           carrusel se ajusta solo. Antes estaba fijo en 320px y en un móvil la
+           tarjeta central no cabía ni quedaba centrada. */
         .carousel-wrap {
-            width: 100vw;
+            --arrow-size: 50px;
+            --wrap-pad: 24px;
+            --wrap-gap: 16px;
+            --card-gap: 20px;
+            --card-h: 420px;
+            --card-h-center: 460px;
+            /* Lo que queda para la foto una vez descontadas las dos flechas.
+               Calculado, no a ojo: así la tarjeta nunca se sale de su hueco. */
+            --scene-w: calc(100vw - 2 * var(--wrap-pad) - 2 * var(--arrow-size) - 2 * var(--wrap-gap));
+            --card-w: min(320px, calc(var(--scene-w) - 12px));
+            width: 100%;
             max-width: 1260px;
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 0 24px;
+            gap: var(--wrap-gap);
+            padding: 0 var(--wrap-pad);
             margin: 0 auto;
         }
 
         .carousel-scene {
             position: relative;
             flex: 1;
-            height: 540px;
+            min-width: 0;
+            height: calc(var(--card-h-center) + 40px);
             overflow: hidden;
         }
 
@@ -586,7 +734,7 @@
             position: absolute;
             top: 0;
             height: 100%;
-            width: 90px;
+            width: clamp(20px, 7vw, 90px);
             z-index: 10;
             pointer-events: none;
         }
@@ -604,8 +752,10 @@
         .carousel-track {
             display: flex;
             align-items: center;
-            gap: 20px;
-            padding: 20px calc(50% - 160px);
+            gap: var(--card-gap);
+            /* El relleno lateral es media tarjeta: es lo que deja la del medio
+               centrada en la escena, sea cual sea el ancho de tarjeta. */
+            padding: 20px calc(50% - var(--card-w) / 2);
             height: 100%;
             will-change: transform;
         }
@@ -613,8 +763,8 @@
         /* ── Arrows ───────────────────────────────────────────── */
         .arrow {
             flex-shrink: 0;
-            width: 50px;
-            height: 50px;
+            width: var(--arrow-size);
+            height: var(--arrow-size);
             border-radius: 50%;
             border: 1.5px solid rgba(0, 0, 0, 0.25);
             background: var(--bg-white);
@@ -656,9 +806,9 @@
 
         /* ── Cards ────────────────────────────────────────────── */
         .card {
-            flex: 0 0 320px;
-            width: 320px;
-            height: 420px;
+            flex: 0 0 var(--card-w);
+            width: var(--card-w);
+            height: var(--card-h);
             border-radius: 18px;
             overflow: hidden;
             position: relative;
@@ -671,7 +821,7 @@
         }
 
         .card.is-center {
-            height: 460px;
+            height: var(--card-h-center);
             opacity: 1;
             cursor: ns-resize;
             box-shadow: 0 14px 44px rgba(0, 0, 0, .17), 0 0 0 1.5px rgba(255, 255, 255, .11);
@@ -747,6 +897,32 @@
 
         .card.is-center .scroll-hint {
             opacity: 1;
+        }
+
+        /* En móvil la tarjeta se adapta al ancho de pantalla y las flechas
+           encogen: con 320px fijos la del medio se salía y quedaba descentrada. */
+        @media (max-width: 760px) {
+            .carousel-wrap {
+                --arrow-size: 40px;
+                --wrap-pad: 8px;
+                --wrap-gap: 6px;
+                --card-gap: 12px;
+                --card-h: 340px;
+                --card-h-center: 400px;
+            }
+
+            .arrow svg {
+                width: 17px;
+                height: 17px;
+            }
+
+            .card-label {
+                padding: 26px 16px 16px;
+            }
+
+            .card-label span {
+                font-size: 1.25rem;
+            }
         }
 
         /* ── Dots ─────────────────────────────────────────────── */
@@ -859,6 +1035,32 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
             width: 100%;
+        }
+
+        /* En móvil los cuatro vídeos apilados eran 3,4 pantallas de scroll para
+           un contenido que se consume deslizando. Pasan a una fila deslizable. */
+        @media (max-width: 900px) {
+            .reels-grid {
+                display: flex;
+                gap: var(--space-xs);
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                /* Sangra hasta el borde de la pantalla: se ve que hay más al lado. */
+                margin-inline: calc(var(--gutter) * -1);
+                padding-inline: var(--gutter);
+                padding-bottom: var(--space-2xs);
+            }
+
+            .reels-grid::-webkit-scrollbar {
+                display: none;
+            }
+
+            .reels-grid .reel-item {
+                flex: 0 0 min(72vw, 300px);
+                scroll-snap-align: center;
+            }
         }
 
         .reel-item {
@@ -1027,6 +1229,18 @@
             transition: all 0.4s ease;
         }
 
+        .instructor-role {
+            display: block;
+            font-family: var(--font-body);
+            font-size: var(--step-xs);
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.4rem;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+        }
+
         .instructor-card h3 {
             font-size: clamp(2rem, 4vw, 3rem);
             margin-bottom: 0.5rem;
@@ -1067,7 +1281,37 @@
         /* Schedule */
         .schedule-table-wrap {
             overflow-x: auto;
-            margin-top: 3rem;
+            margin-top: var(--space-md);
+        }
+
+        /* Las pestañas de día solo existen en móvil (ver media query de abajo). */
+        .day-tabs {
+            display: none;
+        }
+
+        .day-tab {
+            flex: 0 0 auto;
+            scroll-snap-align: center;
+            padding: 0.6rem 1.1rem;
+            min-height: 44px;
+            border: 1px solid var(--hairline);
+            border-radius: 999px;
+            background: transparent;
+            font-family: var(--font-body);
+            font-size: var(--step-xs);
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-gray);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .day-tab[aria-selected="true"] {
+            background: var(--text-dark);
+            border-color: var(--text-dark);
+            color: var(--bg-white);
         }
 
         .schedule-table {
@@ -1115,43 +1359,20 @@
 
         /* Leyenda del horario: sin esto, "Gi", "No Gi" u "Open Mat" no le dicen
            nada a quien no ha entrenado nunca, que es justo a quien queremos convencer. */
-        .legend {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 2rem;
-            margin-top: 3.5rem;
-            text-align: left;
-        }
-
-        .legend-block h4 {
-            font-family: var(--font-heading);
-            font-size: 1.3rem;
-            letter-spacing: 0.05em;
-            color: var(--text-dark);
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--accent);
-        }
-
-        .legend-block p {
-            font-size: 0.95rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .legend-block .legend-classes {
-            font-size: 0.85rem;
-            color: var(--accent-dark);
+        .legend-classes {
+            font-size: var(--step-xs);
+            color: var(--accent-ink);
             font-weight: 600;
             line-height: 1.7;
         }
 
         .legend-terms {
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            margin-top: var(--space-md);
+            padding-top: var(--space-sm);
+            border-top: 1px solid var(--hairline);
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem 2.5rem;
+            gap: var(--space-sm) var(--space-md);
             text-align: left;
         }
 
@@ -1169,40 +1390,88 @@
             display: block;
         }
 
-        /* Bloques informativos: "tu primer día" y la sección para padres */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3.5rem;
+        /* Acordeón (dudas del primer día y niveles del horario).
+           `<details>` nativo: sin JavaScript, accesible con teclado y buscable. */
+        .faq {
+            max-width: 760px;
+            margin: var(--space-md) auto 0;
             text-align: left;
+            border-top: 1px solid var(--hairline);
         }
 
-        .info-card {
-            background: var(--bg-white);
-            padding: 2rem;
-            border-radius: 12px;
-            border-top: 3px solid var(--accent);
-            box-shadow: 0 2px 14px rgba(0, 0, 0, 0.04);
+        .faq-intro {
+            font-size: var(--step-sm);
+            color: var(--text-gray);
+            margin: var(--space-sm) 0 var(--space-xs);
         }
 
-        .info-card h4 {
+        .faq-item {
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .faq-item summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-xs);
+            padding: var(--space-xs) 0;
+            cursor: pointer;
+            list-style: none;
             font-family: var(--font-heading);
-            font-size: 1.4rem;
+            font-size: var(--step-1);
             letter-spacing: 0.04em;
+            text-transform: uppercase;
             color: var(--text-dark);
-            margin-bottom: 0.75rem;
+            transition: color 0.2s ease;
+            /* Zona de toque cómoda en móvil sin engordar la fila. */
+            min-height: 48px;
         }
 
-        .info-card p {
-            font-size: 1rem;
-            margin: 0;
+        .faq-item summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .faq-item summary::after {
+            content: '';
+            flex: 0 0 auto;
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid var(--accent-ink);
+            border-bottom: 2px solid var(--accent-ink);
+            transform: rotate(45deg) translate(-2px, -2px);
+            transition: transform 0.3s var(--ease);
+        }
+
+        .faq-item[open] summary::after {
+            transform: rotate(-135deg) translate(-2px, -2px);
+        }
+
+        .faq-item summary:hover {
+            color: var(--accent-ink);
+        }
+
+        .faq-body {
+            padding: 0 0 var(--space-sm);
+            max-width: var(--measure);
+        }
+
+        .faq-body p {
+            font-size: var(--step-sm);
+            margin-bottom: var(--space-2xs);
+        }
+
+        .faq-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .legend-faq {
+            margin-top: var(--space-md);
         }
 
         .section-intro {
-            max-width: 760px;
+            max-width: var(--measure);
             margin: 0 auto;
-            font-size: 1.15rem;
+            font-size: var(--step-1);
         }
 
         .kids-layout {
@@ -1212,6 +1481,15 @@
             align-items: center;
             margin-top: 3rem;
             text-align: left;
+        }
+
+        /* Sin esto los tres párrafos van pegados y se leen como un bloque. */
+        .kids-layout p {
+            margin-bottom: var(--space-xs);
+        }
+
+        .kids-ages p {
+            margin-bottom: 0;
         }
 
         .kids-ages {
@@ -1332,10 +1610,13 @@
 
         .cta-final p {
             color: #b3b3b3;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-size: 1rem;
+            font-size: var(--step-1);
             line-height: 1.6;
+            max-width: 46ch;
+        }
+
+        .cta-final .eyebrow {
+            color: var(--accent);
         }
 
         .cta-final .hero-buttons {
@@ -1355,14 +1636,34 @@
         }
 
         @media (max-width: 900px) {
+            .cta-final {
+                padding: var(--space-xl) var(--gutter);
+            }
+
             .cta-final .container {
                 flex-direction: column;
                 text-align: center;
+                gap: var(--space-sm);
             }
 
             .cta-final h2,
             .cta-final .cta-content {
                 text-align: center;
+            }
+
+            .cta-final p {
+                margin-inline: auto;
+            }
+
+            /* Centrado: la rayita del "eyebrow" tiene que ir a los dos lados. */
+            .cta-final .eyebrow::after {
+                content: '';
+                display: inline-block;
+                width: 26px;
+                height: 1px;
+                background: currentColor;
+                vertical-align: middle;
+                margin-left: 0.6em;
             }
 
             .cta-final .hero-buttons {
@@ -1548,16 +1849,33 @@
                 margin: 2rem auto 0;
             }
 
+            /* Tres fichas apiladas eran 2,2 pantallas de scroll. Deslizables
+               ocupan una y se entiende igual de bien. */
             .instructors-grid {
-                grid-template-columns: 1fr;
-                gap: 4rem;
+                display: flex;
+                grid-template-columns: none;
+                gap: var(--space-xs);
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                margin-top: var(--space-md);
+                padding-inline: var(--gutter);
+                padding-bottom: var(--space-2xs);
             }
 
-            .reels-grid {
-                grid-template-columns: 1fr;
-                max-width: 400px;
-                margin: 0 auto;
+            .instructors-grid::-webkit-scrollbar {
+                display: none;
             }
+
+            .instructors-grid .instructor-card {
+                flex: 0 0 min(78vw, 320px);
+                scroll-snap-align: center;
+                border-radius: var(--radius);
+            }
+
+            /* La rejilla de reels ya es una fila deslizable por debajo de 900px;
+               aquí no se vuelve a apilar. */
 
             .footer-grid {
                 grid-template-columns: 1fr;
@@ -1570,8 +1888,136 @@
                 text-align: center;
             }
 
+        }
+
+        /* La tabla de 6 columnas no cabe en un móvil: se desliza en horizontal y
+           casi nadie descubre que hay más días a la derecha. Debajo de 760px se
+           muestra un día cada vez, elegido con las pestañas. */
+        @media (max-width: 760px) {
+            .day-tabs {
+                display: flex;
+                gap: 0.5rem;
+                margin-top: var(--space-sm);
+                overflow-x: auto;
+                scroll-snap-type: x proximity;
+                scrollbar-width: none;
+                margin-inline: calc(var(--gutter) * -1);
+                padding-inline: var(--gutter);
+            }
+
+            .day-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .schedule-table-wrap {
+                overflow-x: visible;
+                margin-top: var(--space-sm);
+            }
+
+            .schedule-table,
+            .schedule-table tbody,
+            .schedule-table tr {
+                display: block;
+                min-width: 0;
+                width: 100%;
+            }
+
+            .schedule-table thead {
+                display: none;
+            }
+
+            .schedule-table td {
+                display: none;
+                padding: 0;
+                border-bottom: 0;
+            }
+
+            .schedule-table td.is-active-day {
+                display: block;
+            }
+
+            /* Repite el día elegido dentro del panel: si se hace scroll, las
+               pestañas se quedan arriba y hay que saber qué se está mirando. */
+            .schedule-table td.is-active-day::before {
+                content: attr(data-day);
+                display: block;
+                font-family: var(--font-heading);
+                font-size: var(--step-2);
+                letter-spacing: 0.05em;
+                color: var(--text-dark);
+                margin-bottom: var(--space-2xs);
+            }
+
+            .class-block {
+                margin-bottom: 0.6rem;
+            }
+        }
+
+        /* Densidad real de móvil. Sin esto la página eran 18 pantallas de scroll:
+           los márgenes pensados para escritorio se arrastraban tal cual. */
+        @media (max-width: 560px) {
             .section {
-                padding: 4rem 5%;
+                padding: var(--space-lg) var(--gutter);
+            }
+
+            /* Un párrafo largo centrado obliga a buscar dónde empieza cada línea.
+               En pantalla estrecha va alineado a la izquierda; los titulares se
+               quedan centrados. */
+            .editorial,
+            .editorial-content {
+                text-align: left;
+                gap: var(--space-md);
+            }
+
+            .editorial-content h2,
+            .editorial-content .eyebrow {
+                text-align: center;
+                display: block;
+            }
+
+            .section-intro {
+                text-align: left;
+            }
+
+            .editorial-content p {
+                margin-bottom: var(--space-sm);
+            }
+
+            /* En escritorio reserva sitio para el poema mientras se escribe solo;
+               en móvil esa reserva era una pantalla en blanco. */
+            #itaca-poem {
+                min-height: 0;
+                padding: var(--space-sm) 0;
+            }
+
+            .location-details {
+                gap: var(--space-md);
+                margin-top: var(--space-sm);
+            }
+
+            .map-wrapper {
+                height: 320px !important;
+                min-height: 0;
+                margin-top: var(--space-sm) !important;
+            }
+
+            .legend-terms {
+                gap: var(--space-xs);
+            }
+
+            /* Con la pantalla estrecha los botones ocupan el ancho y bajan de
+               tamaño: es lo que evita que el texto parta en dos líneas. */
+            .btn {
+                padding: 0.95rem 1.5rem;
+                font-size: 1.25rem;
+                width: 100%;
+                max-width: 320px;
+            }
+
+            .hero-buttons,
+            .kids-layout .btn,
+            #firstday .btn {
+                margin-inline: auto;
             }
         }
 
@@ -1901,9 +2347,10 @@
         <div class="hero-overlay"></div>
 
         <div class="hero-content reveal active">
+            <span class="hero-kicker">Brazilian Jiu Jitsu · Logroño</span>
             <h1>Itaca Jiu Jitsu</h1>
-            <p>ELEVAMOS EL ESTÁNDAR DEL BRAZILIAN JIU JITSU. TÉCNICA PROFUNDA, DISCIPLINA FÉRREA Y UNA COMUNIDAD FORJADA
-                EN LA EXCELENCIA.</p>
+            <p>Elevamos el estándar del jiu jitsu. Técnica profunda, disciplina férrea y una comunidad forjada en la
+                excelencia.</p>
             <div class="hero-buttons">
                 <a href="#" class="btn btn-primary modal-trigger">Hazte Miembro</a>
                 <a href="#" class="btn btn-outline trial-trigger">Clase de Prueba</a>
@@ -1915,12 +2362,13 @@
     <section class="section bg-white" id="about">
         <div class="container editorial">
             <div class="editorial-content reveal">
+                <span class="eyebrow">Filosofía</span>
                 <h2>Camino a Itaca</h2>
-                <p>ITACA JIU JITSU NO ES SOLO UN TATAMI, ES UNA ESCUELA DE PERFECCIONAMIENTO. CREEMOS EN EL JIU JITSU
-                    COMO UNA HERRAMIENTA DE TRANSFORMACIÓN PERSONAL, DONDE CADA DETALLE CUENTA Y LA TÉCNICA PREVALECE
-                    SOBRE LA FUERZA.</p>
-                <p>NUESTRAS INSTALACIONES PREMIUM Y NUESTRO ENFOQUE METODOLÓGICO ESTÁN DISEÑADOS PARA ALUMNOS QUE BUSCAN
-                    EL MÁS ALTO NIVEL DE INSTRUCCIÓN EN UN ENTORNO LIMPIO, RESPETUOSO Y ALTAMENTE MOTIVADOR.</p>
+                <p>Itaca Jiu Jitsu no es solo un tatami, es una escuela de perfeccionamiento. Creemos en el jiu jitsu
+                    como una herramienta de transformación personal, donde cada detalle cuenta y la técnica prevalece
+                    sobre la fuerza.</p>
+                <p>Nuestras instalaciones y nuestro enfoque metodológico están diseñados para alumnos que buscan el más
+                    alto nivel de instrucción, en un entorno limpio, respetuoso y altamente motivador.</p>
             </div>
             <div class="reveal delay-1" id="itaca-poem">
                 <h2>Ítaca</h2>
@@ -1933,7 +2381,9 @@
     <!-- Photo Carousel -->
     <section class="section" id="academy" style="padding-left: 0; padding-right: 0;">
         <div class="container" style="padding: 0 5%; margin-bottom: 3rem;">
-            <h2 class="text-center reveal">SOMOS ITACA</h2>
+            <div class="text-center reveal"><span class="eyebrow">El gimnasio</span>
+                <h2>Somos Itaca</h2>
+            </div>
         </div>
         <div class="carousel-wrap reveal delay-1">
             <button class="arrow" id="btnLeft" aria-label="Anterior">
@@ -1970,15 +2420,16 @@
     <!-- Vertical Videos (Reels) -->
     <section class="section bg-white" id="reels">
         <div class="container">
-            <div class="text-center reveal" style="margin-bottom: 4rem;">
-                <h2>ITACA EN MOVIMIENTO</h2>
+            <div class="text-center reveal" style="margin-bottom: var(--space-md);">
+                <span class="eyebrow">En movimiento</span>
+                <h2>Itaca en movimiento</h2>
             </div>
 
             <div class="reels-grid reveal delay-1">
                 <!-- Reel 1 -->
                 <div class="reel-item" data-video="reel-1">
                     <div class="reel-icon"></div>
-                    <video muted loop playsinline preload="metadata">
+                    <video muted loop playsinline preload="none" poster="images/posters/Boris_instagram.webp">
                         <source src="videos/Boris_instagram.mp4#t=1" type="video/mp4">
                     </video>
                     <button class="reel-mute-btn" aria-label="Toggle Sound">
@@ -2000,7 +2451,7 @@
                 <!-- Reel 2 -->
                 <div class="reel-item" data-video="reel-2">
                     <div class="reel-icon"></div>
-                    <video muted loop playsinline preload="metadata">
+                    <video muted loop playsinline preload="none" poster="images/posters/Cipri_instagram.webp">
                         <source src="videos/Cipri_instagram.mp4#t=1" type="video/mp4">
                     </video>
                     <button class="reel-mute-btn" aria-label="Toggle Sound">
@@ -2022,7 +2473,7 @@
                 <!-- Reel 3 -->
                 <div class="reel-item" data-video="reel-3">
                     <div class="reel-icon"></div>
-                    <video muted loop playsinline preload="metadata">
+                    <video muted loop playsinline preload="none" poster="images/posters/Marta_instagram.webp">
                         <source src="videos/Marta_instagram.mp4#t=1" type="video/mp4">
                     </video>
                     <button class="reel-mute-btn" aria-label="Toggle Sound">
@@ -2044,7 +2495,7 @@
                 <!-- Reel 4 -->
                 <div class="reel-item" data-video="reel-4">
                     <div class="reel-icon"></div>
-                    <video muted loop playsinline preload="metadata">
+                    <video muted loop playsinline preload="none" poster="images/posters/Boris2_instagram.webp">
                         <source src="videos/Boris2_instagram.mp4#t=1" type="video/mp4">
                     </video>
                     <button class="reel-mute-btn" aria-label="Toggle Sound">
@@ -2068,34 +2519,37 @@
     </section>
 
     <!-- Instructors -->
-    <section class="section" id="instructors" style="padding-bottom: 0; padding-left: 0; padding-right: 0;">
+    <section class="section section-dark" id="instructors" style="padding-bottom: 0; padding-left: 0; padding-right: 0;">
         <div class="text-center reveal">
+            <span class="eyebrow">Quién enseña</span>
             <h2>Instructores</h2>
         </div>
         <div class="container">
             <div class="instructors-grid reveal delay-1">
                 <div class="instructor-card">
-                    <img src="images/Profesores/Cipri.png" alt="Cipri">
+                    <img src="images/Profesores/Cipri.png" alt="Cipri" loading="lazy" decoding="async">
                     <div class="instructor-content">
+                        <span class="instructor-role">Head coach · Cinturón negro</span>
                         <h3 class="bebas">CIPRI</h3>
-                        <p>HEAD COACH. CINTURÓN NEGRO. ESPECIALISTA EN GUARDIA MODERNA Y TRANSICIONES. MÚLTIPLE CAMPEÓN
-                            NACIONAL CON 10 AÑOS DE EXPERIENCIA.</p>
+                        <p>Especialista en guardia moderna y transiciones. Múltiple campeón nacional con 10 años de
+                            experiencia.</p>
                     </div>
                 </div>
                 <div class="instructor-card">
-                    <img src="images/Profesores/Boris.png" alt="Boris">
+                    <img src="images/Profesores/Boris.png" alt="Boris" loading="lazy" decoding="async">
                     <div class="instructor-content">
+                        <span class="instructor-role">Instructor · Cinturón marrón</span>
                         <h3 class="bebas">BORIS</h3>
-                        <p>INSTRUCTOR. CINTURÓN MARRÓN. EXPERTO EN TÁCTICAS NO-GI Y PREPARACIÓN FÍSICA. INSTRUCTOR
-                            PRINCIPAL DE LAS CLASES MATUTINAS.</p>
+                        <p>Experto en tácticas no gi y preparación física. Instructor principal de las clases
+                            matutinas.</p>
                     </div>
                 </div>
                 <div class="instructor-card">
-                    <img src="images/Profesores/Marta_Pozo.png" alt="Marta">
+                    <img src="images/Profesores/Marta_Pozo.png" alt="Marta" loading="lazy" decoding="async">
                     <div class="instructor-content">
+                        <span class="instructor-role">Instructora · Cinturón morado</span>
                         <h3 class="bebas">MARTA POZO</h3>
-                        <p>INSTRUCTORA. CINTURÓN MORADO. ENCARGADA DE LAS CLASES INTRODUCTORIAS Y DEL PROGRAMA DE
-                            BIENVENIDA A NUEVOS MIEMBROS.</p>
+                        <p>Encargada de las clases introductorias y del programa de bienvenida a nuevos miembros.</p>
                     </div>
                 </div>
             </div>
@@ -2105,7 +2559,14 @@
     <!-- Schedule -->
     <section class="section bg-white" id="schedule">
         <div class="container">
-            <h2 class="text-center reveal">Horarios de Clase</h2>
+            <div class="text-center reveal"><span class="eyebrow">Cuándo se entrena</span>
+                <h2>Horarios de clase</h2>
+            </div>
+
+            <!-- Selector de día: solo se ve en móvil. Lo rellena el JS leyendo las
+                 cabeceras de la tabla, así el horario sigue teniendo un único sitio
+                 donde se edita (la tabla de aquí abajo). -->
+            <div class="day-tabs reveal delay-1" id="dayTabs" role="tablist" aria-label="Día de la semana"></div>
 
             <div class="schedule-table-wrap reveal delay-1">
                 <table class="schedule-table">
@@ -2122,14 +2583,14 @@
                     <tbody>
                         <tr>
                             <!-- Lunes -->
-                            <td style="vertical-align: top;">
+                            <td style="vertical-align: top;" data-day="Lunes">
                                 <div class="class-block"><span class="class-time">07:00 - 08:00</span><span
                                         class="class-name">Fundamentos</span></div>
                                 <div class="class-block"><span class="class-time">17:00 - 18:00</span><span
                                         class="class-name">Fundamentos (Gi)</span></div>
                             </td>
                             <!-- Martes -->
-                            <td style="vertical-align: top;">
+                            <td style="vertical-align: top;" data-day="Martes">
                                 <div class="class-block"><span class="class-time">10:00 - 11:30</span><span
                                         class="class-name">Grappling No Gi</span></div>
                                 <div class="class-block"><span class="class-time">16:45 - 17:45</span><span
@@ -2140,14 +2601,14 @@
                                         class="class-name">Iniciación No Gi</span></div>
                             </td>
                             <!-- Miércoles -->
-                            <td style="vertical-align: top;">
+                            <td style="vertical-align: top;" data-day="Miércoles">
                                 <div class="class-block"><span class="class-time">07:00 - 08:00</span><span
                                         class="class-name">Fundamentos No Gi</span></div>
                                 <div class="class-block"><span class="class-time">17:00 - 18:00</span><span
                                         class="class-name">No Gi Grappling</span></div>
                             </td>
                             <!-- Jueves -->
-                            <td style="vertical-align: top;">
+                            <td style="vertical-align: top;" data-day="Jueves">
                                 <div class="class-block"><span class="class-time">10:00 - 11:30</span><span
                                         class="class-name">BJJ Gi</span></div>
                                 <div class="class-block"><span class="class-time">16:45 - 17:45</span><span
@@ -2158,7 +2619,7 @@
                                         class="class-name">Iniciación Gi</span></div>
                             </td>
                             <!-- Viernes -->
-                            <td style="vertical-align: top;">
+                            <td style="vertical-align: top;" data-day="Viernes">
                                 <div class="class-block"><span class="class-time">07:00 - 08:00</span><span
                                         class="class-name">Específico Sparring</span></div>
                                 <div class="class-block"><span class="class-time">16:45 - 17:45</span><span
@@ -2167,7 +2628,7 @@
                                         class="class-name">Avanzado Gi</span></div>
                             </td>
                             <!-- Sábado -->
-                            <td style="vertical-align: top;">
+                            <td style="vertical-align: top;" data-day="Sábado">
                                 <div class="class-block"><span class="class-time">10:00 - 11:00</span><span
                                         class="class-name">BJJ Gi Libre</span></div>
                                 <div class="class-block"><span class="class-time">11:00 - 12:30</span><span
@@ -2178,43 +2639,56 @@
                 </table>
             </div>
 
-            <div class="legend reveal delay-1">
-                <div class="legend-block">
-                    <h4>Para empezar de cero</h4>
-                    <p>No hace falta ninguna experiencia previa. Se trabaja técnica desde el principio y a tu
-                        ritmo. Si nunca has entrenado, tu sitio está aquí.</p>
-                    <p class="legend-classes">Iniciación Gi · Iniciación No Gi · Fundamentos · Fundamentos (Gi) ·
-                        Fundamentos No Gi</p>
-                </div>
-                <div class="legend-block">
-                    <h4>Con algo de rodaje</h4>
-                    <p>Clases abiertas a todos los niveles en las que ya se entrena a ritmo normal. Recomendadas
-                        cuando llevas unos meses y te manejas con lo básico.</p>
-                    <p class="legend-classes">BJJ Gi · Grappling No Gi · No Gi Grappling</p>
-                </div>
-                <div class="legend-block">
-                    <h4>Avanzados</h4>
-                    <p>Para alumnos con experiencia. Se entra por criterio del profesor: si tienes dudas,
-                        pregúntanos y te decimos por dónde empezar.</p>
-                    <p class="legend-classes">Avanzados Gi · Avanzados No Gi · Avanzado Gi · Específico Sparring</p>
-                </div>
-                <div class="legend-block">
-                    <h4>Niños</h4>
-                    <p>Grupos separados por edad, con su propio ritmo y su propia forma de enseñar.</p>
-                    <p class="legend-classes">Kids 4/6 Años · Kids 7/10 Años · BJJ Kids Gi 7/10 Años</p>
-                </div>
-                <div class="legend-block">
-                    <h4>Entrenamiento libre</h4>
-                    <p>Sin clase dirigida: se entrena lo que cada uno necesita. Mejor cuando ya llevas un tiempo y
-                        sabes en qué quieres trabajar.</p>
-                    <p class="legend-classes">BJJ Gi Libre · Open Mat</p>
-                </div>
-            </div>
-
             <div class="legend-terms reveal delay-1">
                 <p><strong>Gi</strong>Con kimono. Es el jiu jitsu clásico: se usa la tela para agarrar y controlar.</p>
                 <p><strong>No Gi</strong>Sin kimono, con camiseta ajustada y mallas. Más rápido y más resbaladizo.</p>
                 <p><strong>Open Mat</strong>Tatami abierto. Vienes y entrenas libremente con quien quieras.</p>
+            </div>
+
+            <!-- Los cinco niveles ocupaban dos pantallas abiertos a la vez. Plegados,
+                 quien no sabe por dónde empezar sigue encontrándolo igual. -->
+            <div class="faq legend-faq reveal delay-1">
+                <p class="faq-intro">¿No sabes qué clase te toca? Despliega tu caso:</p>
+                <details class="faq-item" open>
+                    <summary>Empiezo de cero</summary>
+                    <div class="faq-body">
+                        <p>No hace falta ninguna experiencia previa. Se trabaja técnica desde el principio y a tu
+                            ritmo. Si nunca has entrenado, tu sitio está aquí.</p>
+                        <p class="legend-classes">Iniciación Gi · Iniciación No Gi · Fundamentos · Fundamentos (Gi) ·
+                            Fundamentos No Gi</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Llevo unos meses</summary>
+                    <div class="faq-body">
+                        <p>Clases abiertas a todos los niveles en las que ya se entrena a ritmo normal. Recomendadas
+                            cuando te manejas con lo básico.</p>
+                        <p class="legend-classes">BJJ Gi · Grappling No Gi · No Gi Grappling</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Tengo experiencia</summary>
+                    <div class="faq-body">
+                        <p>Para alumnos con rodaje. Se entra por criterio del profesor: si tienes dudas, pregúntanos y
+                            te decimos por dónde empezar.</p>
+                        <p class="legend-classes">Avanzados Gi · Avanzados No Gi · Avanzado Gi · Específico Sparring</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Es para mi hijo o hija</summary>
+                    <div class="faq-body">
+                        <p>Grupos separados por edad, con su propio ritmo y su propia forma de enseñar.</p>
+                        <p class="legend-classes">Kids 4/6 Años · Kids 7/10 Años · BJJ Kids Gi 7/10 Años</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Quiero entrenar por libre</summary>
+                    <div class="faq-body">
+                        <p>Sin clase dirigida: se entrena lo que cada uno necesita. Mejor cuando ya llevas un tiempo y
+                            sabes en qué quieres trabajar.</p>
+                        <p class="legend-classes">BJJ Gi Libre · Open Mat</p>
+                    </div>
+                </details>
             </div>
         </div>
     </section>
@@ -2223,41 +2697,57 @@
          qué se van a encontrar. Esta sección existe para quitar ese miedo. -->
     <section class="section" id="firstday">
         <div class="container">
-            <h2 class="text-center reveal">Tu primer día</h2>
+            <div class="text-center reveal"><span class="eyebrow">Antes de venir</span>
+                <h2>Tu primer día</h2>
+            </div>
             <p class="section-intro text-center reveal">Todo el mundo ha tenido un primer día. Esto es lo que pasa
                 en el tuyo, para que vengas sabiendo a qué atenerte.</p>
 
-            <div class="info-grid reveal delay-1">
-                <div class="info-card">
-                    <h4>¿Necesito experiencia?</h4>
-                    <p>Ninguna. Las clases de iniciación y fundamentos están pensadas exactamente para quien nunca
-                        ha pisado un tatami. Nadie espera que sepas nada.</p>
-                </div>
-                <div class="info-card">
-                    <h4>¿Hay que estar en forma?</h4>
-                    <p>No. Se entrena a tu ritmo y paras cuando lo necesitas. La forma física llega entrenando,
-                        no al revés.</p>
-                </div>
-                <div class="info-card">
-                    <h4>¿Qué me pongo?</h4>
-                    <p>Ropa deportiva cómoda y ajustada, chanclas para andar fuera del tatami y una botella de
-                        agua. Para tu primera clase no necesitas kimono: ya te contaremos.</p>
-                </div>
-                <div class="info-card">
-                    <h4>¿Me van a hacer daño?</h4>
-                    <p>No. En las clases de iniciación se trabaja técnica y se va por pasos. Aquí nadie tiene que
-                        demostrar nada a costa del que acaba de llegar.</p>
-                </div>
-                <div class="info-card">
-                    <h4>¿Cuánto dura?</h4>
-                    <p>Alrededor de una hora. Ven diez minutos antes para cambiarte con calma y para que te
-                        expliquemos cuatro cosas antes de empezar.</p>
-                </div>
-                <div class="info-card">
-                    <h4>Dos normas del tatami</h4>
-                    <p>Uñas de manos y pies cortas, y pies limpios: se entrena descalzo y muy cerca de los demás.
-                        Con eso vas sobrado.</p>
-                </div>
+            <!-- Acordeón en vez de seis tarjetas abiertas: el visitante busca UNA
+                 duda concreta, no leerse las seis. -->
+            <div class="faq reveal delay-1">
+                <details class="faq-item" open>
+                    <summary>¿Necesito experiencia?</summary>
+                    <div class="faq-body">
+                        <p>Ninguna. Las clases de iniciación y fundamentos están pensadas exactamente para quien nunca
+                            ha pisado un tatami. Nadie espera que sepas nada.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>¿Hay que estar en forma?</summary>
+                    <div class="faq-body">
+                        <p>No. Se entrena a tu ritmo y paras cuando lo necesitas. La forma física llega entrenando,
+                            no al revés.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>¿Qué me pongo?</summary>
+                    <div class="faq-body">
+                        <p>Ropa deportiva cómoda y ajustada, chanclas para andar fuera del tatami y una botella de
+                            agua. Para tu primera clase no necesitas kimono: ya te contaremos.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>¿Me van a hacer daño?</summary>
+                    <div class="faq-body">
+                        <p>No. En las clases de iniciación se trabaja técnica y se va por pasos. Aquí nadie tiene que
+                            demostrar nada a costa del que acaba de llegar.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>¿Cuánto dura?</summary>
+                    <div class="faq-body">
+                        <p>Alrededor de una hora. Ven diez minutos antes para cambiarte con calma y para que te
+                            expliquemos cuatro cosas antes de empezar.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Dos normas del tatami</summary>
+                    <div class="faq-body">
+                        <p>Uñas de manos y pies cortas, y pies limpios: se entrena descalzo y muy cerca de los demás.
+                            Con eso vas sobrado.</p>
+                    </div>
+                </details>
             </div>
 
             <div class="text-center reveal delay-2" style="margin-top: 3.5rem;">
@@ -2269,7 +2759,9 @@
     <!-- Niños: un padre decide con otros criterios que un adulto que se apunta él. -->
     <section class="section bg-white" id="kids">
         <div class="container">
-            <h2 class="text-center reveal">Jiu Jitsu para niños</h2>
+            <div class="text-center reveal"><span class="eyebrow">De 4 a 10 años</span>
+                <h2>Jiu jitsu para niños</h2>
+            </div>
             <p class="section-intro text-center reveal">Empezamos por lo que preocupa a un padre o una madre, no por
                 la técnica.</p>
 
@@ -2308,7 +2800,8 @@
     <!-- Location -->
     <section class="section" id="location" style="padding-left: 0; padding-right: 0;">
         <div class="text-center reveal">
-            <h2>UBICACIÓN</h2>
+            <span class="eyebrow">Dónde estamos</span>
+            <h2>Ubicación</h2>
         </div>
 
         <div class="map-wrapper reveal delay-1"
@@ -2335,12 +2828,15 @@
     <!-- Final CTA -->
     <section class="cta-final" id="join">
         <div class="container reveal">
-            <h2>COMIENZA TU VIAJE</h2>
+            <div>
+                <span class="eyebrow">Empieza hoy</span>
+                <h2>Comienza tu viaje</h2>
+            </div>
             <div class="cta-content">
-                <p>ÚNETE A ITACA JIU JITSU Y TRANSFORMA TU VIDA A TRAVÉS DEL DEPORTE.</p>
+                <p>La primera clase es de prueba y no cuesta nada. Ven, mira cómo se entrena y decide después.</p>
                 <div class="hero-buttons">
-                    <button class="btn btn-outline modal-trigger">HAZTE MIEMBRO</button>
-                    <button class="btn btn-outline trial-trigger">CLASE DE PRUEBA</button>
+                    <button class="btn btn-outline modal-trigger">Hazte miembro</button>
+                    <button class="btn btn-outline trial-trigger">Clase de prueba</button>
                 </div>
             </div>
         </div>
@@ -3066,6 +3562,36 @@ entenderás ya qué significan las Ítacas.`;
 
             revealElements.forEach(el => revealObserver.observe(el));
 
+            // Horario en móvil: un día cada vez.
+            // Las pestañas se construyen leyendo la propia tabla, así el horario
+            // se sigue editando en un único sitio.
+            const dayTabs = document.getElementById('dayTabs');
+            const dayCells = document.querySelectorAll('.schedule-table td[data-day]');
+
+            if (dayTabs && dayCells.length) {
+                const showDay = (index) => {
+                    dayCells.forEach((cell, i) => cell.classList.toggle('is-active-day', i === index));
+                    dayTabs.querySelectorAll('.day-tab').forEach((tab, i) => {
+                        tab.setAttribute('aria-selected', String(i === index));
+                        tab.tabIndex = i === index ? 0 : -1;
+                    });
+                };
+
+                dayCells.forEach((cell, i) => {
+                    const tab = document.createElement('button');
+                    tab.type = 'button';
+                    tab.className = 'day-tab';
+                    tab.role = 'tab';
+                    tab.textContent = cell.dataset.day;
+                    tab.addEventListener('click', () => showDay(i));
+                    dayTabs.appendChild(tab);
+                });
+
+                // Arranca en el día de hoy si hay clase; el domingo, en lunes.
+                const todayIndex = (new Date().getDay() + 6) % 7; // 0 = lunes
+                showDay(todayIndex < dayCells.length ? todayIndex : 0);
+            }
+
             // Reels Hover Logic
             const reels = document.querySelectorAll('.reel-item');
 
@@ -3185,11 +3711,20 @@ entenderás ya qué significan las Ítacas.`;
                 const cards = Array.from(newTrack.querySelectorAll('.card'));
                 const dots = Array.from(hintEl.querySelectorAll('.hint-dot'));
 
-                const STEP = 340;
-                const CARD_W = 320;
-                const CARD_H_C = 460;
+                // El paso se mide del DOM, no de la variable CSS: `--card-w` vale
+                // `min(74vw, 320px)` en móvil y getComputedStyle devuelve ese texto
+                // sin resolver, que no es un número. Midiendo la tarjeta real el
+                // carrusel queda centrado en cualquier ancho de pantalla.
+                const measureStep = () => {
+                    const first = newTrack.querySelector('.card');
+                    if (!first) return 340;
+                    const gap = parseFloat(getComputedStyle(newTrack).columnGap) || 0;
+                    return first.getBoundingClientRect().width + gap;
+                };
+
+                let STEP = measureStep();
                 const INIT = Math.floor((photos.length - 1) / 2);
-                const minOff = -(photos.length - 1) * STEP;
+                let minOff = -(photos.length - 1) * STEP;
                 const maxOff = 0;
 
                 let carX = -INIT * STEP;
@@ -3226,6 +3761,19 @@ entenderás ya qué significan las Ítacas.`;
                 btnLeft.addEventListener('click', () => goTo(centerIdx - 1));
                 btnRight.addEventListener('click', () => goTo(centerIdx + 1));
 
+                // Al girar el móvil o cambiar de ventana el ancho de tarjeta cambia:
+                // sin esto el carrusel se quedaría desplazado a media tarjeta.
+                let resizeTimer;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        STEP = measureStep();
+                        minOff = -(photos.length - 1) * STEP;
+                        carTgt = clamp(-centerIdx * STEP, minOff, maxOff);
+                        carX = carTgt;
+                    }, 150);
+                });
+
                 function renderZoom() {
                     if (zoomLevel < 0.003) {
                         zoomOverlay.classList.remove('on');
@@ -3240,9 +3788,13 @@ entenderás ya qué significan las Ítacas.`;
                     }
 
                     const { w: eW, h: eH } = expandedSize(centerIdx);
+                    // Punto de partida del zoom: el tamaño real que tiene ahora
+                    // la tarjeta central, no el de escritorio.
+                    const centerCard = newTrack.querySelector('.card.is-center') || newTrack.querySelector('.card');
+                    const cr = centerCard.getBoundingClientRect();
                     // Prevent crash if calculation fails
-                    const curW = Math.round(lerp(CARD_W, eW || CARD_W, zoomLevel));
-                    const curH = Math.round(lerp(CARD_H_C, eH || CARD_H_C, zoomLevel));
+                    const curW = Math.round(lerp(cr.width, eW || cr.width, zoomLevel));
+                    const curH = Math.round(lerp(cr.height, eH || cr.height, zoomLevel));
 
                     zoomBox.style.width = curW + 'px';
                     zoomBox.style.height = curH + 'px';
