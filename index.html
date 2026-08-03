@@ -1761,6 +1761,184 @@
             background-color: var(--accent);
         }
 
+        /* Galería completa de fotos.
+           El carrusel enseña una selección; aquí se ven todas de golpe. Pensado
+           para ir subiendo material y rotar las mejores sin tocar el diseño. */
+        .gallery {
+            position: fixed;
+            inset: 0;
+            z-index: 1700;
+            background: var(--bg-light);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            display: none;
+        }
+
+        .gallery.open {
+            display: block;
+        }
+
+        .gallery__bar {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--gutter);
+            padding-top: calc(var(--space-sm) + env(safe-area-inset-top));
+            background: rgba(246, 245, 242, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .gallery__title {
+            font-family: var(--font-heading);
+            font-size: var(--step-2);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .gallery__close {
+            flex: 0 0 auto;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--hairline);
+            background: var(--bg-white);
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .gallery__close svg,
+        .gallery__nav svg {
+            width: 19px;
+            height: 19px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.1;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Rejilla que se adapta sola: da igual que haya 7 fotos que 60. */
+        .gallery__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.5rem;
+            padding: var(--space-sm) var(--gutter) var(--space-lg);
+        }
+
+        @media (min-width: 700px) {
+            .gallery__grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 0.75rem;
+            }
+        }
+
+        .gallery__item {
+            position: relative;
+            aspect-ratio: 3 / 4;
+            border: 0;
+            padding: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #e6e4e0;
+            cursor: pointer;
+        }
+
+        .gallery__item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s var(--ease);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .gallery__item:hover img {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Foto a tamaño grande dentro de la galería. */
+        .gallery__lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            background: rgba(10, 10, 10, 0.94);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+        }
+
+        .gallery__lightbox.open {
+            display: flex;
+        }
+
+        .gallery__lightbox img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .gallery__nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .gallery__nav--prev {
+            left: 0.75rem;
+        }
+
+        .gallery__nav--next {
+            right: 0.75rem;
+        }
+
+        .gallery__close--light {
+            position: absolute;
+            top: calc(0.9rem + env(safe-area-inset-top));
+            right: 0.9rem;
+            background: rgba(255, 255, 255, 0.14);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .gallery__counter {
+            position: absolute;
+            left: 50%;
+            bottom: calc(1.1rem + env(safe-area-inset-bottom));
+            transform: translateX(-50%);
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+        }
+
         /* Visor de reels a pantalla completa (solo móvil).
            El público llega de Instagram: ahí los vídeos se ven a pantalla completa
            y se pasa deslizando. Un recuadro pequeño con el dedo encima no compite. */
@@ -2609,8 +2787,8 @@
         <div class="hero-content reveal active">
             <span class="hero-kicker">Brazilian Jiu Jitsu · Logroño</span>
             <h1>Itaca Jiu Jitsu</h1>
-            <p>Elevamos el estándar del jiu jitsu. Técnica profunda, disciplina férrea y una comunidad forjada en la
-                excelencia.</p>
+            <p>Técnica bien explicada, entrenamiento exigente y gente que te ayuda a mejorar. Aquí se empieza de cero.
+            </p>
             <div class="hero-buttons">
                 <a href="#" class="btn btn-primary modal-trigger">Hazte Miembro</a>
                 <a href="#" class="btn btn-outline trial-trigger">Clase de Prueba</a>
@@ -2662,6 +2840,11 @@
         </div>
 
         <div class="hint reveal delay-1" id="hint"></div>
+
+        <div class="text-center reveal delay-1" style="margin-top: var(--space-sm);">
+            <!-- El texto lo pone el JS con el número real de fotos de la lista. -->
+            <button class="btn btn-dark-outline" id="galleryOpen" type="button">Ver la galería</button>
+        </div>
 
         <div id="zoomOverlay">
             <div id="zoomBackdrop"></div>
@@ -2798,20 +2981,39 @@
                 <div class="instructor-card">
                     <img src="images/Profesores/Boris.png" alt="Boris" loading="lazy" decoding="async">
                     <div class="instructor-content">
-                        <span class="instructor-role">Instructor · Cinturón marrón</span>
+                        <span class="instructor-role">Instructor · Cinturón morado</span>
                         <h3 class="bebas">BORIS</h3>
-                        <p>Experto en tácticas no gi y preparación física. Instructor principal de las clases
-                            matutinas.</p>
+                        <p>Muy técnico y muy estructurado: explica el porqué de cada movimiento. Formado en Itaca desde
+                            cero, es la prueba de hasta dónde se puede llegar aquí.</p>
                     </div>
                 </div>
                 <div class="instructor-card">
-                    <img src="images/Profesores/Marta_Pozo.png" alt="Marta" loading="lazy" decoding="async">
+                    <img src="images/Profesores/Marta_Pozo.png" alt="Marta Pozo" loading="lazy" decoding="async">
                     <div class="instructor-content">
-                        <span class="instructor-role">Instructora · Cinturón morado</span>
+                        <!-- Pendiente: confirmar el cinturón de Marta antes de ponerlo. -->
+                        <span class="instructor-role">Instructora · Competidora</span>
                         <h3 class="bebas">MARTA POZO</h3>
-                        <p>Encargada de las clases introductorias y del programa de bienvenida a nuevos miembros.</p>
+                        <p>Competidora destacada de la escuela y profesora de profesión: da clase en un instituto y en
+                            el tatami. Se le nota en cómo enseña.</p>
                     </div>
                 </div>
+
+                <!-- HUECO PARA LOS TRES QUE FALTAN (infantiles y mañanas).
+                     Para añadir uno: copia el bloque de aquí abajo, quítale los
+                     marcadores de comentario, y cambia foto, nombre y texto.
+                     La foto va en images/Profesores/ y conviene que sea vertical
+                     (más alta que ancha), como las tres que ya hay.
+
+                <div class="instructor-card">
+                    <img src="images/Profesores/NOMBRE.png" alt="Nombre" loading="lazy" decoding="async">
+                    <div class="instructor-content">
+                        <span class="instructor-role">Instructor · Programa infantil</span>
+                        <h3 class="bebas">NOMBRE</h3>
+                        <p>Dos frases: qué hace en la escuela y por qué merece la pena entrenar con esta persona.</p>
+                    </div>
+                </div>
+                -->
+
             </div>
         </div>
     </section>
@@ -3344,6 +3546,47 @@
     </div>
 
     <!-- Back to top -->
+    <!-- Galería completa. La rejilla y el visor grande los rellena el JS con la
+         MISMA lista `photos` que usa el carrusel: para añadir fotos solo se toca
+         esa lista (ver el comentario que hay encima de ella). -->
+    <div class="gallery" id="gallery" role="dialog" aria-modal="true" aria-label="Fotos de Itaca Jiu Jitsu">
+        <div class="gallery__bar">
+            <div>
+                <span class="eyebrow">El gimnasio</span>
+                <h3 class="gallery__title">Somos Itaca</h3>
+            </div>
+            <button class="gallery__close" id="galleryClose" type="button" aria-label="Cerrar galería">
+                <svg viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <div class="gallery__grid" id="galleryGrid"></div>
+
+        <div class="gallery__lightbox" id="galleryLightbox">
+            <img id="galleryLightboxImg" src="" alt="">
+            <button class="gallery__nav gallery__nav--prev" id="galleryPrev" type="button" aria-label="Foto anterior">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+            </button>
+            <button class="gallery__nav gallery__nav--next" id="galleryNext" type="button" aria-label="Foto siguiente">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="9 6 15 12 9 18" />
+                </svg>
+            </button>
+            <button class="gallery__close gallery__close--light" id="galleryLightboxClose" type="button"
+                aria-label="Cerrar foto">
+                <svg viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="gallery__counter" id="galleryLightboxCounter"></div>
+        </div>
+    </div>
+
     <!-- Visor de reels a pantalla completa. Las diapositivas las crea el JS a
          partir de los vídeos de la sección MOVIMIENTO: no hay que mantener la
          lista de vídeos en dos sitios. -->
@@ -4072,15 +4315,40 @@ entenderás ya qué significan las Ítacas.`;
             });
 
             // ── Carousel Zoom ─────────────────────────────────────────────────────────────
+            /* ══════════════════════════════════════════════════════════════════
+               LISTA DE FOTOS DEL GIMNASIO — el único sitio que hay que tocar.
+
+               Para añadir una foto:
+                 1. Sube el archivo a la carpeta images/Itaca/
+                 2. Añade una línea aquí, copiando una de las de abajo y
+                    cambiando el nombre del archivo y la etiqueta.
+
+               Las PRIMERAS 8 son las que salen en el carrusel de la portada.
+               Todas, sin límite, salen en "Ver todas las fotos".
+               Para ascender una foto al carrusel, sube su línea en la lista.
+               ══════════════════════════════════════════════════════════════════ */
             const photos = [
-                { src: 'images/Itaca/Gym1.webp', label: 'Instalaciones', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym2.webp', label: 'Entrenamiento', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym3.webp', label: 'Tatami', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym4.webp', label: 'Equipamiento', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym5.webp', label: 'Jiu Jitsu', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym6.webp', label: 'Recepción', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym7.webp', label: 'Detalles', sub: 'ITACA', w: 1200, h: 800 }
+                { src: 'images/Itaca/Gym1.webp', label: 'Instalaciones' },
+                { src: 'images/Itaca/Gym2.webp', label: 'Entrenamiento' },
+                { src: 'images/Itaca/Gym3.webp', label: 'Tatami' },
+                { src: 'images/Itaca/Gym4.webp', label: 'Equipamiento' },
+                { src: 'images/Itaca/Gym5.webp', label: 'Jiu Jitsu' },
+                { src: 'images/Itaca/Gym6.webp', label: 'Recepción' },
+                { src: 'images/Itaca/Gym7.webp', label: 'Detalles' }
             ];
+
+            // Valores por defecto: así una línea nueva puede ser solo `{ src: '...' }`
+            // y no hay que acordarse de rellenar nada más.
+            photos.forEach(p => {
+                p.label = p.label || 'Itaca';
+                p.sub = p.sub || 'ITACA';
+                p.w = p.w || 1200;
+                p.h = p.h || 800;
+            });
+
+            // Cuántas van al carrusel. El resto solo se ven en la galería.
+            const CAROUSEL_MAX = 8;
+            const carouselPhotos = photos.slice(0, CAROUSEL_MAX);
 
             const zoomClose = document.getElementById('zoomClose');
             const newTrack = document.getElementById('track');
@@ -4092,7 +4360,7 @@ entenderás ya qué significan las Ítacas.`;
             const zoomImg = document.getElementById('zoomImg');
 
             if (newTrack && btnLeft && btnRight) {
-                photos.forEach((p, i) => {
+                carouselPhotos.forEach((p, i) => {
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.dataset.idx = i;
@@ -4103,7 +4371,7 @@ entenderás ya qué significan las Ítacas.`;
                     newTrack.appendChild(card);
                 });
 
-                photos.forEach(() => {
+                carouselPhotos.forEach(() => {
                     const d = document.createElement('div');
                     d.className = 'hint-dot';
                     hintEl.appendChild(d);
@@ -4124,8 +4392,8 @@ entenderás ya qué significan las Ítacas.`;
                 };
 
                 let STEP = measureStep();
-                const INIT = Math.floor((photos.length - 1) / 2);
-                let minOff = -(photos.length - 1) * STEP;
+                const INIT = Math.floor((carouselPhotos.length - 1) / 2);
+                let minOff = -(carouselPhotos.length - 1) * STEP;
                 const maxOff = 0;
 
                 let carX = -INIT * STEP;
@@ -4141,14 +4409,14 @@ entenderás ya qué significan las Ítacas.`;
                 const lerp = (a, b, t) => a + (b - a) * t;
 
                 function expandedSize(i) {
-                    const p = photos[i];
+                    const p = carouselPhotos[i];
                     const s = Math.min(1, window.innerWidth * 0.82 / p.w, window.innerHeight * 0.80 / p.h);
                     return { w: Math.round(p.w * s), h: Math.round(p.h * s) };
                 }
 
                 function syncUI() {
                     btnLeft.disabled = centerIdx <= 0;
-                    btnRight.disabled = centerIdx >= photos.length - 1;
+                    btnRight.disabled = centerIdx >= carouselPhotos.length - 1;
                     cards.forEach((c, i) => c.classList.toggle('is-center', i === centerIdx));
                     dots.forEach((d, i) => d.classList.toggle('active', i === centerIdx));
                 }
@@ -4169,7 +4437,7 @@ entenderás ya qué significan las Ítacas.`;
                     clearTimeout(resizeTimer);
                     resizeTimer = setTimeout(() => {
                         STEP = measureStep();
-                        minOff = -(photos.length - 1) * STEP;
+                        minOff = -(carouselPhotos.length - 1) * STEP;
                         carTgt = clamp(-centerIdx * STEP, minOff, maxOff);
                         carX = carTgt;
                     }, 150);
@@ -4184,7 +4452,7 @@ entenderás ya qué significan las Ítacas.`;
                     }
 
                     if (zoomFor !== centerIdx) {
-                        zoomImg.src = photos[centerIdx].src;
+                        zoomImg.src = carouselPhotos[centerIdx].src;
                         zoomFor = centerIdx;
                     }
 
@@ -4214,7 +4482,7 @@ entenderás ya qué significan las Ítacas.`;
                     if (Math.abs(carX - carTgt) < 0.1) carX = carTgt;
                     newTrack.style.transform = `translateX(${carX}px)`;
 
-                    const ci = clamp(Math.round(-carX / STEP), 0, photos.length - 1);
+                    const ci = clamp(Math.round(-carX / STEP), 0, carouselPhotos.length - 1);
                     if (ci !== centerIdx) {
                         centerIdx = ci;
                         syncUI();
@@ -4271,6 +4539,91 @@ entenderás ya qué significan las Ítacas.`;
 
                 syncUI();
                 requestAnimationFrame(tick);
+            }
+
+            // Galería completa: rejilla con TODAS las fotos de la lista `photos`,
+            // más un visor grande para verlas de una en una.
+            const galleryEl = document.getElementById('gallery');
+            const galleryGrid = document.getElementById('galleryGrid');
+            const galleryOpenBtn = document.getElementById('galleryOpen');
+            const lightbox = document.getElementById('galleryLightbox');
+            const lightboxImg = document.getElementById('galleryLightboxImg');
+            const lightboxCounter = document.getElementById('galleryLightboxCounter');
+
+            if (galleryEl && galleryGrid && galleryOpenBtn) {
+                // Decir cuántas hay invita a entrar más que un "ver galería" a secas.
+                galleryOpenBtn.textContent = photos.length === 1
+                    ? 'Ver la foto'
+                    : 'Ver las ' + photos.length + ' fotos';
+
+                photos.forEach((p, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'gallery__item';
+                    btn.type = 'button';
+                    btn.setAttribute('aria-label', 'Ampliar: ' + p.label);
+                    // loading="lazy": con 60 fotos, abrir la galería no puede
+                    // significar descargarlas las 60 de golpe.
+                    btn.innerHTML = '<img src="' + p.src + '" alt="' + p.label +
+                        '" loading="lazy" decoding="async">';
+                    btn.addEventListener('click', () => openLightbox(i));
+                    galleryGrid.appendChild(btn);
+                });
+
+                let lightboxIdx = 0;
+
+                const showPhoto = (i) => {
+                    lightboxIdx = (i + photos.length) % photos.length;
+                    lightboxImg.src = photos[lightboxIdx].src;
+                    lightboxImg.alt = photos[lightboxIdx].label;
+                    lightboxCounter.textContent = (lightboxIdx + 1) + ' / ' + photos.length;
+                };
+
+                function openLightbox(i) {
+                    showPhoto(i);
+                    lightbox.classList.add('open');
+                }
+
+                const closeLightbox = () => lightbox.classList.remove('open');
+
+                const openGallery = () => {
+                    galleryEl.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                };
+
+                const closeGallery = () => {
+                    closeLightbox();
+                    galleryEl.classList.remove('open');
+                    document.body.style.overflow = '';
+                };
+
+                galleryOpenBtn.addEventListener('click', openGallery);
+                document.getElementById('galleryClose').addEventListener('click', closeGallery);
+                document.getElementById('galleryLightboxClose').addEventListener('click', closeLightbox);
+                document.getElementById('galleryPrev').addEventListener('click', () => showPhoto(lightboxIdx - 1));
+                document.getElementById('galleryNext').addEventListener('click', () => showPhoto(lightboxIdx + 1));
+
+                document.addEventListener('keydown', (e) => {
+                    if (!galleryEl.classList.contains('open')) return;
+                    if (e.key === 'Escape') {
+                        lightbox.classList.contains('open') ? closeLightbox() : closeGallery();
+                    }
+                    if (!lightbox.classList.contains('open')) return;
+                    if (e.key === 'ArrowLeft') showPhoto(lightboxIdx - 1);
+                    if (e.key === 'ArrowRight') showPhoto(lightboxIdx + 1);
+                });
+
+                // Pasar foto deslizando: en un móvil es lo que se hace por instinto.
+                let swipeX = null;
+                lightbox.addEventListener('touchstart', (e) => {
+                    swipeX = e.touches[0].clientX;
+                }, { passive: true });
+
+                lightbox.addEventListener('touchend', (e) => {
+                    if (swipeX === null) return;
+                    const dx = e.changedTouches[0].clientX - swipeX;
+                    if (Math.abs(dx) > 45) showPhoto(lightboxIdx + (dx < 0 ? 1 : -1));
+                    swipeX = null;
+                }, { passive: true });
             }
 
             // ScrollSpy Navigation Links 
