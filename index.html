@@ -48,6 +48,7 @@
             --space-lg: clamp(3rem, 2rem + 4vw, 6rem);
             --space-xl: clamp(4rem, 2.5rem + 6vw, 8rem);
 
+            --wa-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.34 4.95L2 22l5.23-1.37a9.9 9.9 0 0 0 4.8 1.23c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2zm-2.4 6.08c.15 0 .3-.07.46-.06.15.01.35-.06.54.41.2.48.68 1.66.74 1.78.06.12.1.26.02.42-.08.16-.12.26-.24.4-.12.14-.25.31-.36.42-.12.12-.24.25-.1.49.14.24.63 1.04 1.35 1.69.93.83 1.72 1.09 1.96 1.21.24.12.38.1.52-.06.14-.16.6-.71.76-.95.16-.24.32-.2.54-.12.22.08 1.42.67 1.66.79.24.12.4.18.46.28.06.1.06.59-.14 1.16-.2.57-1.17 1.09-1.64 1.16-.42.06-.95.09-1.53-.1-.35-.11-.8-.26-1.38-.51-2.43-1.04-4.01-3.48-4.13-3.64-.12-.16-.98-1.3-.98-2.48s.62-1.76.84-2c.22-.24.48-.3.64-.3z'/%3E%3C/svg%3E");
             --gutter: clamp(1.15rem, 5vw, 4rem);
             --measure: 62ch;
             --radius: 14px;
@@ -2680,6 +2681,41 @@
             color: #23512f;
         }
 
+        /* Atajo a WhatsApp tras enviar: el correo puede tardar, esto no. */
+        .form-status__wa {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 46px;
+            margin-top: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background-color: #1f7a4d;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .form-status__wa::before {
+            content: '';
+            flex: 0 0 18px;
+            height: 18px;
+            background-color: currentColor;
+            /* Icono de WhatsApp como máscara: así hereda el color y no hace falta
+               cargar ninguna imagen. */
+            -webkit-mask: var(--wa-icon) center / contain no-repeat;
+            mask: var(--wa-icon) center / contain no-repeat;
+        }
+
+        .form-status__wa:hover,
+        .form-status__wa:focus {
+            background-color: #18603c;
+            color: #ffffff;
+        }
+
         .form-status.error {
             background-color: #fbeeed;
             border-left: 3px solid #b3261e;
@@ -3529,10 +3565,17 @@
                     style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
                     Destinatarios y servicios de terceros</h3>
                 <p style="margin-bottom: 1rem;">Para el envío de los formularios utilizamos el servicio Web3Forms, que
-                    hace de intermediario para entregarnos el mensaje por correo electrónico. Esta web también carga
-                    tipografías de Google Fonts y muestra un mapa de Google Maps; al hacerlo, su navegador se conecta a
-                    servidores de Google, que puede registrar su dirección IP. No utilizamos cookies, analítica ni
-                    ningún sistema de seguimiento publicitario.</p>
+                    hace de intermediario para entregarnos el mensaje por correo electrónico. Los datos de la solicitud
+                    (nombre, correo, teléfono y, en el caso de la clase de prueba, la categoría de edad, la fecha y la
+                    clase elegidas) se guardan además en una hoja de cálculo alojada en Google Drive, de acceso
+                    restringido a la dirección de la escuela, con el único fin de gestionar y hacer seguimiento de su
+                    solicitud. Esta web también carga tipografías de Google Fonts y muestra un mapa de Google Maps; al
+                    hacerlo, su navegador se conecta a servidores de Google, que puede registrar su dirección IP. No
+                    utilizamos cookies, analítica ni ningún sistema de seguimiento publicitario.</p>
+                <p style="margin-bottom: 1rem;">Si lo prefiere, puede continuar la conversación por WhatsApp desde el
+                    enlace que aparece tras enviar el formulario. En ese caso el tratamiento de los mensajes se rige
+                    además por las condiciones de WhatsApp; usarlo es voluntario y no es necesario para que atendamos
+                    su solicitud.</p>
                 <h3
                     style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
                     Sus derechos</h3>
@@ -3642,8 +3685,24 @@
         // ─────────────────────────────────────────────────────────────────────────────
         const WEB3FORMS_ACCESS_KEY = '';
 
+        // ─────────────────────────────────────────────────────────────────────────────
+        //  COPIA EN HOJA DE CÁLCULO (opcional)
+        //
+        //  Pega aquí la dirección que te da Google al publicar el script de
+        //  docs/hoja-de-calculo.md y cada solicitud se apuntará sola en una fila,
+        //  además de llegarte por correo.
+        //
+        //  Mientras esté vacío no se envía nada a ningún sitio: el correo funciona igual.
+        //  Ojo: es una dirección pública. Cualquiera que mire el código puede verla y,
+        //  como mucho, colar filas de broma en la hoja. El correo sigue siendo la fuente
+        //  fiable; la hoja es para llevar el seguimiento.
+        // ─────────────────────────────────────────────────────────────────────────────
+        const HOJA_CALCULO_URL = '';
+
         const EMAIL_ITACA = 'itacajiujitsu@gmail.com';
         const TELEFONO_ITACA = '664 78 41 21';
+        // Sin espacios ni signos: es el formato que necesita el enlace de WhatsApp.
+        const WHATSAPP_ITACA = '34664784121';
 
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -3926,15 +3985,55 @@ entenderás ya qué significan las Ítacas.`;
                 window.location.href = `mailto:${EMAIL_ITACA}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
             }
 
-            async function enviarFormulario({ form, boton, estado, asunto, datos, textoBoton, cuerpoCorreo, exito }) {
+            // Copia de la solicitud en la hoja de cálculo, para el seguimiento.
+            // Va aparte y "sin esperar respuesta" a propósito: si la hoja falla o
+            // tarda, el visitante no se entera y el correo se ha enviado igual.
+            function copiarEnHoja(tipo, datos) {
+                if (!HOJA_CALCULO_URL) return;
+                try {
+                    fetch(HOJA_CALCULO_URL, {
+                        method: 'POST',
+                        // `no-cors` + texto plano: es lo que acepta un script de Google
+                        // publicado sin pedir permisos al visitante.
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ tipo, ...datos })
+                    }).catch(() => { });
+                } catch (err) {
+                    /* El seguimiento nunca puede tumbar el envío del formulario. */
+                }
+            }
+
+            // Atajo de WhatsApp con el mensaje ya escrito. Se ofrece DESPUÉS de que el
+            // formulario se haya enviado: quien prefiera esperar al correo no pierde
+            // nada, y quien tenga prisa habla contigo al momento.
+            function enlaceWhatsApp(texto) {
+                return 'https://wa.me/' + WHATSAPP_ITACA + '?text=' + encodeURIComponent(texto);
+            }
+
+            function bloqueWhatsApp(texto) {
+                return '<a class="form-status__wa" href="' + enlaceWhatsApp(texto) + '" target="_blank" ' +
+                    'rel="noopener">¿Prefieres que hablemos por WhatsApp?</a>';
+            }
+
+            async function enviarFormulario({ form, boton, estado, asunto, datos, textoBoton, cuerpoCorreo, exito, whatsapp, tipo }) {
                 // El navegador ya sabe avisar de los campos obligatorios: se lo pedimos.
                 if (!form.reportValidity()) return;
 
                 ocultarEstado(estado);
 
-                // Sin clave configurada todavía: se abre el programa de correo, como antes.
+                // Sin clave configurada todavía: se intenta abrir el programa de correo.
+                // Eso falla en muchos móviles y en quien usa Gmail desde el navegador, y
+                // antes no se avisaba de nada: el visitante creía haber enviado el
+                // mensaje y aquí no llegaba nunca. Ahora al menos se le dice lo que ha
+                // pasado y se le dan dos vías que sí funcionan siempre.
                 if (!WEB3FORMS_ACCESS_KEY) {
                     abrirCorreo(asunto, cuerpoCorreo);
+                    mostrarEstado(estado, 'error',
+                        '<strong>Casi.</strong> Hemos abierto tu programa de correo con el mensaje escrito: ' +
+                        'revisa que se haya enviado.<br>Si no se ha abierto nada, escríbenos por ' +
+                        '<a href="' + enlaceWhatsApp(whatsapp || 'Hola, os escribo desde la web.') +
+                        '" target="_blank" rel="noopener">WhatsApp</a> o llámanos al ' + TELEFONO_ITACA + '.');
                     return;
                 }
 
@@ -3956,8 +4055,9 @@ entenderás ya qué significan las Ítacas.`;
                     const resultado = await respuesta.json();
 
                     if (respuesta.ok && resultado.success) {
+                        copiarEnHoja(tipo, datos);
                         form.reset();
-                        mostrarEstado(estado, 'ok', exito);
+                        mostrarEstado(estado, 'ok', exito + (whatsapp ? bloqueWhatsApp(whatsapp) : ''));
                     } else {
                         mostrarEstado(estado, 'error', MENSAJE_ERROR);
                     }
@@ -3995,7 +4095,9 @@ entenderás ya qué significan las Ítacas.`;
                         Consentimiento: 'Aceptada la política de privacidad'
                     },
                     cuerpoCorreo: `Hola Itaca Jiu Jitsu,\n\nNombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}\n\n${mensaje}\n\nUn saludo.`,
-                    exito: '<strong>Mensaje enviado.</strong> Te contestamos lo antes posible, normalmente en menos de 24 horas.'
+                    exito: '<strong>Mensaje enviado.</strong> Te contestamos lo antes posible, normalmente en menos de 24 horas.',
+                    tipo: 'Contacto',
+                    whatsapp: `Hola, soy ${nombre}. Os he escrito por la web: ${mensaje}`
                 });
             });
 
@@ -4035,7 +4137,9 @@ entenderás ya qué significan las Ítacas.`;
                         Consentimiento: 'Aceptada la política de privacidad. En caso de menor, consentimiento del tutor legal.'
                     },
                     cuerpoCorreo: `Hola Itaca Jiu Jitsu,\n\nMe gustaría asistir a una clase de prueba. Estos son mis datos:\n\nNombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}\nCategoría: ${cat}\nFecha: ${fecha}\nClase: ${clase}\n\nUn saludo.`,
-                    exito: '<strong>Solicitud enviada.</strong> Te confirmamos la plaza por teléfono o por email antes de la clase.'
+                    exito: '<strong>Solicitud enviada.</strong> Te confirmamos la plaza por teléfono o por email antes de la clase.',
+                    tipo: 'Clase de prueba',
+                    whatsapp: `Hola, soy ${nombre}. He pedido una clase de prueba por la web: ${clase}, el ${fecha} (${cat}).`
                 });
             });
 
