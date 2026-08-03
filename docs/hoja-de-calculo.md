@@ -36,11 +36,11 @@ function doPost(e) {
   // La primera vez escribe la fila de títulos.
   if (hoja.getLastRow() === 0) {
     hoja.appendRow([
-      'Fecha', 'Tipo', 'Nombre', 'Email', 'Teléfono',
+      'Fecha', 'Tipo', 'Nombre', 'Email', 'Teléfono', 'Contestar por',
       'Categoría', 'Día', 'Clase', 'Mensaje',
       'Contactado', 'Vino', 'Se apuntó', 'Notas'
     ]);
-    hoja.getRange(1, 1, 1, 13).setFontWeight('bold');
+    hoja.getRange(1, 1, 1, 14).setFontWeight('bold');
     hoja.setFrozenRows(1);
   }
 
@@ -57,6 +57,7 @@ function doPost(e) {
     d.Nombre || '',
     d.Email || '',
     d['Teléfono'] || '',
+    d['Contestar por'] || '',
     d['Categoría'] || '',
     d.Fecha || '',
     d.Clase || '',
@@ -95,7 +96,11 @@ function doPost(e) {
 
 ## Cómo lo usas después
 
-La hoja tendrá una fila por solicitud. Las cuatro últimas columnas son tuyas:
+La hoja tendrá una fila por solicitud. Mira siempre la columna **Contestar por**:
+es la vía que ha pedido esa persona (WhatsApp, llamada o email). Contestar por
+donde te han pedido es la diferencia entre que te lean o no.
+
+Las cuatro últimas columnas son tuyas:
 
 | Columna | Para qué |
 |---|---|

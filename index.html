@@ -2576,6 +2576,38 @@
             margin-bottom: 0.5rem;
         }
 
+        /* Canal de respuesta: en botones y no en redondelitos sueltos, para que en
+           un móvil se acierte con el dedo a la primera. */
+        .channel-options {
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .channel-options .radio-label {
+            flex: 1 1 0;
+            min-width: 92px;
+            justify-content: center;
+            gap: 0.4rem;
+            min-height: 46px;
+            padding: 0.5rem 0.6rem;
+            border: 1px solid var(--hairline);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .channel-options .radio-label:has(input:checked) {
+            border-color: var(--text-dark);
+            background-color: rgba(20, 20, 20, 0.04);
+            font-weight: 600;
+        }
+
+        /* Respaldo para navegadores sin :has(): el punto del radio sigue viéndose,
+           así que la opción marcada nunca queda sin señalar. */
+        .channel-options .radio-label input {
+            accent-color: var(--text-dark);
+        }
+
         .radio-label {
             display: flex;
             align-items: center;
@@ -3383,6 +3415,24 @@
                     <label for="contactMensaje">MENSAJE <span>*</span></label>
                     <textarea id="contactMensaje" name="Mensaje" rows="4" placeholder="MENSAJE" required></textarea>
                 </div>
+                <!-- Saber por dónde quiere que le contesten evita perder a quien no
+                     mira el correo, y le dice a la escuela por dónde empezar. -->
+                <div class="form-group">
+                    <label>¿CÓMO PREFIERES QUE TE CONTESTEMOS? <span>*</span></label>
+                    <div class="radio-options channel-options">
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferido" value="WhatsApp" data-needs-phone="1"
+                                id="contactViaWhatsapp" checked> WhatsApp
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferido" value="Llamada" data-needs-phone="1"
+                                id="contactViaLlamada"> Llamada
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferido" value="Email" id="contactViaEmail"> Email
+                        </label>
+                    </div>
+                </div>
                 <div class="form-group consent-group">
                     <input type="checkbox" id="contactConsent" name="Consentimiento" required>
                     <label for="contactConsent">He leído y acepto la <a href="#" class="privacy-trigger">política de
@@ -3451,6 +3501,23 @@
                         <select id="trialClassSelect" required>
                             <option value="">Selecciona modalidad y fecha</option>
                         </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>¿CÓMO PREFIERES QUE TE CONFIRMEMOS LA PLAZA? <span>*</span></label>
+                    <div class="radio-options channel-options">
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferidoPrueba" value="WhatsApp" data-needs-phone="1"
+                                id="trialViaWhatsapp" checked> WhatsApp
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferidoPrueba" value="Llamada" data-needs-phone="1"
+                                id="trialViaLlamada"> Llamada
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferidoPrueba" value="Email" id="trialViaEmail"> Email
+                        </label>
                     </div>
                 </div>
 
@@ -3566,8 +3633,9 @@
                     Destinatarios y servicios de terceros</h3>
                 <p style="margin-bottom: 1rem;">Para el envío de los formularios utilizamos el servicio Web3Forms, que
                     hace de intermediario para entregarnos el mensaje por correo electrónico. Los datos de la solicitud
-                    (nombre, correo, teléfono y, en el caso de la clase de prueba, la categoría de edad, la fecha y la
-                    clase elegidas) se guardan además en una hoja de cálculo alojada en Google Drive, de acceso
+                    (nombre, correo, teléfono, la vía por la que prefiere que le contestemos y, en el caso de la clase
+                    de prueba, la categoría de edad, la fecha y la clase elegidas) se guardan además en una hoja de
+                    cálculo alojada en Google Drive, de acceso
                     restringido a la dirección de la escuela, con el único fin de gestionar y hacer seguimiento de su
                     solicitud. Esta web también carga tipografías de Google Fonts y muestra un mapa de Google Maps; al
                     hacerlo, su navegador se conecta a servidores de Google, que puede registrar su dirección IP. No
@@ -4011,12 +4079,21 @@ entenderás ya qué significan las Ítacas.`;
                 return 'https://wa.me/' + WHATSAPP_ITACA + '?text=' + encodeURIComponent(texto);
             }
 
-            function bloqueWhatsApp(texto) {
+            function bloqueWhatsApp(texto, canal) {
+                const rotulo = canal === 'WhatsApp'
+                    ? 'Adelanta la conversación por WhatsApp'
+                    : '¿Prefieres que hablemos por WhatsApp?';
                 return '<a class="form-status__wa" href="' + enlaceWhatsApp(texto) + '" target="_blank" ' +
-                    'rel="noopener">¿Prefieres que hablemos por WhatsApp?</a>';
+                    'rel="noopener">' + rotulo + '</a>';
             }
 
-            async function enviarFormulario({ form, boton, estado, asunto, datos, textoBoton, cuerpoCorreo, exito, whatsapp, tipo }) {
+            function textoCanal(canal) {
+                if (canal === 'WhatsApp') return 'por WhatsApp';
+                if (canal === 'Llamada') return 'por teléfono';
+                return 'por email';
+            }
+
+            async function enviarFormulario({ form, boton, estado, asunto, datos, textoBoton, cuerpoCorreo, exito, whatsapp, tipo, canal }) {
                 // El navegador ya sabe avisar de los campos obligatorios: se lo pedimos.
                 if (!form.reportValidity()) return;
 
@@ -4057,7 +4134,7 @@ entenderás ya qué significan las Ítacas.`;
                     if (respuesta.ok && resultado.success) {
                         copiarEnHoja(tipo, datos);
                         form.reset();
-                        mostrarEstado(estado, 'ok', exito + (whatsapp ? bloqueWhatsApp(whatsapp) : ''));
+                        mostrarEstado(estado, 'ok', exito + (whatsapp ? bloqueWhatsApp(whatsapp, canal) : ''));
                     } else {
                         mostrarEstado(estado, 'error', MENSAJE_ERROR);
                     }
@@ -4068,6 +4145,42 @@ entenderás ya qué significan las Ítacas.`;
                     boton.textContent = textoBoton || textoOriginal;
                 }
             }
+
+            // Canal preferido de respuesta.
+            // Si alguien pide que le contesten por WhatsApp o por teléfono, el número
+            // deja de ser opcional: sin él, esa preferencia no se puede cumplir.
+            function canalElegido(nombreGrupo) {
+                const marcado = document.querySelector('input[name="' + nombreGrupo + '"]:checked');
+                return marcado ? marcado.value : 'Email';
+            }
+
+            function vincularCanalConTelefono(nombreGrupo, campoTelefono, grupoTelefono) {
+                const opciones = document.querySelectorAll('input[name="' + nombreGrupo + '"]');
+                if (!opciones.length || !campoTelefono) return;
+
+                const etiqueta = grupoTelefono ? grupoTelefono.querySelector('label') : null;
+                const textoBase = etiqueta ? etiqueta.textContent.replace('*', '').trim() : '';
+
+                const actualizar = () => {
+                    const marcado = document.querySelector('input[name="' + nombreGrupo + '"]:checked');
+                    const hace_falta = !!(marcado && marcado.dataset.needsPhone);
+                    campoTelefono.required = hace_falta;
+                    if (etiqueta && textoBase) {
+                        etiqueta.innerHTML = textoBase + (hace_falta ? ' <span>*</span>' : '');
+                    }
+                };
+
+                opciones.forEach(o => o.addEventListener('change', actualizar));
+                actualizar();
+            }
+
+            const contactTelefonoEl = document.getElementById('contactTelefono');
+            vincularCanalConTelefono('ContactoPreferido', contactTelefonoEl,
+                contactTelefonoEl ? contactTelefonoEl.closest('.form-group') : null);
+
+            const trialTelefonoEl = document.getElementById('trialTelefono');
+            vincularCanalConTelefono('ContactoPreferidoPrueba', trialTelefonoEl,
+                trialTelefonoEl ? trialTelefonoEl.closest('.form-group') : null);
 
             // Formulario de contacto
             const contactForm = document.getElementById('contactForm');
@@ -4080,22 +4193,27 @@ entenderás ya qué significan las Ítacas.`;
                 const email = document.getElementById('contactEmail').value.trim();
                 const telefono = document.getElementById('contactTelefono').value.trim();
                 const mensaje = document.getElementById('contactMensaje').value.trim();
+                const canal = canalElegido('ContactoPreferido');
 
                 enviarFormulario({
                     form: contactForm,
                     boton: submitFormBtn,
                     estado: contactStatus,
-                    asunto: 'Consulta desde la web: ' + nombre,
+                    // El canal va en el asunto: se ve en la lista del correo, sin abrirlo.
+                    asunto: '[' + canal + '] Consulta desde la web: ' + nombre,
                     textoBoton: 'ENVIAR MENSAJE',
                     datos: {
                         Nombre: nombre,
                         Email: email,
                         'Teléfono': telefono || '(no indicado)',
+                        'Contestar por': canal,
                         Mensaje: mensaje,
                         Consentimiento: 'Aceptada la política de privacidad'
                     },
+                    canal: canal,
                     cuerpoCorreo: `Hola Itaca Jiu Jitsu,\n\nNombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}\n\n${mensaje}\n\nUn saludo.`,
-                    exito: '<strong>Mensaje enviado.</strong> Te contestamos lo antes posible, normalmente en menos de 24 horas.',
+                    exito: '<strong>Mensaje enviado.</strong> Te contestamos ' + textoCanal(canal) +
+                        ', normalmente en menos de 24 horas.',
                     tipo: 'Contacto',
                     whatsapp: `Hola, soy ${nombre}. Os he escrito por la web: ${mensaje}`
                 });
@@ -4120,24 +4238,28 @@ entenderás ya qué significan las Ítacas.`;
                 const cat = tipoAdulto.checked ? 'Adulto' : 'Niño (' + (nino4a6.checked ? '4 a 6 años' : '7 a 10 años') + ')';
                 const fecha = trialDate.value;
                 const clase = trialClassSelect.value;
+                const canal = canalElegido('ContactoPreferidoPrueba');
 
                 enviarFormulario({
                     form: trialForm,
                     boton: submitTrialBtn,
                     estado: trialStatus,
-                    asunto: 'Reserva de clase de prueba: ' + nombre,
+                    asunto: '[' + canal + '] Reserva de clase de prueba: ' + nombre,
                     textoBoton: 'SOLICITAR CLASE',
                     datos: {
                         Nombre: nombre,
                         Email: email,
                         'Teléfono': telefono,
+                        'Contestar por': canal,
                         'Categoría': cat,
                         Fecha: fecha,
                         Clase: clase,
                         Consentimiento: 'Aceptada la política de privacidad. En caso de menor, consentimiento del tutor legal.'
                     },
+                    canal: canal,
                     cuerpoCorreo: `Hola Itaca Jiu Jitsu,\n\nMe gustaría asistir a una clase de prueba. Estos son mis datos:\n\nNombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}\nCategoría: ${cat}\nFecha: ${fecha}\nClase: ${clase}\n\nUn saludo.`,
-                    exito: '<strong>Solicitud enviada.</strong> Te confirmamos la plaza por teléfono o por email antes de la clase.',
+                    exito: '<strong>Solicitud enviada.</strong> Te confirmamos la plaza ' + textoCanal(canal) +
+                        ' antes de la clase.',
                     tipo: 'Clase de prueba',
                     whatsapp: `Hola, soy ${nombre}. He pedido una clase de prueba por la web: ${clase}, el ${fecha} (${cat}).`
                 });
