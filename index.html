@@ -1159,10 +1159,12 @@
             opacity: 1;
         }
 
-        /* Sin ratón el botón de sonido no aparecería nunca. */
+        /* Sin ratón la miniatura no reproduce nada: al tocarla se abre el visor a
+           pantalla completa, que tiene su propio botón de sonido. Aquí sobra y
+           además dejaba un punto muerto donde el toque no abría el visor. */
         @media (hover: none) {
             .reel-mute-btn {
-                opacity: 1;
+                display: none;
             }
         }
 
@@ -1759,6 +1761,234 @@
             background-color: var(--accent);
         }
 
+        /* Visor de reels a pantalla completa (solo móvil).
+           El público llega de Instagram: ahí los vídeos se ven a pantalla completa
+           y se pasa deslizando. Un recuadro pequeño con el dedo encima no compite. */
+        .reels-viewer {
+            position: fixed;
+            inset: 0;
+            z-index: 1800;
+            background: #000;
+            display: none;
+        }
+
+        .reels-viewer.open {
+            display: block;
+        }
+
+        .reels-viewer__track {
+            height: 100%;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            overscroll-behavior: contain;
+        }
+
+        .reels-viewer__track::-webkit-scrollbar {
+            display: none;
+        }
+
+        .reels-viewer__slide {
+            position: relative;
+            height: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reels-viewer__slide video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        .reels-viewer__close,
+        .reels-viewer__sound {
+            position: absolute;
+            top: calc(1rem + env(safe-area-inset-top));
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        .reels-viewer__close {
+            right: 1rem;
+        }
+
+        .reels-viewer__sound {
+            left: 1rem;
+        }
+
+        .reels-viewer__close svg,
+        .reels-viewer__sound svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Pista de que hay más vídeos debajo: sin esto mucha gente ve uno y sale. */
+        .reels-viewer__hint {
+            position: absolute;
+            left: 50%;
+            bottom: calc(1.6rem + env(safe-area-inset-bottom));
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            z-index: 3;
+            transition: opacity 0.4s ease;
+        }
+
+        .reels-viewer__hint::after {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-right: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+            transform: rotate(45deg) translate(-1px, -1px);
+            animation: nudge 1.5s ease-in-out infinite;
+        }
+
+        @keyframes nudge {
+
+            0%,
+            100% {
+                transform: rotate(45deg) translate(-1px, -1px);
+            }
+
+            50% {
+                transform: rotate(45deg) translate(2px, 2px);
+            }
+        }
+
+        .reels-viewer__hint.hidden {
+            opacity: 0;
+        }
+
+        /* Barra de acción del móvil.
+           En un móvil la mano llega cómodamente a la parte de abajo, no a la de
+           arriba. Con esto la clase de prueba, el teléfono y el WhatsApp están
+           siempre a un dedo, sin tener que buscar nada scrolleando. */
+        .action-bar {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .action-bar {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 950;
+                display: flex;
+                align-items: stretch;
+                gap: 0.5rem;
+                padding: 0.6rem var(--gutter);
+                /* padding-bottom extra para no quedar debajo de la barra de
+                   gestos del iPhone. */
+                padding-bottom: calc(0.6rem + env(safe-area-inset-bottom));
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-top: 1px solid var(--hairline);
+                transform: translateY(110%);
+                transition: transform 0.35s var(--ease);
+            }
+
+            /* Aparece al salir de la portada: sobre el hero ya hay dos botones
+               grandes y taparlos con una barra sería redundante. */
+            .action-bar.visible {
+                transform: translateY(0);
+            }
+
+            .action-bar__cta {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 50px;
+                padding: 0 1rem;
+                background: var(--text-dark);
+                color: var(--bg-white);
+                border: none;
+                border-radius: 10px;
+                font-family: var(--font-heading);
+                font-size: 1.2rem;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                /* En una línea siempre: partido en dos, el botón crece y la barra
+                   se come media pantalla. */
+                white-space: nowrap;
+                cursor: pointer;
+            }
+
+            .action-bar__icon {
+                flex: 0 0 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 50px;
+                border: 1px solid var(--hairline);
+                border-radius: 10px;
+                background: var(--bg-white);
+                color: var(--text-dark);
+            }
+
+            .action-bar__icon svg {
+                width: 21px;
+                height: 21px;
+                stroke: currentColor;
+                fill: none;
+                stroke-width: 1.9;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+
+            .action-bar__icon--wa svg {
+                fill: currentColor;
+                stroke: none;
+            }
+
+            /* El botón de volver arriba se sube para no pisar la barra. */
+            .back-to-top {
+                bottom: calc(4.6rem + env(safe-area-inset-bottom));
+                right: 1rem;
+            }
+
+            /* Hueco al final para que la barra no tape el pie de página. */
+            body {
+                padding-bottom: calc(3.9rem + env(safe-area-inset-bottom));
+            }
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .editorial {
@@ -2340,10 +2570,40 @@
 
     <!-- Hero -->
     <section class="hero" id="home">
-        <!-- El vídeo que había (Itaca_Hero_Video.mp4) es un stock genérico (animación
-             cósmica), no imagen real del gimnasio: se sustituye por foto real hasta
-             que haya vídeo propio que subir. -->
-        <img class="hero-video" src="images/Itaca/Gym1.webp" alt="Instalaciones Itaca Jiu Jitsu">
+        <!-- Escritorio: foto. El vídeo que había (Itaca_Hero_Video.mp4) es una
+             animación de logo, casi todo negro: como fondo en bucle no vale.
+             Falta grabar uno apaisado del gimnasio para poner aquí. -->
+        <img class="hero-video" id="hero-photo" src="images/Itaca/Gym1.webp"
+            alt="Entrenamiento en Itaca Jiu Jitsu">
+        <script>
+            // Móvil: vídeo vertical grabado a 9:16. El de escritorio es 1920x800 y
+            // en una pantalla estrecha solo se vería el 19% del centro del
+            // fotograma. Se cambia aquí, junto al elemento, para que empiece a
+            // cargar sin esperar al resto de la página; y se crea solo en móvil,
+            // así un escritorio nunca descarga los 4 MB del vídeo.
+            (function () {
+                if (!window.matchMedia('(max-width: 760px)').matches) return;
+                var img = document.getElementById('hero-photo');
+                if (!img) return;
+                var v = document.createElement('video');
+                v.className = 'hero-video';
+                v.id = 'hero-video';
+                // `muted` antes que `autoplay`: ningún móvil arranca solo un vídeo
+                // con sonido, y si no está silenciado se queda congelado.
+                v.muted = true;
+                v.defaultMuted = true;
+                ['autoplay', 'loop', 'playsinline', 'muted'].forEach(function (a) {
+                    v.setAttribute(a, '');
+                });
+                v.preload = 'metadata';
+                v.poster = 'images/Itaca/Portada-movil.jpg';
+                v.src = 'videos/Itaca_Hero_Mobile.mp4';
+                img.replaceWith(v);
+                // Si el navegador se resiste al autoplay, la foto de poster se
+                // queda visible: no hay pantalla en negro en ningún caso.
+                v.play().catch(function () { });
+            })();
+        </script>
         <div class="hero-overlay"></div>
 
         <div class="hero-content reveal active">
@@ -3084,6 +3344,45 @@
     </div>
 
     <!-- Back to top -->
+    <!-- Visor de reels a pantalla completa. Las diapositivas las crea el JS a
+         partir de los vídeos de la sección MOVIMIENTO: no hay que mantener la
+         lista de vídeos en dos sitios. -->
+    <div class="reels-viewer" id="reelsViewer" role="dialog" aria-modal="true" aria-label="Vídeos de Itaca">
+        <div class="reels-viewer__track" id="reelsViewerTrack"></div>
+        <button class="reels-viewer__sound" id="reelsViewerSound" type="button" aria-label="Activar sonido">
+            <svg viewBox="0 0 24 24">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <line x1="23" y1="9" x2="17" y2="15"></line>
+                <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+        </button>
+        <button class="reels-viewer__close" id="reelsViewerClose" type="button" aria-label="Cerrar vídeos">
+            <svg viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+        </button>
+        <div class="reels-viewer__hint" id="reelsViewerHint">Desliza</div>
+    </div>
+
+    <!-- Barra de acción: solo se ve en móvil (ver CSS .action-bar) -->
+    <div class="action-bar" id="actionBar">
+        <button class="action-bar__cta trial-trigger" type="button">Clase de prueba</button>
+        <a class="action-bar__icon" href="tel:+34664784121" aria-label="Llamar a Itaca Jiu Jitsu">
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+        </a>
+        <a class="action-bar__icon action-bar__icon--wa" href="https://wa.me/34664784121" target="_blank"
+            rel="noopener" aria-label="Escribir por WhatsApp">
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.34 4.95L2 22l5.23-1.37a9.9 9.9 0 0 0 4.8 1.23h.01c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2zm0 1.68c2.21 0 4.29.86 5.85 2.43a8.23 8.23 0 0 1 2.43 5.85c0 4.57-3.72 8.28-8.29 8.28a8.27 8.27 0 0 1-4.22-1.16l-.3-.18-3.1.81.83-3.03-.2-.31a8.24 8.24 0 0 1-1.27-4.41c0-4.57 3.72-8.28 8.27-8.28zm-2.4 4.4c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.13 3.64.58.25 1.03.4 1.38.51.58.19 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.54.12-.16.24-.62.79-.76.95-.14.16-.28.18-.52.06-.24-.12-1.03-.38-1.96-1.21-.72-.65-1.21-1.45-1.35-1.69-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.47-.39-.4-.54-.41h-.46z" />
+            </svg>
+        </a>
+    </div>
+
     <button class="back-to-top" id="backToTop" aria-label="Volver arriba"></button>
 
     <!-- JavaScript -->
@@ -3501,6 +3800,10 @@ entenderás ya qué significan las Ítacas.`;
             const header = document.getElementById('header');
             const backToTop = document.getElementById('backToTop');
 
+            // La barra de acción del móvil aparece al dejar atrás la portada:
+            // encima del hero ya hay dos botones grandes y sería redundante.
+            const actionBar = document.getElementById('actionBar');
+
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
                     header.classList.add('scrolled');
@@ -3509,7 +3812,11 @@ entenderás ya qué significan las Ítacas.`;
                     header.classList.remove('scrolled');
                     backToTop.classList.remove('visible');
                 }
-            });
+
+                if (actionBar) {
+                    actionBar.classList.toggle('visible', window.scrollY > window.innerHeight * 0.6);
+                }
+            }, { passive: true });
 
             backToTop.addEventListener('click', () => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3592,6 +3899,109 @@ entenderás ya qué significan las Ítacas.`;
                 showDay(todayIndex < dayCells.length ? todayIndex : 0);
             }
 
+            // Visor de reels a pantalla completa (solo móvil).
+            // Sustituye al "tocar para reproducir" dentro del recuadro pequeño:
+            // el vídeo se abre grande y se pasa al siguiente deslizando.
+            const rvRoot = document.getElementById('reelsViewer');
+            const rvTrack = document.getElementById('reelsViewerTrack');
+            const rvHint = document.getElementById('reelsViewerHint');
+            const rvSound = document.getElementById('reelsViewerSound');
+            const rvClose = document.getElementById('reelsViewerClose');
+            const isTouch = window.matchMedia('(hover: none)').matches;
+            let rvMuted = true;
+
+            if (rvRoot && rvTrack && isTouch) {
+                const sources = Array.from(document.querySelectorAll('#reels .reel-item video'))
+                    .map(v => ({
+                        src: (v.querySelector('source') || {}).src || v.src,
+                        poster: v.poster
+                    }));
+
+                sources.forEach(s => {
+                    const slide = document.createElement('div');
+                    slide.className = 'reels-viewer__slide';
+                    const vid = document.createElement('video');
+                    vid.loop = true;
+                    vid.muted = true;
+                    vid.defaultMuted = true;
+                    ['loop', 'playsinline', 'muted'].forEach(a => vid.setAttribute(a, ''));
+                    vid.preload = 'none';
+                    vid.poster = s.poster;
+                    vid.src = s.src;
+                    slide.appendChild(vid);
+                    rvTrack.appendChild(slide);
+                });
+
+                const rvVideos = Array.from(rvTrack.querySelectorAll('video'));
+
+                const setSoundIcon = () => {
+                    rvSound.innerHTML = rvMuted
+                        ? '<svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>'
+                        : '<svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+                    rvSound.setAttribute('aria-label', rvMuted ? 'Activar sonido' : 'Silenciar');
+                };
+
+                // Solo reproduce el que se está viendo: cuatro vídeos a la vez
+                // calientan el teléfono y se comen los datos.
+                const rvObserver = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        const vid = entry.target;
+                        if (entry.isIntersecting) {
+                            vid.muted = rvMuted;
+                            vid.play().catch(() => { });
+                        } else {
+                            vid.pause();
+                            vid.currentTime = 0;
+                        }
+                    });
+                }, { root: rvTrack, threshold: 0.6 });
+
+                rvVideos.forEach(v => rvObserver.observe(v));
+
+                const openViewer = (index) => {
+                    rvRoot.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                    rvHint.classList.toggle('hidden', sources.length < 2);
+                    // El scroll hay que fijarlo con el visor ya visible: mientras
+                    // está en `display:none` no tiene altura y no se puede desplazar.
+                    requestAnimationFrame(() => {
+                        rvTrack.scrollTop = index * rvTrack.clientHeight;
+                    });
+                };
+
+                const closeViewer = () => {
+                    rvRoot.classList.remove('open');
+                    document.body.style.overflow = '';
+                    rvVideos.forEach(v => v.pause());
+                };
+
+                document.querySelectorAll('#reels .reel-item').forEach((item, i) => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openViewer(i);
+                    });
+                });
+
+                rvClose.addEventListener('click', closeViewer);
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && rvRoot.classList.contains('open')) closeViewer();
+                });
+
+                rvSound.addEventListener('click', () => {
+                    rvMuted = !rvMuted;
+                    rvVideos.forEach(v => { v.muted = rvMuted; });
+                    setSoundIcon();
+                });
+
+                let hintTimer;
+                rvTrack.addEventListener('scroll', () => {
+                    rvHint.classList.add('hidden');
+                    clearTimeout(hintTimer);
+                }, { passive: true });
+
+                setSoundIcon();
+            }
+
             // Reels Hover Logic
             const reels = document.querySelectorAll('.reel-item');
 
@@ -3638,18 +4048,9 @@ entenderás ya qué significan las Ítacas.`;
                     userHasMuted = false;
                 });
 
-                // En un móvil no hay "pasar el ratón por encima": sin esto los cuatro
-                // vídeos se quedarían siempre quietos.
-                if (window.matchMedia('(hover: none)').matches) {
-                    reel.addEventListener('click', () => {
-                        if (video.paused) {
-                            video.muted = userHasMuted;
-                            video.play().catch(e => console.log("Play interrupted", e));
-                        } else {
-                            video.pause();
-                        }
-                    });
-                }
+                // En móvil el recuadro no reproduce nada: al tocarlo se abre el
+                // visor a pantalla completa (ver arriba). Reproducir además aquí
+                // dejaría dos vídeos sonando a la vez.
 
                 if (btnMute) {
                     btnMute.addEventListener('click', (e) => {
