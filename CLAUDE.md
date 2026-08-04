@@ -163,9 +163,9 @@ ITACA JIU JITSU — Estado de Salud (actualizado 2026-08-04, auditoría prepubli
 ✅ Código funciona:  index.html + movil.html + js/ + legal/, sin errores
 ✅ Horario:          una sola fuente (js/itaca-horario.js), ya no duplicado
 ✅ Formularios:      Web3Forms activo (clave puesta), casilla de consentimiento en los dos
-⚠️  Deuda técnica:   ver DECISIONS.md — DT-1 y DT-2 resueltas, quedan DT-3 y DT-4
+⚠️  Deuda técnica:   ver DECISIONS.md — DT-1, DT-2 y DT-4 resueltas, queda DT-3 (y DT-5, DT-6 nuevas)
 📊 Pruebas:         No hay suite automática (manual en navegador + Playwright puntual)
-🔴 Bloqueadores:    NIF y razón social pendientes en la política de privacidad (DT-4)
+🔴 Bloqueadores:    ninguno crítico — ver DT-5 (revisión legal de terminos.html) como pendiente importante
 📦 Deploy:          Vercel preview OK en cada push a claude/new-session-oa3wjo, PR #1 abierto. main no existe todavía
 ```
 
@@ -279,7 +279,7 @@ Los dos tienen **casilla de consentimiento obligatoria** con enlace a la políti
 - **Ningún formulario nuevo sin casilla de consentimiento y enlace a la política de privacidad.**
 - **Si se quita o se relaja el consentimiento, es un retroceso legal.** No se hace.
 - **Nada de analítica, cookies ni píxeles** sin avisar antes: en cuanto entra uno, hace falta el aviso de cookies.
-- ⏳ **Pendiente:** falta la razón social completa y el NIF en la política de privacidad. Hay un comentario en el HTML marcándolo.
+- ✅ **Razón social y NIF ya puestos** en la política de privacidad (`ITACA JIU JITSU · NIF G26554923`, aportado por Cipri el 4 de agosto de 2026). Los datos personales del propio Cipri como representante (DNI, domicilio particular, teléfono) no se han publicado — no hacen falta en una web pública.
 
 ---
 

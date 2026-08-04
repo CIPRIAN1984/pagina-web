@@ -96,7 +96,7 @@
 | DT-1 | Horarios duplicados (HTML + JS) | MEDIA | — | ✅ Resuelto 2026-08-04 (A1) |
 | DT-2 | Imagen Portada.jpg falta | BAJA | — | ✅ Obsoleto: el archivo ya no hace falta (A3) |
 | DT-3 | Tipografías Google (privacidad) | BAJA | Privacidad/RGPD | Sigue en backlog |
-| DT-4 | Razón social + NIF (legal) | MEDIA | Requisito legal España | Sigue pendiente de que Cipri lo facilite |
+| DT-4 | Razón social + NIF (legal) | MEDIA | — | ✅ Resuelto 2026-08-04: Cipri facilitó el NIF (G26554923) vía certificado de la FNMT-RCM. Añadido a `legal/privacidad.html`. La dirección fiscal del certificado (Avda. Colón 38, 8A) difiere de la dirección del gimnasio ya publicada (Polígono Cantabria); se ha dejado la del gimnasio por ser la de contacto real — si Cipri prefiere la fiscal, se cambia. Los datos personales del representante (DNI, domicilio, teléfono particular) NO se han publicado: no hacen falta en la web pública. |
 | DT-5 | `legal/terminos.html` parece texto genérico sin revisar (cuotas, exención de responsabilidad por lesiones) | MEDIA | Riesgo legal si una cláusula no es válida en España | Nuevo — pendiente de que lo revise alguien con criterio legal, no la IA |
 | DT-6 | Sin trampa antispam propia de Web3Forms confirmada (más allá del honeypot del formulario) | BAJA | Spam si se filtra la clave pública | No verificable desde el código — revisar en el panel de Web3Forms |
 
