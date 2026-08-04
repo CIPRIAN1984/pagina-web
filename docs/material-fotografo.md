@@ -69,6 +69,25 @@ Sección «Itaca en movimiento». En móvil se abren a pantalla completa.
 - Nombres que digan qué son: `tatami-adultos-01.jpg`, `retrato-boris.jpg`,
   `portada-horizontal-01.mp4`
 
+## Luz y tono — lo que más se va a notar
+
+La referencia que le gusta a Cipri (artofjiujitsu.com) va sobre **fondo blanco**.
+Ahí la foto oscura se convierte en una mancha; la foto luminosa se funde con el
+papel y parece de revista. Ellos graban kimonos blancos sobre tatami claro con
+mucha luz. El material actual de Itaca es lo contrario: rashguard negro, tatami
+gris, luz de fluorescente.
+
+**Esto no se arregla con diseño, se arregla al disparar.** Lo que pedimos:
+
+- **Sobreexponer ligeramente**, más de lo que pediría el instinto. Buscamos
+  imagen luminosa, no dramática.
+- **Clases con kimono (Gi) para la mayoría de las fotos.** El blanco del kimono
+  es lo que da el aire de las webs premium. El No Gi, en negro, para unas pocas.
+- **Fondos limpios**: pared blanca, tatami despejado. Sin bolsas, botellas ni
+  mochilas en el encuadre.
+- **Luz difusa**, no flash directo. Si se puede, con las persianas abiertas.
+- **Sin filtros ni virados de color.** Se entrega neutro y ya se ajusta aquí.
+
 ## Avisos
 
 - **Nada horizontal salvo la portada de ordenador.** Hoy 6 de las 7 fotos del
