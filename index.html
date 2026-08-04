@@ -3767,38 +3767,15 @@
 
     <button class="back-to-top" id="backToTop" aria-label="Volver arriba"></button>
 
+    <!-- La clave de envío y la lógica de los formularios viven en un único
+         archivo que comparten esta página y movil.html. Ver ese archivo. -->
+    <script src="js/itaca-formularios.js"></script>
+
     <!-- JavaScript -->
     <script>
-        // ─────────────────────────────────────────────────────────────────────────────
-        //  ENVÍO DE FORMULARIOS
-        //
-        //  Pega aquí la clave de acceso (Access Key) que te da web3forms.com y los dos
-        //  formularios empezarán a enviarse de verdad al correo del gimnasio.
-        //
-        //  Mientras esté vacío, los formularios siguen abriendo el programa de correo
-        //  del visitante, como hacían antes. No es una contraseña: esta clave solo sirve
-        //  para que los mensajes lleguen a itacajiujitsu@gmail.com y nada más.
-        // ─────────────────────────────────────────────────────────────────────────────
-        const WEB3FORMS_ACCESS_KEY = 'e6a72e8e-1963-4d39-b6d8-cad84ad95cae';
-
-        // ─────────────────────────────────────────────────────────────────────────────
-        //  COPIA EN HOJA DE CÁLCULO (opcional)
-        //
-        //  Pega aquí la dirección que te da Google al publicar el script de
-        //  docs/hoja-de-calculo.md y cada solicitud se apuntará sola en una fila,
-        //  además de llegarte por correo.
-        //
-        //  Mientras esté vacío no se envía nada a ningún sitio: el correo funciona igual.
-        //  Ojo: es una dirección pública. Cualquiera que mire el código puede verla y,
-        //  como mucho, colar filas de broma en la hoja. El correo sigue siendo la fuente
-        //  fiable; la hoja es para llevar el seguimiento.
-        // ─────────────────────────────────────────────────────────────────────────────
-        const HOJA_CALCULO_URL = '';
-
-        const EMAIL_ITACA = 'itacajiujitsu@gmail.com';
-        const TELEFONO_ITACA = '664 78 41 21';
-        // Sin espacios ni signos: es el formato que necesita el enlace de WhatsApp.
-        const WHATSAPP_ITACA = '34664784121';
+        // Configuración y envío: js/itaca-formularios.js
+        const EMAIL_ITACA = Itaca.CONFIG.email;
+        const TELEFONO_ITACA = Itaca.CONFIG.telefono;
 
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -4054,57 +4031,15 @@ entenderás ya qué significan las Ítacas.`;
                 }
             }
 
-            // ── Envío de formularios ──────────────────────────────────────────────
-            //
-            // Antes los dos formularios usaban `mailto:`, que abre el programa de correo
-            // del visitante. En un móvil, o en un ordenador que use Gmail en el navegador,
-            // eso no envía nada: el mensaje se pierde y el gimnasio no se entera.
-            //
-            // Ahora se envían por detrás con fetch y el visitante ve una confirmación.
-            // Si todavía no hay clave configurada, se cae al comportamiento antiguo para
-            // no dejar la web peor de lo que estaba.
+            // Envío, canal preferido y copia en la hoja: js/itaca-formularios.js
+            const enlaceWhatsApp = Itaca.enlaceWhatsApp;
+            const enlaceRespuesta = Itaca.enlaceRespuesta;
+            const textoCanal = Itaca.textoCanal;
+            const canalElegido = Itaca.canalElegido;
 
             function mostrarEstado(el, tipo, mensaje) {
                 el.className = 'form-status visible ' + tipo;
                 el.innerHTML = mensaje;
-            }
-
-            function ocultarEstado(el) {
-                el.className = 'form-status';
-                el.innerHTML = '';
-            }
-
-            const MENSAJE_ERROR = 'No hemos podido enviar tu mensaje. Escríbenos a ' +
-                `<a href="mailto:${EMAIL_ITACA}">${EMAIL_ITACA}</a> o llámanos al ${TELEFONO_ITACA}.`;
-
-            function abrirCorreo(asunto, cuerpo) {
-                window.location.href = `mailto:${EMAIL_ITACA}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
-            }
-
-            // Copia de la solicitud en la hoja de cálculo, para el seguimiento.
-            // Va aparte y "sin esperar respuesta" a propósito: si la hoja falla o
-            // tarda, el visitante no se entera y el correo se ha enviado igual.
-            function copiarEnHoja(tipo, datos) {
-                if (!HOJA_CALCULO_URL) return;
-                try {
-                    fetch(HOJA_CALCULO_URL, {
-                        method: 'POST',
-                        // `no-cors` + texto plano: es lo que acepta un script de Google
-                        // publicado sin pedir permisos al visitante.
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ tipo, ...datos })
-                    }).catch(() => { });
-                } catch (err) {
-                    /* El seguimiento nunca puede tumbar el envío del formulario. */
-                }
-            }
-
-            // Atajo de WhatsApp con el mensaje ya escrito. Se ofrece DESPUÉS de que el
-            // formulario se haya enviado: quien prefiera esperar al correo no pierde
-            // nada, y quien tenga prisa habla contigo al momento.
-            function enlaceWhatsApp(texto) {
-                return 'https://wa.me/' + WHATSAPP_ITACA + '?text=' + encodeURIComponent(texto);
             }
 
             function bloqueWhatsApp(texto, canal) {
@@ -4115,106 +4050,21 @@ entenderás ya qué significan las Ítacas.`;
                     'rel="noopener">' + rotulo + '</a>';
             }
 
-            // Enlace listo para responder por WhatsApp, que viaja DENTRO del correo
-            // que recibe la escuela. Sin esto hay que copiar el número a mano cada
-            // vez; con esto se contesta de un toque desde el propio correo.
-            function enlaceRespuesta(telefono, respuesta) {
-                // wa.me quiere el número sin +, sin espacios y con prefijo de país.
-                let num = (telefono || '').replace(/[^\d]/g, '');
-                if (!num) return '';
-                if (num.length === 9) num = '34' + num;            // móvil español sin prefijo
-                else if (num.startsWith('0034')) num = num.slice(2);
-                if (num.length < 11) return '';
-                return 'https://wa.me/' + num + '?text=' + encodeURIComponent(respuesta);
-            }
-
-            function textoCanal(canal) {
-                if (canal === 'WhatsApp') return 'por WhatsApp';
-                if (canal === 'Llamada') return 'por teléfono';
-                return 'por email';
-            }
-
-            async function enviarFormulario({ form, boton, estado, asunto, datos, textoBoton, cuerpoCorreo, exito, whatsapp, tipo, canal }) {
-                // El navegador ya sabe avisar de los campos obligatorios: se lo pedimos.
-                if (!form.reportValidity()) return;
-
-                ocultarEstado(estado);
-
-                // Sin clave configurada todavía: se intenta abrir el programa de correo.
-                // Eso falla en muchos móviles y en quien usa Gmail desde el navegador, y
-                // antes no se avisaba de nada: el visitante creía haber enviado el
-                // mensaje y aquí no llegaba nunca. Ahora al menos se le dice lo que ha
-                // pasado y se le dan dos vías que sí funcionan siempre.
-                if (!WEB3FORMS_ACCESS_KEY) {
-                    abrirCorreo(asunto, cuerpoCorreo);
-                    mostrarEstado(estado, 'error',
-                        '<strong>Casi.</strong> Hemos abierto tu programa de correo con el mensaje escrito: ' +
-                        'revisa que se haya enviado.<br>Si no se ha abierto nada, escríbenos por ' +
-                        '<a href="' + enlaceWhatsApp(whatsapp || 'Hola, os escribo desde la web.') +
-                        '" target="_blank" rel="noopener">WhatsApp</a> o llámanos al ' + TELEFONO_ITACA + '.');
-                    return;
-                }
-
-                boton.disabled = true;
-                const textoOriginal = boton.textContent;
-                boton.textContent = 'ENVIANDO…';
-
-                try {
-                    const respuesta = await fetch('https://api.web3forms.com/submit', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                        body: JSON.stringify({
-                            access_key: WEB3FORMS_ACCESS_KEY,
-                            subject: asunto,
-                            from_name: 'Web de Itaca Jiu Jitsu',
-                            // Si viene marcada, lo ha rellenado un robot: Web3Forms lo tira.
-                            botcheck: form.querySelector('[name="botcheck"]')?.checked || false,
-                            ...datos
-                        })
-                    });
-                    const resultado = await respuesta.json();
-
-                    if (respuesta.ok && resultado.success) {
-                        copiarEnHoja(tipo, datos);
-                        form.reset();
-                        mostrarEstado(estado, 'ok', exito + (whatsapp ? bloqueWhatsApp(whatsapp, canal) : ''));
-                    } else {
-                        mostrarEstado(estado, 'error', MENSAJE_ERROR);
+            // Adapta la llamada compartida al aviso que usa esta página.
+            function enviarFormulario({ form, boton, estado, asunto, datos, textoBoton, cuerpoCorreo, exito, whatsapp, tipo, canal }) {
+                Itaca.enviar({
+                    form, boton, asunto, datos, textoBoton, cuerpoCorreo, whatsapp, tipo,
+                    exito: exito + (whatsapp ? bloqueWhatsApp(whatsapp, canal) : ''),
+                    pintar: (t, html) => {
+                        if (!t) { estado.className = 'form-status'; estado.innerHTML = ''; return; }
+                        mostrarEstado(estado, t, html);
                     }
-                } catch (err) {
-                    mostrarEstado(estado, 'error', MENSAJE_ERROR);
-                } finally {
-                    boton.disabled = false;
-                    boton.textContent = textoBoton || textoOriginal;
-                }
+                });
             }
 
-            // Canal preferido de respuesta.
-            // Si alguien pide que le contesten por WhatsApp o por teléfono, el número
-            // deja de ser opcional: sin él, esa preferencia no se puede cumplir.
-            function canalElegido(nombreGrupo) {
-                const marcado = document.querySelector('input[name="' + nombreGrupo + '"]:checked');
-                return marcado ? marcado.value : 'Email';
-            }
-
-            function vincularCanalConTelefono(nombreGrupo, campoTelefono, grupoTelefono) {
-                const opciones = document.querySelectorAll('input[name="' + nombreGrupo + '"]');
-                if (!opciones.length || !campoTelefono) return;
-
-                const etiqueta = grupoTelefono ? grupoTelefono.querySelector('label') : null;
-                const textoBase = etiqueta ? etiqueta.textContent.replace('*', '').trim() : '';
-
-                const actualizar = () => {
-                    const marcado = document.querySelector('input[name="' + nombreGrupo + '"]:checked');
-                    const hace_falta = !!(marcado && marcado.dataset.needsPhone);
-                    campoTelefono.required = hace_falta;
-                    if (etiqueta && textoBase) {
-                        etiqueta.innerHTML = textoBase + (hace_falta ? ' <span>*</span>' : '');
-                    }
-                };
-
-                opciones.forEach(o => o.addEventListener('change', actualizar));
-                actualizar();
+            function vincularCanalConTelefono(nombreGrupo, campo, grupo) {
+                Itaca.vincularCanalConTelefono(nombreGrupo, campo,
+                    grupo ? grupo.querySelector('label') : null);
             }
 
             const contactTelefonoEl = document.getElementById('contactTelefono');
