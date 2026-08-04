@@ -19,11 +19,17 @@
             --bg-white: #ffffff;
             --text-dark: #141414;
             --text-gray: #55534e;
-            --accent: #d4cfb6;
-            --accent-dark: #b8b29c;
-            /* El beige claro no llega al contraste mínimo sobre blanco: para
-               texto pequeño se usa esta versión oscura (6:1, cumple AA). */
-            --accent-ink: #6b6448;
+            /* Paleta sin color por decisión de Cipri: negro, blanco y grises,
+               en la línea de la referencia (artofjiujitsu.com). Se conservan los
+               nombres --accent* porque son los que usa todo el CSS; lo que ha
+               cambiado es el valor, no el papel de cada uno:
+                 --accent      destaque sobre fondo OSCURO (blanco)
+                 --accent-dark texto secundario sobre fondo claro
+                 --accent-ink  texto pequeño sobre fondo claro (cumple AA) */
+            --accent: #ffffff;
+            --accent-soft: #bdbdbd;
+            --accent-dark: #6f6f6f;
+            --accent-ink: #5f5f5f;
             --surface-dark: #101010;
             --hairline: rgba(20, 20, 20, 0.10);
             --font-heading: 'Bebas Neue', Impact, sans-serif;
@@ -215,8 +221,8 @@
 
         .btn-primary:hover,
         .btn-primary:focus {
-            background-color: var(--accent);
-            color: var(--text-dark);
+            background-color: #3d3d3d;
+            color: var(--bg-white);
         }
 
         .btn-outline {
@@ -386,7 +392,7 @@
         }
 
         .nav-links a:hover:not(.active) {
-            color: var(--accent) !important;
+            color: var(--text-gray) !important;
         }
 
         .header-cta-wrapper {
@@ -872,7 +878,7 @@
             display: block;
             font-size: .8rem;
             font-family: var(--font-body);
-            color: var(--accent);
+            color: var(--accent-soft);
             text-transform: uppercase;
             margin-top: 4px;
         }
@@ -1239,7 +1245,7 @@
             font-weight: 600;
             letter-spacing: 0.16em;
             text-transform: uppercase;
-            color: var(--accent);
+            color: var(--accent-soft);
             margin-bottom: 0.4rem;
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
         }
@@ -1759,7 +1765,7 @@
         }
 
         .back-to-top:hover {
-            background-color: var(--accent);
+            background-color: #3d3d3d;
         }
 
         /* Galería completa de fotos.
@@ -2642,7 +2648,7 @@
         }
 
         .contact-form .submit-btn:hover {
-            background-color: var(--accent);
+            background-color: #3d3d3d;
             color: var(--text-dark);
         }
 
