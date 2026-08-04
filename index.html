@@ -3117,70 +3117,10 @@
             <div class="schedule-table-wrap reveal delay-1">
                 <table class="schedule-table">
                     <thead>
-                        <tr>
-                            <th>Lunes</th>
-                            <th>Martes</th>
-                            <th>Miércoles</th>
-                            <th>Jueves</th>
-                            <th>Viernes</th>
-                            <th>Sábado</th>
-                        </tr>
+                        <tr id="scheduleHead"></tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <!-- Lunes -->
-                            <td style="vertical-align: top;" data-day="Lunes">
-                                <div class="class-block"><span class="class-time">07:00 - 08:00</span><span
-                                        class="class-name">Fundamentos</span></div>
-                                <div class="class-block"><span class="class-time">17:00 - 18:00</span><span
-                                        class="class-name">Fundamentos (Gi)</span></div>
-                            </td>
-                            <!-- Martes -->
-                            <td style="vertical-align: top;" data-day="Martes">
-                                <div class="class-block"><span class="class-time">10:00 - 11:30</span><span
-                                        class="class-name">Grappling No Gi</span></div>
-                                <div class="class-block"><span class="class-time">16:45 - 17:45</span><span
-                                        class="class-name">Kids 7/10 Años</span></div>
-                                <div class="class-block"><span class="class-time">18:00 - 20:00</span><span
-                                        class="class-name">Avanzados No Gi</span></div>
-                                <div class="class-block"><span class="class-time">20:00 - 21:00</span><span
-                                        class="class-name">Iniciación No Gi</span></div>
-                            </td>
-                            <!-- Miércoles -->
-                            <td style="vertical-align: top;" data-day="Miércoles">
-                                <div class="class-block"><span class="class-time">07:00 - 08:00</span><span
-                                        class="class-name">Fundamentos No Gi</span></div>
-                                <div class="class-block"><span class="class-time">17:00 - 18:00</span><span
-                                        class="class-name">No Gi Grappling</span></div>
-                            </td>
-                            <!-- Jueves -->
-                            <td style="vertical-align: top;" data-day="Jueves">
-                                <div class="class-block"><span class="class-time">10:00 - 11:30</span><span
-                                        class="class-name">BJJ Gi</span></div>
-                                <div class="class-block"><span class="class-time">16:45 - 17:45</span><span
-                                        class="class-name">Kids 4/6 Años</span></div>
-                                <div class="class-block"><span class="class-time">18:00 - 20:00</span><span
-                                        class="class-name">Avanzados Gi</span></div>
-                                <div class="class-block"><span class="class-time">20:00 - 21:00</span><span
-                                        class="class-name">Iniciación Gi</span></div>
-                            </td>
-                            <!-- Viernes -->
-                            <td style="vertical-align: top;" data-day="Viernes">
-                                <div class="class-block"><span class="class-time">07:00 - 08:00</span><span
-                                        class="class-name">Específico Sparring</span></div>
-                                <div class="class-block"><span class="class-time">16:45 - 17:45</span><span
-                                        class="class-name">BJJ Kids Gi 7/10 Años</span></div>
-                                <div class="class-block"><span class="class-time">18:30 - 20:00</span><span
-                                        class="class-name">Avanzado Gi</span></div>
-                            </td>
-                            <!-- Sábado -->
-                            <td style="vertical-align: top;" data-day="Sábado">
-                                <div class="class-block"><span class="class-time">10:00 - 11:00</span><span
-                                        class="class-name">BJJ Gi Libre</span></div>
-                                <div class="class-block"><span class="class-time">11:00 - 12:30</span><span
-                                        class="class-name">Open Mat</span></div>
-                            </td>
-                        </tr>
+                        <tr id="scheduleRow"></tr>
                     </tbody>
                 </table>
             </div>
@@ -3769,6 +3709,7 @@
 
     <!-- La clave de envío y la lógica de los formularios viven en un único
          archivo que comparten esta página y movil.html. Ver ese archivo. -->
+    <script src="js/itaca-horario.js"></script>
     <script src="js/itaca-formularios.js"></script>
 
     <!-- JavaScript -->
@@ -3978,42 +3919,20 @@ entenderás ya qué significan las Ítacas.`;
                     return;
                 }
 
-                const dateSelected = new Date(trialDate.value);
-                const dayOfWeek = dateSelected.getDay(); // 0=Domingo, 1=Lunes, ..., 6=Sábado
+                // Las clases salen de js/itaca-horario.js, que es el único sitio
+                // donde se editan. Antes había aquí una copia que podía quedarse
+                // desfasada respecto a la tabla de horarios de más arriba.
+                let categoria = null;
+                if (tipoAdulto.checked) categoria = 'adulto';
+                else if (tipoNino.checked && nino4a6.checked) categoria = 'nino46';
+                else if (tipoNino.checked && nino7a10.checked) categoria = 'nino710';
 
-                const classesForAdult = {
-                    1: ["07:00 - Fundamentos", "17:00 - Fundamentos (Gi)"],
-                    2: ["10:00 - Grappling No Gi", "18:00 - Avanzados No Gi", "20:00 - Iniciación No Gi"],
-                    3: ["07:00 - Fundamentos No Gi", "17:00 - No Gi Grappling"],
-                    4: ["10:00 - BJJ Gi", "18:00 - Avanzados Gi", "20:00 - Iniciación Gi"],
-                    5: ["07:00 - Específico Sparring", "18:30 - Avanzado Gi"],
-                    6: ["10:00 - BJJ Gi Libre", "11:00 - Open Mat"],
-                    0: []
-                };
-
-                const classesForNino46 = {
-                    4: ["16:45 - Kids 4/6 Años"]
-                };
-
-                const classesForNino710 = {
-                    2: ["16:45 - Kids 7/10 Años"],
-                    5: ["16:45 - BJJ Kids Gi 7/10 Años"]
-                };
-
-                let optionsConfig = [];
-
-                if (tipoAdulto.checked) {
-                    optionsConfig = classesForAdult[dayOfWeek] || [];
-                } else if (tipoNino.checked) {
-                    if (nino4a6.checked) {
-                        optionsConfig = classesForNino46[dayOfWeek] || [];
-                    } else if (nino7a10.checked) {
-                        optionsConfig = classesForNino710[dayOfWeek] || [];
-                    }
-                } else {
+                if (!categoria) {
                     trialClassSelect.innerHTML = '<option value="">Primero selecciona una modalidad</option>';
                     return;
                 }
+
+                const optionsConfig = ItacaHorario.clasesParaReserva(trialDate.value, categoria);
 
                 trialClassSelect.innerHTML = '';
                 if (optionsConfig.length > 0) {
@@ -4237,6 +4156,34 @@ entenderás ya qué significan las Ítacas.`;
             }, revealOptions);
 
             revealElements.forEach(el => revealObserver.observe(el));
+
+            // La tabla de horarios se pinta desde js/itaca-horario.js. Antes
+            // estaba escrita a mano en el HTML y era una segunda copia que
+            // podía contradecir a la que usa el formulario de clase de prueba.
+            (function pintarTablaHorario() {
+                const cabecera = document.getElementById('scheduleHead');
+                const fila = document.getElementById('scheduleRow');
+                if (!cabecera || !fila) return;
+
+                ItacaHorario.DIAS.forEach(dia => {
+                    const th = document.createElement('th');
+                    th.textContent = dia;
+                    cabecera.appendChild(th);
+
+                    const td = document.createElement('td');
+                    td.style.verticalAlign = 'top';
+                    td.dataset.day = dia;
+                    ItacaHorario.clasesDe(dia).forEach(c => {
+                        const bloque = document.createElement('div');
+                        bloque.className = 'class-block';
+                        bloque.innerHTML = '<span class="class-time"></span><span class="class-name"></span>';
+                        bloque.querySelector('.class-time').textContent = c.hora;
+                        bloque.querySelector('.class-name').textContent = c.nombre;
+                        td.appendChild(bloque);
+                    });
+                    fila.appendChild(td);
+                });
+            })();
 
             // Horario en móvil: un día cada vez.
             // Las pestañas se construyen leyendo la propia tabla, así el horario
