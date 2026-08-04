@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <title>ITACA JIU JITSU | Brazilian Jiu Jitsu en Logroño</title>
+    <meta name="description"
+        content="Escuela de Brazilian Jiu Jitsu en Logroño. Horarios, clases para niños y adultos, y clase de prueba gratuita.">
+    <!-- Versión móvil de la misma web: se declara para que los buscadores
+         sepan que index.html y esta son la misma página. -->
+    <link rel="canonical" href="index.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Itaca Jiu Jitsu | Brazilian Jiu Jitsu en Logroño">
+    <meta property="og:description" content="Técnica bien explicada, entrenamiento exigente y gente que te ayuda a mejorar. Aquí se empieza de cero.">
+    <meta property="og:image" content="images/og-image.jpg">
+    <meta property="og:locale" content="es_ES">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <!-- Horario y envío de formularios: compartidos con index.html para que
+         no existan dos copias que puedan contradecirse. -->
+    <script src="js/itaca-horario.js"></script>
+    <script src="js/itaca-formularios.js"></script>
+    <style>
+        /* ─────────────────────────────────────────────────────────────
+           VERSIÓN MÓVIL. Quien entra desde un móvil llega aquí; desde un
+           ordenador, a index.html. Comparten horario, formularios y textos
+           legales, que viven en archivos aparte para no duplicarse.
+
+           Dirección tomada de la referencia que pidió Cipri
+           (artofjiujitsu.com): fondo BLANCO con mucho aire, titulares
+           negros enormes en mayúsculas casi rozando el borde, texto de
+           apoyo corto en mayúsculas espaciadas, listas numeradas con
+           rayas finas, y botón en píldora negra flotando abajo.
+
+           Paleta sin color por decisión de Cipri: solo negro, blanco y
+           grises, como la referencia. El beige de la marca queda fuera
+           de la versión móvil.
+
+           Lo que NO se copia: el texto largo en mayúsculas. Sus párrafos
+           son de dos líneas; los de Itaca son más largos y en mayúsculas
+           se volverían ilegibles. Mayúsculas solo donde el texto es corto.
+           ───────────────────────────────────────────────────────────── */
+        :root {
+            --paper: #ffffff;
+            --ink: #0a0a0a;
+            /* #8b8b8b daba 3.41:1 sobre blanco — por debajo del 4.5:1 que exige
+               WCAG AA para texto de este tamaño. #707070 pasa (≈4.95:1) y sigue
+               leyéndose más ligero que --grey-dark. */
+            --grey: #707070;
+            --grey-dark: #5f5f5f;
+            --rule: #e5e5e5;
+
+            --sans: 'Archivo', system-ui, 'Helvetica Neue', Arial, sans-serif;
+            --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+            --gutter: 1.35rem;
+            --safe-b: env(safe-area-inset-bottom, 0px);
+            --safe-t: env(safe-area-inset-top, 0px);
+            --banner-h: 0rem;
+            --ease: cubic-bezier(.16, 1, .3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            background: var(--paper);
+        }
+
+        body {
+            font-family: var(--sans);
+            background: var(--paper);
+            color: var(--ink);
+            line-height: 1.55;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        img,
+        video {
+            display: block;
+            max-width: 100%;
+        }
+
+        button {
+            font: inherit;
+            color: inherit;
+            background: none;
+            border: 0;
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 3px;
+        }
+
+        /* ── voces tipográficas ─────────────────────────────────── */
+        .eyebrow {
+            display: block;
+            font-family: var(--mono);
+            font-size: .68rem;
+            font-weight: 500;
+            letter-spacing: .26em;
+            text-transform: uppercase;
+            color: var(--grey);
+        }
+
+        /* Titular pesado, mayúsculas, interlineado apretado y tamaño que
+           casi roza el borde: es el gesto característico de la referencia. */
+        .display {
+            font-weight: 800;
+            font-size: clamp(2.9rem, 15vw, 4.6rem);
+            line-height: .92;
+            letter-spacing: -.035em;
+            text-transform: uppercase;
+            text-wrap: balance;
+        }
+
+        .display--sm {
+            font-size: clamp(2rem, 9vw, 2.8rem);
+            letter-spacing: -.028em;
+        }
+
+        .caps {
+            font-size: .82rem;
+            font-weight: 500;
+            letter-spacing: .11em;
+            text-transform: uppercase;
+            color: var(--grey-dark);
+            line-height: 1.75;
+        }
+
+        .prose {
+            font-size: .95rem;
+            color: var(--grey-dark);
+            line-height: 1.7;
+            max-width: 40ch;
+        }
+
+        .prose+.prose {
+            margin-top: .85rem;
+        }
+
+        /* ── cabecera ───────────────────────────────────────────── */
+        .top {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: calc(.85rem + var(--safe-t) + var(--banner-h)) var(--gutter) .85rem;
+            background: rgba(255, 255, 255, .93);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .top__mark {
+            grid-column: 2;
+            font-weight: 800;
+            font-size: .88rem;
+            letter-spacing: .19em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .top__side {
+            grid-column: 3;
+            justify-self: end;
+            font-family: var(--mono);
+            font-size: .66rem;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--grey);
+        }
+
+        /* ── portada ────────────────────────────────────────────── */
+        .hero {
+            padding: 0 var(--gutter);
+        }
+
+        .hero__media {
+            position: relative;
+            aspect-ratio: 4 / 5;
+            overflow: hidden;
+            background: #f2f2f2;
+            border-top: 1px solid var(--rule);
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .hero__media img,
+        .hero__media video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero__txt {
+            padding: 1.9rem 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: .85rem;
+        }
+
+        /* ── lista de destinos ──────────────────────────────────── */
+        .menu {
+            margin-top: 2.6rem;
+            border-top: 1px solid var(--rule);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 2.4rem 1fr auto;
+            align-items: start;
+            gap: 0 .5rem;
+            width: calc(100% - var(--gutter));
+            text-align: left;
+            padding: 1.5rem var(--gutter) 1.5rem 0;
+            margin-left: var(--gutter);
+            border-bottom: 1px solid var(--rule);
+            transition: opacity .2s;
+        }
+
+        .row:active {
+            opacity: .45;
+        }
+
+        .row__n {
+            font-family: var(--mono);
+            font-size: .72rem;
+            font-weight: 500;
+            letter-spacing: .06em;
+            color: var(--grey);
+            padding-top: .34rem;
+        }
+
+        .row__name {
+            font-weight: 800;
+            font-size: 1.42rem;
+            line-height: 1.06;
+            letter-spacing: -.02em;
+            text-transform: uppercase;
+        }
+
+        .row__desc {
+            grid-column: 2;
+            margin-top: .3rem;
+            font-size: .74rem;
+            font-weight: 500;
+            letter-spacing: .085em;
+            text-transform: uppercase;
+            color: var(--grey);
+            line-height: 1.65;
+        }
+
+        .row__go {
+            align-self: center;
+            width: 9px;
+            height: 9px;
+            border-right: 1.7px solid var(--ink);
+            border-top: 1.7px solid var(--ink);
+            transform: rotate(45deg);
+        }
+
+        /* ── pie ────────────────────────────────────────────────── */
+        .foot {
+            padding: 2.8rem var(--gutter) calc(7rem + var(--safe-b));
+            display: flex;
+            flex-direction: column;
+            gap: .45rem;
+        }
+
+        .foot a {
+            font-size: .82rem;
+            font-weight: 500;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: var(--grey-dark);
+        }
+
+        .foot__link {
+            align-self: start;
+            padding: 0;
+            font-size: .82rem;
+            font-weight: 500;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: var(--grey-dark);
+            text-decoration: underline;
+            text-underline-offset: .2em;
+        }
+
+        .foot__legal {
+            margin-top: 1.2rem;
+            font-family: var(--mono);
+            font-size: .64rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--grey);
+        }
+
+        .foot__legal a {
+            color: var(--grey);
+        }
+
+        .foot .eyebrow {
+            margin-bottom: .5rem;
+        }
+
+        /* ── botón píldora flotante ─────────────────────────────── */
+        .dock {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 70;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: .5rem;
+            padding: .75rem var(--gutter) calc(.9rem + var(--safe-b));
+            background: linear-gradient(to top, #fff 62%, rgba(255, 255, 255, 0));
+            pointer-events: none;
+        }
+
+        .dock>* {
+            pointer-events: auto;
+        }
+
+        /* Con un panel abierto el botón flotante sobra y además tapa el final
+           del formulario. Cada panel ya lleva su propia acción. */
+        body.panel-abierto .dock {
+            display: none;
+        }
+
+        .pill {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 3.1rem;
+            padding: 0 1.9rem;
+            border-radius: 999px;
+            background: var(--ink);
+            color: var(--paper);
+            font-weight: 600;
+            font-size: .84rem;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .16);
+        }
+
+        .pill--ghost {
+            flex: 0 0 3.1rem;
+            min-width: 3.1rem;
+            padding: 0;
+            background: var(--paper);
+            color: var(--ink);
+            border: 1px solid var(--rule);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .08);
+        }
+
+        .pill--ghost svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ── paneles ────────────────────────────────────────────── */
+        .panel {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: var(--paper);
+            transform: translateY(100%);
+            transition: transform .4s var(--ease);
+            display: flex;
+            flex-direction: column;
+            visibility: hidden;
+        }
+
+        .panel.open {
+            transform: none;
+            visibility: visible;
+        }
+
+        .panel__bar {
+            display: grid;
+            grid-template-columns: 2.6rem 1fr 2.6rem;
+            align-items: center;
+            padding: calc(.75rem + var(--safe-t) + var(--banner-h)) var(--gutter) .75rem;
+            border-bottom: 1px solid var(--rule);
+            background: var(--paper);
+        }
+
+        .panel__back {
+            width: 2.6rem;
+            height: 2.6rem;
+            margin-left: -.7rem;
+            display: grid;
+            place-items: center;
+        }
+
+        .panel__back::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-left: 1.8px solid var(--ink);
+            border-bottom: 1.8px solid var(--ink);
+            transform: rotate(45deg) translate(1px, -1px);
+        }
+
+        .panel__title {
+            text-align: center;
+            font-weight: 800;
+            font-size: .88rem;
+            letter-spacing: .17em;
+            text-transform: uppercase;
+        }
+
+        .panel__body {
+            flex: 1;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+            padding: 2rem var(--gutter) calc(7rem + var(--safe-b));
+        }
+
+        .panel__lede {
+            margin: .9rem 0 2rem;
+        }
+
+        /* ── horario ────────────────────────────────────────────── */
+        .days {
+            display: flex;
+            gap: .4rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            margin: 0 calc(var(--gutter) * -1) 1.8rem;
+            padding: 0 var(--gutter);
+        }
+
+        .days::-webkit-scrollbar {
+            display: none;
+        }
+
+        .day {
+            flex: 0 0 auto;
+            min-height: 2.5rem;
+            padding: .4rem .95rem;
+            border: 1px solid var(--rule);
+            border-radius: 999px;
+            font-family: var(--mono);
+            font-size: .66rem;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            color: var(--grey);
+            white-space: nowrap;
+        }
+
+        .day[aria-selected="true"] {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: var(--paper);
+        }
+
+        .slot {
+            display: grid;
+            grid-template-columns: 5.9rem 1fr;
+            align-items: baseline;
+            gap: .6rem;
+            padding: 1.05rem 0;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .slot:first-child {
+            border-top: 1px solid var(--rule);
+        }
+
+        .slot__time {
+            font-family: var(--mono);
+            font-size: .7rem;
+            letter-spacing: .02em;
+            color: var(--grey);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .slot__name {
+            font-weight: 800;
+            font-size: 1.06rem;
+            letter-spacing: -.01em;
+            text-transform: uppercase;
+            line-height: 1.15;
+        }
+
+        .empty {
+            padding: 2rem 0;
+            color: var(--grey);
+            font-size: .8rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        /* ── fichas ─────────────────────────────────────────────── */
+        .people {
+            display: flex;
+            flex-direction: column;
+            gap: 2.8rem;
+        }
+
+        .person img {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            background: #f2f2f2;
+            border-top: 1px solid var(--rule);
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .person__txt {
+            padding-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+        }
+
+        .qa {
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .qa:first-of-type {
+            border-top: 1px solid var(--rule);
+        }
+
+        .qa summary {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.15rem 0;
+            min-height: 3rem;
+            list-style: none;
+            font-weight: 800;
+            font-size: 1.02rem;
+            text-transform: uppercase;
+        }
+
+        .qa summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .qa summary::after {
+            content: '';
+            width: 9px;
+            height: 9px;
+            border-right: 1.7px solid var(--ink);
+            border-bottom: 1.7px solid var(--ink);
+            transform: rotate(45deg) translateY(-2px);
+            transition: transform .3s var(--ease);
+        }
+
+        .qa[open] summary::after {
+            transform: rotate(-135deg) translateY(-2px);
+        }
+
+        .qa .body {
+            padding-bottom: 1.25rem;
+        }
+
+        .shots {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: var(--rule);
+        }
+
+        .shots img {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            background: #f2f2f2;
+        }
+
+        .reels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--rule);
+        }
+
+        .reel {
+            position: relative;
+            aspect-ratio: 9/16;
+            overflow: hidden;
+            background: #f2f2f2;
+        }
+
+        .reel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .reel::after {
+            content: '';
+            position: absolute;
+            inset: 50% auto auto 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 8px 0 8px 14px;
+            border-color: transparent transparent transparent #fff;
+            filter: drop-shadow(0 1px 4px rgba(0, 0, 0, .5));
+        }
+
+        .map {
+            width: 100%;
+            aspect-ratio: 4/3;
+            border: 1px solid var(--rule);
+            filter: grayscale(100%) contrast(92%);
+            background: #f2f2f2;
+        }
+
+        .poem {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-style: italic;
+            font-size: 1.02rem;
+            line-height: 1.9;
+            color: var(--grey-dark);
+            white-space: pre-line;
+            border-left: 1px solid var(--rule);
+            padding-left: 1.15rem;
+        }
+
+        /* ── formularios ────────────────────────────────────────── */
+        .campo {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+            margin-bottom: 1.35rem;
+        }
+
+        .campo>label {
+            font-family: var(--mono);
+            font-size: .64rem;
+            font-weight: 500;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--grey);
+        }
+
+        .campo>label span {
+            color: var(--ink);
+        }
+
+        .campo input[type="text"],
+        .campo input[type="email"],
+        .campo input[type="tel"],
+        .campo input[type="date"],
+        .campo select,
+        .campo textarea {
+            width: 100%;
+            /* 16px como mínimo: por debajo, el iPhone hace zoom al enfocar. */
+            font-size: 1rem;
+            font-family: var(--sans);
+            color: var(--ink);
+            background: var(--paper);
+            border: 0;
+            border-bottom: 1px solid var(--ink);
+            border-radius: 0;
+            padding: .55rem 0;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .campo textarea {
+            resize: vertical;
+            min-height: 5rem;
+            border: 1px solid var(--rule);
+            padding: .7rem;
+        }
+
+        .campo select {
+            background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+                linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+            background-position: calc(100% - 11px) 1.15rem, calc(100% - 6px) 1.15rem;
+            background-size: 5px 5px, 5px 5px;
+            background-repeat: no-repeat;
+            padding-right: 1.6rem;
+        }
+
+        .opciones {
+            display: flex;
+            gap: .4rem;
+            flex-wrap: wrap;
+        }
+
+        .opcion {
+            flex: 1 1 0;
+            min-width: 4.6rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .4rem;
+            min-height: 2.9rem;
+            padding: .4rem .5rem;
+            border: 1px solid var(--rule);
+            border-radius: 999px;
+            font-size: clamp(.68rem, 3vw, .78rem);
+            font-weight: 500;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .opcion:has(input:checked) {
+            border-color: var(--ink);
+            background: var(--ink);
+            color: var(--paper);
+            font-weight: 600;
+        }
+
+        /* Respaldo donde :has() no exista: el punto del radio se sigue viendo. */
+        .opcion input {
+            accent-color: currentColor;
+            margin: 0;
+        }
+
+        .consent {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: .7rem;
+            align-items: start;
+            margin: 1.6rem 0;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--rule);
+        }
+
+        .consent input {
+            width: 1.15rem;
+            height: 1.15rem;
+            margin-top: .15rem;
+            accent-color: var(--ink);
+        }
+
+        .consent label {
+            font-size: .8rem;
+            line-height: 1.6;
+            color: var(--grey-dark);
+        }
+
+        .consent a {
+            color: var(--ink);
+            text-decoration: underline;
+            text-underline-offset: .15em;
+        }
+
+        /* Trampa para robots: fuera de la pantalla, no oculta del todo, porque
+           algunos programas de spam saltan lo que lleva display:none. */
+        .trampa {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .aviso {
+            display: none;
+            margin: 1.2rem 0;
+            padding: .95rem 1.05rem;
+            font-size: .86rem;
+            line-height: 1.6;
+            border-left: 2px solid var(--ink);
+            background: #f6f6f6;
+        }
+
+        .aviso.visible {
+            display: block;
+        }
+
+        .aviso.error {
+            border-left-color: #b3261e;
+            background: #fdf0ef;
+        }
+
+        .aviso a {
+            color: var(--ink);
+            text-decoration: underline;
+        }
+
+        .aviso__wa {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 2.9rem;
+            margin-top: .9rem;
+            border-radius: 999px;
+            background: var(--ink);
+            color: var(--paper);
+            font-size: .78rem;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            text-decoration: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::after,
+            *::before {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="top">
+        <span class="top__mark">Itaca Jiu Jitsu</span>
+        <span class="top__side">Logroño</span>
+    </header>
+
+    <main>
+    <section class="hero">
+        <div class="hero__media" id="heroMedia">
+            <img src="images/Itaca/Portada-movil.jpg" alt="Entrenamiento en Itaca Jiu Jitsu" id="heroPoster">
+        </div>
+        <div class="hero__txt">
+            <span class="eyebrow">Brazilian Jiu Jitsu · Logroño</span>
+            <h1 class="display">Itaca<br>Jiu Jitsu</h1>
+            <p class="caps">Técnica bien explicada.<br>Entrenamiento exigente.<br>Aquí se empieza de cero.</p>
+        </div>
+    </section>
+
+    <nav class="menu">
+        <button class="row" data-panel="horarios">
+            <span class="row__n">01</span>
+            <span class="row__name">Horarios</span>
+            <span class="row__go"></span>
+            <span class="row__desc">Seis días a la semana, de las siete de la mañana a las nueve de la noche</span>
+        </button>
+        <button class="row" data-panel="primer">
+            <span class="row__n">02</span>
+            <span class="row__name">Tu primer día</span>
+            <span class="row__go"></span>
+            <span class="row__desc">Qué te pones, qué pasa en la clase y por qué no hace falta experiencia</span>
+        </button>
+        <button class="row" data-panel="fotos">
+            <span class="row__n">03</span>
+            <span class="row__name">El gimnasio</span>
+            <span class="row__go"></span>
+            <span class="row__desc">Tatami, vestuarios y el sitio donde vas a entrenar</span>
+        </button>
+        <button class="row" data-panel="videos">
+            <span class="row__n">04</span>
+            <span class="row__name">En movimiento</span>
+            <span class="row__go"></span>
+            <span class="row__desc">Entrenamientos reales grabados en el tatami</span>
+        </button>
+        <button class="row" data-panel="instructores">
+            <span class="row__n">05</span>
+            <span class="row__name">Instructores</span>
+            <span class="row__go"></span>
+            <span class="row__desc">Quién da las clases y de dónde viene cada uno</span>
+        </button>
+        <button class="row" data-panel="ninos">
+            <span class="row__n">06</span>
+            <span class="row__name">Niños</span>
+            <span class="row__go"></span>
+            <span class="row__desc">De cuatro a diez años, en grupos reducidos y separados por edad</span>
+        </button>
+        <button class="row" data-panel="filosofia">
+            <span class="row__n">07</span>
+            <span class="row__name">Filosofía</span>
+            <span class="row__go"></span>
+            <span class="row__desc">Por qué la escuela se llama Ítaca</span>
+        </button>
+        <button class="row" data-panel="donde">
+            <span class="row__n">08</span>
+            <span class="row__name">Dónde estamos</span>
+            <span class="row__go"></span>
+            <span class="row__desc">Polígono Cantabria, calle Barriguelo 4 · Logroño</span>
+        </button>
+    </nav>
+    </main>
+
+    <footer class="foot">
+        <span class="eyebrow">Contacto</span>
+        <a href="tel:+34664784121">664 78 41 21</a>
+        <a href="mailto:itacajiujitsu@gmail.com">itacajiujitsu@gmail.com</a>
+        <button class="foot__link" data-panel="contacto" type="button">Escribir por el formulario</button>
+        <span class="foot__legal">
+            <a href="legal/privacidad.html">Privacidad</a> ·
+            <a href="legal/terminos.html">Términos</a> ·
+            <a href="index.html?full=1">Ver versión completa</a>
+        </span>
+    </footer>
+
+    <div class="dock">
+        <a class="pill pill--ghost" href="tel:+34664784121" aria-label="Llamar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+        </a>
+        <button class="pill" data-panel="prueba">Clase de prueba</button>
+        <a class="pill pill--ghost" href="https://wa.me/34664784121" target="_blank" rel="noopener"
+            aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.34 4.95L2 22l5.23-1.37a9.9 9.9 0 0 0 4.8 1.23c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2zm0 1.68c2.21 0 4.29.86 5.85 2.43a8.23 8.23 0 0 1 2.43 5.85c0 4.57-3.72 8.28-8.29 8.28a8.27 8.27 0 0 1-4.22-1.16l-.3-.18-3.1.81.83-3.03-.2-.31a8.24 8.24 0 0 1-1.27-4.41c0-4.57 3.72-8.28 8.27-8.28zm-2.4 4.4c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.13 3.64.58.25 1.03.4 1.38.51.58.19 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.54.12-.16.24-.62.79-.76.95-.14.16-.28.18-.52.06-.24-.12-1.03-.38-1.96-1.21-.72-.65-1.21-1.45-1.35-1.69-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.47-.39-.4-.54-.41h-.46z" />
+            </svg>
+        </a>
+    </div>
+
+    <!-- ── PANELES ─────────────────────────────────────────────── -->
+    <section class="panel" id="p-horarios" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span
+                class="panel__title">Horarios</span></div>
+        <div class="panel__body">
+            <span class="eyebrow">01 — Cuándo se entrena</span>
+            <h2 class="display display--sm" style="margin-top:.5rem">Horarios<br>de clase</h2>
+            <p class="caps panel__lede">Se abre en el día de hoy</p>
+            <div class="days" id="days" role="tablist"></div>
+            <div id="slots"></div>
+        </div>
+    </section>
+
+    <section class="panel" id="p-primer" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span class="panel__title">Tu
+                primer día</span></div>
+        <div class="panel__body">
+            <span class="eyebrow">02 — Antes de venir</span>
+            <h2 class="display display--sm" style="margin-top:.5rem">Tu primer<br>día</h2>
+            <p class="prose panel__lede">Todo el mundo ha tenido un primer día. Esto es lo que pasa en el tuyo, para que
+                vengas sabiendo a qué atenerte.</p>
+            <details class="qa" open>
+                <summary>¿Necesito experiencia?</summary>
+                <div class="body">
+                    <p class="prose">Ninguna. Las clases de iniciación y fundamentos están pensadas exactamente para
+                        quien nunca ha pisado un tatami. Nadie espera que sepas nada.</p>
+                </div>
+            </details>
+            <details class="qa">
+                <summary>¿Hay que estar en forma?</summary>
+                <div class="body">
+                    <p class="prose">No. Se entrena a tu ritmo y paras cuando lo necesitas. La forma física llega
+                        entrenando, no al revés.</p>
+                </div>
+            </details>
+            <details class="qa">
+                <summary>¿Qué me pongo?</summary>
+                <div class="body">
+                    <p class="prose">Ropa deportiva cómoda y ajustada, chanclas para andar fuera del tatami y una
+                        botella de agua. Para tu primera clase no necesitas kimono.</p>
+                </div>
+            </details>
+            <details class="qa">
+                <summary>¿Me van a hacer daño?</summary>
+                <div class="body">
+                    <p class="prose">No. En las clases de iniciación se trabaja técnica y se va por pasos. Aquí nadie
+                        tiene que demostrar nada a costa del que acaba de llegar.</p>
+                </div>
+            </details>
+            <details class="qa">
+                <summary>¿Cuánto dura?</summary>
+                <div class="body">
+                    <p class="prose">Alrededor de una hora. Ven diez minutos antes para cambiarte con calma.</p>
+                </div>
+            </details>
+            <details class="qa">
+                <summary>Dos normas del tatami</summary>
+                <div class="body">
+                    <p class="prose">Uñas de manos y pies cortas, y pies limpios: se entrena descalzo y muy cerca de los
+                        demás.</p>
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <section class="panel" id="p-fotos" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span class="panel__title">El
+                gimnasio</span></div>
+        <div class="panel__body" style="padding-left:0;padding-right:0">
+            <div style="padding:0 var(--gutter)">
+                <span class="eyebrow">03 — Las instalaciones</span>
+                <h2 class="display display--sm" style="margin-top:.5rem">Somos<br>Itaca</h2>
+                <p class="prose panel__lede">Polígono Cantabria. Tatami de competición, vestuarios y sitio para entrenar
+                    en serio.</p>
+            </div>
+            <div class="shots" id="shots"></div>
+        </div>
+    </section>
+
+    <section class="panel" id="p-videos" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span class="panel__title">En
+                movimiento</span></div>
+        <div class="panel__body" style="padding-left:0;padding-right:0">
+            <div style="padding:0 var(--gutter)">
+                <span class="eyebrow">04 — Vídeos</span>
+                <h2 class="display display--sm" style="margin-top:.5rem">Itaca en<br>movimiento</h2>
+                <p class="prose panel__lede">Entrenamientos reales, grabados en el tatami.</p>
+            </div>
+            <div class="reels">
+                <div class="reel"><img src="images/posters/Boris_instagram.webp" alt="" loading="lazy"></div>
+                <div class="reel"><img src="images/posters/Cipri_instagram.webp" alt="" loading="lazy"></div>
+                <div class="reel"><img src="images/posters/Marta_instagram.webp" alt="" loading="lazy"></div>
+                <div class="reel"><img src="images/posters/Itaca_gi_instagram.webp" alt="" loading="lazy"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" id="p-instructores" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span
+                class="panel__title">Instructores</span></div>
+        <div class="panel__body">
+            <span class="eyebrow">05 — Quién enseña</span>
+            <h2 class="display display--sm" style="margin-top:.5rem;margin-bottom:2rem">Instructores</h2>
+            <div class="people">
+                <article class="person">
+                    <img src="images/Profesores/Cipri.webp" alt="Cipri" loading="lazy">
+                    <div class="person__txt">
+                        <span class="eyebrow">Head coach · Cinturón negro</span>
+                        <h3 class="display display--sm">Cipri</h3>
+                        <p class="prose">Especialista en guardia moderna y transiciones. Múltiple campeón nacional con
+                            10 años de experiencia.</p>
+                    </div>
+                </article>
+                <article class="person">
+                    <img src="images/Profesores/Boris.webp" alt="Boris" loading="lazy">
+                    <div class="person__txt">
+                        <span class="eyebrow">Instructor · Cinturón morado</span>
+                        <h3 class="display display--sm">Boris</h3>
+                        <p class="prose">Muy técnico y muy estructurado: explica el porqué de cada movimiento. Formado
+                            en Itaca desde cero.</p>
+                    </div>
+                </article>
+                <article class="person">
+                    <img src="images/Profesores/Marta_Pozo.webp" alt="Marta Pozo" loading="lazy">
+                    <div class="person__txt">
+                        <span class="eyebrow">Instructora · Cinturón morado</span>
+                        <h3 class="display display--sm">Marta Pozo</h3>
+                        <p class="prose">Competidora destacada de la escuela y profesora de profesión: da clase en un
+                            instituto y en el tatami.</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" id="p-ninos" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span
+                class="panel__title">Niños</span></div>
+        <div class="panel__body">
+            <span class="eyebrow">06 — De 4 a 10 años</span>
+            <h2 class="display display--sm" style="margin-top:.5rem">Jiu jitsu<br>para niños</h2>
+            <p class="prose panel__lede">Empezamos por lo que preocupa a un padre o una madre, no por la técnica.</p>
+            <p class="prose">El jiu jitsu infantil no va de pegar. No hay golpes: se trabaja el control, el equilibrio y
+                la manera de salir de una situación incómoda sin hacer daño a nadie.</p>
+            <p class="prose">Lo que más se nota fuera del tatami es otra cosa: la confianza de saber que puede con algo
+                difícil y el respeto por el compañero con el que acaba de entrenar.</p>
+            <div style="margin-top:2.2rem">
+                <div class="slot"><span class="slot__time">4–6 años</span><span class="slot__name">Jueves · 16:45</span>
+                </div>
+                <div class="slot"><span class="slot__time">7–10 años</span><span class="slot__name">Martes y viernes ·
+                        16:45</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" id="p-filosofia" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span
+                class="panel__title">Filosofía</span></div>
+        <div class="panel__body">
+            <span class="eyebrow">07 — Por qué Ítaca</span>
+            <h2 class="display display--sm" style="margin-top:.5rem">Camino<br>a Itaca</h2>
+            <p class="prose panel__lede">Itaca no es solo un tatami: es una escuela de perfeccionamiento. Aquí la
+                técnica prevalece sobre la fuerza.</p>
+            <span class="eyebrow">Konstantino Kavafis</span>
+            <p class="poem" style="margin-top:1rem">Cuando emprendas tu viaje a Ítaca
+                pide que el camino sea largo,
+                lleno de aventuras, lleno de experiencias.
+
+                Ten siempre a Ítaca en tu mente.
+                Llegar allí es tu destino.
+                Mas no apresures nunca el viaje.
+
+                Ítaca te brindó tan hermoso viaje.
+                Sin ella no habrías emprendido el camino.</p>
+        </div>
+    </section>
+
+    <section class="panel" id="p-donde" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span
+                class="panel__title">Dónde estamos</span></div>
+        <div class="panel__body">
+            <span class="eyebrow">08 — Cómo llegar</span>
+            <h2 class="display display--sm" style="margin-top:.5rem">Ubicación</h2>
+            <p class="caps panel__lede">Polígono Cantabria<br>C. Barriguelo 4<br>26009 Logroño</p>
+            <iframe class="map" id="mapa"
+                data-src="https://maps.google.com/maps?q=ITACA%20JIU%20JITSU%2C%20Pol%C3%ADgono%20Cantabria%2C%20C.%20Barriguelo%2C%204%2C%2026009%20Logro%C3%B1o&amp;z=14&amp;output=embed"
+                loading="lazy" title="Mapa"></iframe>
+            <a class="pill" style="margin-top:1.6rem"
+                href="https://maps.google.com/?q=Pol%C3%ADgono+Cantabria,+C.+Barriguelo+4,+26009+Logro%C3%B1o"
+                target="_blank" rel="noopener">Abrir en Maps</a>
+        </div>
+    </section>
+
+        <section class="panel" id="p-prueba" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span
+                class="panel__title">Clase de prueba</span></div>
+        <div class="panel__body">
+            <span class="eyebrow">Primera clase · Gratis</span>
+            <h2 class="display display--sm" style="margin-top:.5rem">Ven a<br>probar</h2>
+            <p class="prose panel__lede">Dinos cuándo te viene bien y te confirmamos la plaza. La primera clase no tiene coste.</p>
+
+            <form id="formPrueba" novalidate>
+                <div class="campo">
+                    <label for="pNombre">Nombre y apellidos <span>*</span></label>
+                    <input type="text" id="pNombre" required autocomplete="name">
+                </div>
+                <div class="campo">
+                    <label for="pEmail">Email <span>*</span></label>
+                    <input type="email" id="pEmail" required autocomplete="email">
+                </div>
+                <div class="campo">
+                    <label for="pTelefono">Teléfono <span>*</span></label>
+                    <input type="tel" id="pTelefono" autocomplete="tel">
+                </div>
+
+                <div class="campo">
+                    <label>¿Para quién es? <span>*</span></label>
+                    <div class="opciones">
+                        <label class="opcion"><input type="radio" name="pCategoria" value="adulto" checked> Adulto</label>
+                        <label class="opcion"><input type="radio" name="pCategoria" value="nino46"> 4-6 años</label>
+                        <label class="opcion"><input type="radio" name="pCategoria" value="nino710"> 7-10 años</label>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label for="pFecha">Día que quieres venir <span>*</span></label>
+                    <input type="date" id="pFecha" required>
+                </div>
+
+                <div class="campo">
+                    <label for="pClase">Clase <span>*</span></label>
+                    <select id="pClase" required>
+                        <option value="">Elige primero el día</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>¿Cómo te confirmamos la plaza? <span>*</span></label>
+                    <div class="opciones">
+                        <label class="opcion"><input type="radio" name="pCanal" value="WhatsApp" data-needs-phone="1" checked> WhatsApp</label>
+                        <label class="opcion"><input type="radio" name="pCanal" value="Llamada" data-needs-phone="1"> Llamada</label>
+                        <label class="opcion"><input type="radio" name="pCanal" value="Email"> Email</label>
+                    </div>
+                </div>
+
+                <input type="checkbox" name="botcheck" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+                <div class="consent">
+                    <input type="checkbox" id="pConsent" required>
+                    <label for="pConsent">He leído y acepto la <a href="legal/privacidad.html" target="_blank"
+                            rel="noopener">política de privacidad</a>. Si la solicitud es para un menor, confirmo que
+                        soy su padre, madre o tutor legal y autorizo el tratamiento de sus datos para gestionar la
+                        clase de prueba.</label>
+                </div>
+
+                <div class="aviso" id="avisoPrueba" role="status" aria-live="polite"></div>
+                <button class="pill" style="width:100%" type="submit" id="btnPrueba">Solicitar clase</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="panel" id="p-contacto" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span
+                class="panel__title">Contacto</span></div>
+        <div class="panel__body">
+            <span class="eyebrow">Escríbenos</span>
+            <h2 class="display display--sm" style="margin-top:.5rem">Contacto</h2>
+            <p class="prose panel__lede">Cuéntanos qué necesitas saber y te contestamos por donde prefieras.</p>
+
+            <form id="formContacto" novalidate>
+                <div class="campo">
+                    <label for="cNombre">Nombre y apellidos <span>*</span></label>
+                    <input type="text" id="cNombre" required autocomplete="name">
+                </div>
+                <div class="campo">
+                    <label for="cEmail">Email <span>*</span></label>
+                    <input type="email" id="cEmail" required autocomplete="email">
+                </div>
+                <div class="campo">
+                    <label for="cTelefono">Teléfono <span>*</span></label>
+                    <input type="tel" id="cTelefono" autocomplete="tel">
+                </div>
+                <div class="campo">
+                    <label for="cMensaje">Mensaje <span>*</span></label>
+                    <textarea id="cMensaje" rows="4" required></textarea>
+                </div>
+
+                <div class="campo">
+                    <label>¿Cómo prefieres que te contestemos? <span>*</span></label>
+                    <div class="opciones">
+                        <label class="opcion"><input type="radio" name="cCanal" value="WhatsApp" data-needs-phone="1" checked> WhatsApp</label>
+                        <label class="opcion"><input type="radio" name="cCanal" value="Llamada" data-needs-phone="1"> Llamada</label>
+                        <label class="opcion"><input type="radio" name="cCanal" value="Email"> Email</label>
+                    </div>
+                </div>
+
+                <input type="checkbox" name="botcheck" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+                <div class="consent">
+                    <input type="checkbox" id="cConsent" required>
+                    <label for="cConsent">He leído y acepto la <a href="legal/privacidad.html" target="_blank"
+                            rel="noopener">política de privacidad</a>. Usaremos tus datos únicamente para
+                        responderte.</label>
+                </div>
+
+                <div class="aviso" id="avisoContacto" role="status" aria-live="polite"></div>
+                <button class="pill" style="width:100%" type="submit" id="btnContacto">Enviar mensaje</button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        (function () {
+            'use strict';
+
+            /* Portada: el vídeo entra DESPUÉS de pintar la página, y no entra en
+               absoluto con ahorro de datos o conexión lenta. La foto pesa 42 KB. */
+            function cargarVideo() {
+                var c = navigator.connection || {};
+                if (c.saveData) return;
+                if (/^(slow-)?2g$/.test(c.effectiveType || '')) return;
+                var v = document.createElement('video');
+                v.muted = true; v.defaultMuted = true;
+                ['autoplay', 'loop', 'playsinline', 'muted'].forEach(function (a) { v.setAttribute(a, ''); });
+                v.poster = 'images/Itaca/Portada-movil.jpg';
+                v.src = 'videos/Itaca_Hero_Mobile.mp4';
+                v.addEventListener('canplay', function () {
+                    var p = document.getElementById('heroPoster');
+                    if (p) p.remove();
+                }, { once: true });
+                document.getElementById('heroMedia').appendChild(v);
+                v.play().catch(function () { });
+            }
+            if (document.readyState === 'complete') setTimeout(cargarVideo, 200);
+            else window.addEventListener('load', function () { setTimeout(cargarVideo, 200); });
+
+            /* Paneles */
+            var abierto = null;
+
+            function abrir(nombre, empujarHistorial) {
+                var el = document.getElementById('p-' + nombre);
+                if (!el) return;
+                if (abierto) abierto.classList.remove('open');
+                el.classList.add('open');
+                el.setAttribute('aria-hidden', 'false');
+                el.querySelector('.panel__body').scrollTop = 0;
+                document.body.style.overflow = 'hidden';
+                document.body.classList.add('panel-abierto');
+                abierto = el;
+                if (nombre === 'donde') {
+                    var m = document.getElementById('mapa');
+                    if (m && !m.src) m.src = m.dataset.src;
+                }
+                /* El botón atrás del móvil cierra el panel en vez de salir. */
+                if (empujarHistorial !== false) history.pushState({ panel: nombre }, '', '#' + nombre);
+            }
+
+            function cerrar() {
+                if (!abierto) return;
+                abierto.classList.remove('open');
+                abierto.setAttribute('aria-hidden', 'true');
+                abierto = null;
+                document.body.style.overflow = '';
+                document.body.classList.remove('panel-abierto');
+            }
+
+            document.querySelectorAll('[data-panel]').forEach(function (b) {
+                b.addEventListener('click', function () { abrir(b.dataset.panel); });
+            });
+            document.querySelectorAll('.panel__back').forEach(function (b) {
+                b.addEventListener('click', function () { history.back(); });
+            });
+            window.addEventListener('popstate', function (e) {
+                if (e.state && e.state.panel) abrir(e.state.panel, false); else cerrar();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && abierto) history.back();
+            });
+
+            /* Horario — los datos vienen de js/itaca-horario.js */
+            var elDias = document.getElementById('days');
+            var elSlots = document.getElementById('slots');
+
+            function pintarDia(i) {
+                var clases = ItacaHorario.clasesDe(ItacaHorario.DIAS[i]);
+                elSlots.innerHTML = clases.length
+                    ? clases.map(function (c) {
+                        return '<div class="slot"><span class="slot__time">' + c.hora +
+                            '</span><span class="slot__name">' + c.nombre + '</span></div>';
+                    }).join('')
+                    : '<p class="empty">Ese día no hay clases</p>';
+                Array.prototype.forEach.call(elDias.children, function (b, j) {
+                    b.setAttribute('aria-selected', String(j === i));
+                });
+            }
+
+            ItacaHorario.DIAS.forEach(function (d, i) {
+                var b = document.createElement('button');
+                b.className = 'day'; b.type = 'button';
+                b.setAttribute('role', 'tab');
+                b.textContent = d;
+                b.addEventListener('click', function () { pintarDia(i); });
+                elDias.appendChild(b);
+            });
+
+            pintarDia(ItacaHorario.indiceHoy());
+
+            /* ── Formularios ──────────────────────────────────────────────
+               El envío, la clave y la copia en la hoja están en
+               js/itaca-formularios.js, compartido con la web de ordenador. */
+
+            function avisar(caja) {
+                return function (tipo, html) {
+                    if (!tipo) { caja.className = 'aviso'; caja.innerHTML = ''; return; }
+                    caja.className = 'aviso visible' + (tipo === 'error' ? ' error' : '');
+                    caja.innerHTML = html;
+                };
+            }
+
+            function botonWhatsApp(texto, canal) {
+                return '<a class="aviso__wa" href="' + Itaca.enlaceWhatsApp(texto) +
+                    '" target="_blank" rel="noopener">' +
+                    (canal === 'WhatsApp' ? 'Adelanta la conversación' : '¿Mejor por WhatsApp?') + '</a>';
+            }
+
+            var val = function (id) { return (document.getElementById(id).value || '').trim(); };
+
+            /* Si piden WhatsApp o llamada, el teléfono deja de ser opcional. */
+            Itaca.vincularCanalConTelefono('pCanal', document.getElementById('pTelefono'),
+                document.querySelector('label[for="pTelefono"]'));
+            Itaca.vincularCanalConTelefono('cCanal', document.getElementById('cTelefono'),
+                document.querySelector('label[for="cTelefono"]'));
+
+            /* ── Clase de prueba ── */
+            var pFecha = document.getElementById('pFecha');
+            var pClase = document.getElementById('pClase');
+
+            /* No se puede reservar para ayer. */
+            pFecha.min = new Date().toISOString().slice(0, 10);
+
+            function categoriaElegida() {
+                var m = document.querySelector('input[name="pCategoria"]:checked');
+                return m ? m.value : 'adulto';
+            }
+
+            function refrescarClases() {
+                var opciones = pFecha.value
+                    ? ItacaHorario.clasesParaReserva(pFecha.value, categoriaElegida())
+                    : [];
+                if (!pFecha.value) {
+                    pClase.innerHTML = '<option value="">Elige primero el día</option>';
+                } else if (!opciones.length) {
+                    pClase.innerHTML = '<option value="">Ese día no hay clases para esa edad</option>';
+                } else {
+                    pClase.innerHTML = opciones.map(function (o) {
+                        return '<option value="' + o + '">' + o + '</option>';
+                    }).join('');
+                }
+            }
+
+            pFecha.addEventListener('change', refrescarClases);
+            document.querySelectorAll('input[name="pCategoria"]').forEach(function (r) {
+                r.addEventListener('change', refrescarClases);
+            });
+            refrescarClases();
+
+            var formPrueba = document.getElementById('formPrueba');
+            var pintaPrueba = avisar(document.getElementById('avisoPrueba'));
+
+            formPrueba.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (!pClase.value) {
+                    pintaPrueba('error', 'Elige un día en el que haya clase para esa edad.');
+                    return;
+                }
+                var nombre = val('pNombre'), telefono = val('pTelefono');
+                var canal = Itaca.canalElegido('pCanal');
+                var cat = { adulto: 'Adulto', nino46: 'Niño (4 a 6 años)', nino710: 'Niño (7 a 10 años)' }[categoriaElegida()];
+                var responder = Itaca.enlaceRespuesta(telefono,
+                    'Hola ' + nombre + ', soy de Itaca Jiu Jitsu. Te confirmo tu clase de prueba del ' +
+                    pFecha.value + ' (' + pClase.value + '). ¡Nos vemos!');
+
+                var datos = {
+                    Nombre: nombre,
+                    Email: val('pEmail'),
+                    'Teléfono': telefono || '(no indicado)',
+                    'Contestar por': canal,
+                    'Categoría': cat,
+                    Fecha: pFecha.value,
+                    Clase: pClase.value,
+                    Consentimiento: 'Aceptada la política de privacidad. En caso de menor, consentimiento del tutor legal.'
+                };
+                if (responder) datos['Responder por WhatsApp'] = responder;
+
+                Itaca.enviar({
+                    form: formPrueba,
+                    boton: document.getElementById('btnPrueba'),
+                    pintar: pintaPrueba,
+                    tipo: 'Clase de prueba',
+                    asunto: '[' + canal + '] Reserva de clase de prueba: ' + nombre,
+                    textoBoton: 'Solicitar clase',
+                    datos: datos,
+                    whatsapp: 'Hola, soy ' + nombre + '. He pedido una clase de prueba por la web.',
+                    cuerpoCorreo: 'Hola Itaca Jiu Jitsu,\n\nMe gustaría asistir a una clase de prueba.\n\n' +
+                        'Nombre: ' + nombre + '\nFecha: ' + pFecha.value + '\nClase: ' + pClase.value,
+                    exito: '<strong>Solicitud enviada.</strong> Te confirmamos la plaza ' +
+                        Itaca.textoCanal(canal) + ' antes de la clase.' +
+                        botonWhatsApp('Hola, soy ' + nombre + '. He pedido una clase de prueba por la web.', canal)
+                }).then(function (bien) { if (bien) refrescarClases(); });
+            });
+
+            /* ── Contacto ── */
+            var formContacto = document.getElementById('formContacto');
+            var pintaContacto = avisar(document.getElementById('avisoContacto'));
+
+            formContacto.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var nombre = val('cNombre'), telefono = val('cTelefono'), mensaje = val('cMensaje');
+                var canal = Itaca.canalElegido('cCanal');
+                var responder = Itaca.enlaceRespuesta(telefono,
+                    'Hola ' + nombre + ', soy de Itaca Jiu Jitsu. Te escribo por tu consulta desde la web.');
+
+                var datos = {
+                    Nombre: nombre,
+                    Email: val('cEmail'),
+                    'Teléfono': telefono || '(no indicado)',
+                    'Contestar por': canal,
+                    Mensaje: mensaje,
+                    Consentimiento: 'Aceptada la política de privacidad'
+                };
+                if (responder) datos['Responder por WhatsApp'] = responder;
+
+                Itaca.enviar({
+                    form: formContacto,
+                    boton: document.getElementById('btnContacto'),
+                    pintar: pintaContacto,
+                    tipo: 'Contacto',
+                    asunto: '[' + canal + '] Consulta desde la web: ' + nombre,
+                    textoBoton: 'Enviar mensaje',
+                    datos: datos,
+                    whatsapp: 'Hola, soy ' + nombre + '. ' + mensaje,
+                    cuerpoCorreo: 'Hola Itaca Jiu Jitsu,\n\n' + mensaje + '\n\n' + nombre,
+                    exito: '<strong>Mensaje enviado.</strong> Te contestamos ' + Itaca.textoCanal(canal) +
+                        ', normalmente en menos de 24 horas.' +
+                        botonWhatsApp('Hola, soy ' + nombre + '. ' + mensaje, canal)
+                });
+            });
+
+            /* Fotos */
+            var FOTOS = ['Gym1', 'Gym2', 'Gym3', 'Gym4', 'Gym5', 'Gym6', 'Gym7'];
+            document.getElementById('shots').innerHTML = FOTOS.map(function (f) {
+                return '<img src="images/Itaca/' + f + '.webp" alt="" loading="lazy" decoding="async">';
+            }).join('');
+
+            var inicial = location.hash.replace('#', '');
+            if (inicial && document.getElementById('p-' + inicial)) abrir(inicial, false);
+        })();
+    </script>
+</body>
+
+</html>

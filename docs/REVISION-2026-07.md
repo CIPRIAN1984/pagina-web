@@ -1,5 +1,44 @@
 # Revisión de la web — julio de 2026
 
+> ## ✅ Estado: los cuatro primeros puntos ya están arreglados
+>
+> Arreglado y comprobado en navegador (escritorio y móvil) el 29 de julio de 2026:
+>
+> - **nº 1 Formularios** — ya no usan `mailto:`. Envían por Web3Forms, con confirmación
+>   visible y, si algo falla, el correo y el teléfono del gimnasio.
+>   ⚠️ **Falta pegar la clave de acceso**: hasta entonces siguen abriendo el programa de correo.
+> - **nº 2 Consentimiento y textos legales** — casilla obligatoria en los dos formularios,
+>   aviso de tutor legal en el de menores y política de privacidad completa.
+>   ⚠️ **Falta la razón social y el NIF** para completar la identificación del responsable.
+> - **nº 3 Rueda del ratón** — el zoom se abre con un clic. La rueda vuelve a bajar la página.
+> - **nº 4 Vídeo de portada** — `muted` y `poster`. ⚠️ Falta la imagen `images/Itaca/Portada.jpg`.
+> - **nº 5 Contenido invisible en móvil** — fichas de instructores, etiquetas del carrusel y
+>   botón de sonido de los vídeos ya se ven sin ratón; los vídeos se reproducen al tocarlos.
+> - **nº 7 Fechas pasadas** — resuelto de paso, era una línea.
+>
+> ### Además, tras mirar artofjiujitsu.com (29 de julio)
+>
+> Añadido lo que allí funciona y aquí faltaba, adaptado a Ítaca:
+>
+> - **Leyenda del horario** — qué es Gi, No Gi y Open Mat, y a quién va dirigida cada clase.
+> - **Sección "Tu primer día"** (`#firstday`) — las seis preguntas que frenan a un principiante.
+> - **Sección "Jiu Jitsu para niños"** (`#kids`) — escrita para un padre, no para un practicante.
+>
+> ⚠️ **Esos textos son un borrador escrito por la IA**, no información que diera Cipri.
+> Pendiente de que los confirme o los corrija.
+>
+> Descartado por decisión suya: plataforma de vídeo de pago, masterclass y tienda.
+> Queda pendiente decidir si la clase de prueba es gratuita y decirlo en el botón.
+>
+> Además aparecieron y se arreglaron dos fallos que esta revisión no había detectado:
+>
+> - **En el móvil no se podía enviar la clase de prueba**: el formulario era más alto que la
+>   pantalla y el botón quedaba fuera, sin posibilidad de desplazarse. Ahora el modal se desplaza.
+> - **El fondo del zoom no recibía clics** (`pointer-events: none`), así que no se podía cerrar
+>   pulsando fuera. Ahora se cierra con la X, con un clic fuera o con `Escape`.
+>
+> Lo de abajo se conserva como registro de la revisión original.
+
 Revisión completa de `index.html` (2.800 líneas), abierta en un navegador de verdad
 (Chromium) en escritorio (1440 px) y en móvil (390 px).
 

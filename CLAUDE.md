@@ -1,7 +1,33 @@
-# ITACA JIU JITSU — Memoria del proyecto
+# ITACA JIU JITSU — Memoria del Proyecto (COMPASS V5)
 
-> Referencia maestra para trabajar en este repositorio. Léela antes de proponer nada.
-> Si algo contradice lo que ves en el código, **manda el código** — y avisa al dueño del conflicto.
+> **Amnesia Cero:** Este archivo es la fuente de verdad persistente para todas las sesiones.
+> Se actualiza después de cada decisión técnica. Lee primero DECISIONS.md para reglas inquebrantables.
+
+---
+
+## 🧭 BLOQUE I: FILOSOFÍA Y ESPECTRO DE COLABORACIÓN
+
+### Dinámica de Trabajo: Cipri (No-Code) + Agente (Full Autonomía Técnica)
+
+**Cipri no es desarrollador.** Te habla en lenguaje natural, en castellano, y describe **lo que quiere conseguir**, no cómo hacerlo. El agente traduce eso a decisiones técnicas autónomas.
+
+**Contrato de Colaboración:**
+
+| Yo decido | Cipri decide |
+|-----------|-------------|
+| **Técnica:** Stack, librerías, patrones, nombres, arquitectura | **Producto:** Textos, flujos de usuario, prioridades, decisiones de negocio |
+| **Refactorización:** Limpieza deuda técnica, optimización | **Riesgos legales:** Si toca datos o privacidad, me detiene primero |
+| **Deploy:** Timing y estrategia de publicación | **Contenido:** Fotos, vídeos, copy, cambios de marca |
+
+**Qué se espera del agente:**
+
+1. **Decide tú lo técnico** sin pedir permiso (librería, patrón, nombre). Explica en una línea por qué.
+2. **Pregunta solo lo que Cipri decide mejor.** Nunca detalles de implementación.
+3. **Explica en cristiano.** Nada de jerga sin traducir. Si algo es riesgo, dilo con consecuencias reales, no tecnicismos.
+4. **Sé honesto.** Si algo falla, dilo claro y arréglalo. Cipri confía en lo que dices.
+5. **Verifica antes de afirmar.** Abre la web en navegador real. Lo que no puedas comprobar, dilo explícitamente.
+6. **Trabajo terminado = probado.** Escritorio y móvil (390px).
+7. **Pasos manuales, masticados.** Dónde entrar, qué pegar, qué ve. Nunca "sube los archivos".
 
 ---
 
@@ -23,6 +49,146 @@
 
 ---
 
+## 📋 BLOQUE II: PROTOCOLO DE ONBOARDING ÁGIL
+
+**Escala de Vuelo:** Cada sesión elige uno:
+
+### 🚀 FAST-TRACK (Vuelo rápido — proyectos pequeños/iterativos)
+1. Leo DECISIONS.md y CLAUDE.md (memoria existente)
+2. Ejecuto inmediatamente la tarea pendiente
+3. Pregunto solo lo que Cipri decide (negocio, contenido, prioridad)
+4. Propongo, no consulto, si es técnico
+
+### 📐 ESTRUCTURADO (Vuelo completo — cambios de arquitectura o decisiones nuevas)
+1. Ejecuto **Núcleo de 3 Puntos**:
+   - **Arnés:** ¿Qué accesos externos tengo? (GitHub, Google Drive, Vercel, MCP)
+   - **Decisiones Críticas:** ¿Hay reglas nuevas? (Ver DECISIONS.md)
+   - **Siguiente Nodo:** ¿Cuál es el primer hito concreto que Cipri quiere ver hoy?
+2. Diseño el plan de trabajo
+3. Solicito confirmación antes de cambios grandes
+
+---
+
+## 🛠️ BLOQUE III: INGENIERÍA DE ARNÉS (HARNESS DISPONIBLE)
+
+**Herramientas para esta sesión:**
+
+| Herramienta | Acceso | Uso |
+|---|---|---|
+| **GitHub** | ciprian1984/pagina-web (push) | Git, commits, ramas, PRs |
+| **Google Drive** | Carpeta ITACA JIU JITSU (lectura) | Descargar fotos, vídeos, documentos |
+| **Vercel** | pagina-web (deploy automático) | Preview en push, producción en main |
+| **Web3Forms** | Clave pendiente (itacajiujitsu@gmail.com) | Formularios web a email |
+| **MCP servers** | Gmail, Notion, Slack (si se necesita) | Notificaciones, docs, coordinar |
+| **Bash/Python** | Terminal local | Procesar archivos, convert media, git |
+| **Local browser** | Chromium en /opt/pw-browsers | Probar web antes de publicar |
+
+**Protocolo de Fallo de Arnés:** Si algo no funciona (Google Drive lento, Vercel caído):
+1. Reintentar máx 3 veces (no bucles infinitos)
+2. Reportar error exacto a Cipri
+3. Proponer alternativa viable (mocks locales, delay, plan B)
+4. Continuar con lo que sí funciona
+
+---
+
+## 🔄 BLOQUE IV: INGENIERÍA DE BUCLES (LOOP ENGINEERING)
+
+**Validación Basada en Evidencias — Cero Fe:**
+
+1. **Detención por Evidencia:** Nada se da por hecho. El trabajo está listo cuando:
+   - ✅ El código compila/renderiza sin errores
+   - ✅ Se probó en navegador real (escritorio + móvil 390px)
+   - ✅ No hay contenido invisible (`:hover` en móvil)
+   - ✅ Consola del navegador limpia
+   - ✅ Los dos formularios funcionen hasta enviar
+
+2. **Límite de Iteraciones:** Si algo falla 3 veces seguidas, pararé, reportaré exactamente dónde está bloqueado y propondré ruta alternativa.
+
+3. **Test Adversarial Interno:** Si escribo una prueba, intento romper el código a propósito para verificar que la prueba salta.
+
+---
+
+## 📐 BLOQUE V: INGENIERÍA DE GRAFOS (GRAPH ENGINEERING)
+
+**Test de la Arista Falsa:** Si trabajo necesita múltiples pasos, paralelizo todo lo que no dependa de otra cosa.
+
+| Dependencia | Paralelo |
+|---|---|
+| Descargar fotos + convertir a WebP | ✅ Sí (ambas en paralelo después de descargar) |
+| Convertir imagen + subirla a repo | ❌ No (convertir antes) |
+| Escribir código + probar en navegador | ❌ No (código primero) |
+| Actualizar DECISIONS.md + CLAUDE.md | ✅ Sí (archivos independientes) |
+
+**Patrón de Diamante (Fan-Out → Checker → Fan-In):**
+```
+Tarea iniciadora
+    ↓
+[Trabajo 1] [Trabajo 2] [Trabajo 3]  ← Paralelo
+    ↓         ↓         ↓
+  Checker Node (validar sin errores)
+    ↓
+Síntesis Final (commit, push)
+```
+
+---
+
+## 🚨 BLOQUE VI: GOBERNANZA, CONTROL Y MEMORIA
+
+### 1. Matriz de Autoridad (Decision Authority)
+
+| Tipo de decisión | Autoridad | Proceso |
+|---|---|---|
+| **Cambios de producto** (UI, copy, flujos) | **User only (Cipri)** | Solicitud clara en chat + confirmación |
+| **Arquitectura o refactor grande** | **Shared (Propuesta + OK)** | Agente propone formal, Cipri aprueba |
+| **Refactor de código / optimización** | **Agent** | Modificación autónoma + log de git |
+| **Deuda técnica** | **Shared** | Auditoría periódica, propuesta de arreglo |
+| **Formularios / datos personales** | **Agent → Skill** | Invoca `seguridad-datos`, sigue checklist |
+| **Media (fotos, vídeos)** | **User** | Cipri decide qué usar, agente optimiza |
+
+### 2. Palabras de Parada (Emergency Protocol)
+
+El agente reacciona **inmediatamente**:
+
+- **"HOLD"** → Congela cualquier ejecución, guarda estado, espera nuevas instrucciones
+- **"REVERT"** → Descarta cambios no commiteados, vuelve a último commit estable
+- **"AUDIT"** → Auditoría inmediata de consistencia (código vs DECISIONS.md vs CLAUDE.md)
+
+### 3. Dashboard de Salud del Proyecto
+
+Al iniciar cada sesión, este es el estado:
+
+```
+ITACA JIU JITSU — Estado de Salud (actualizado 2026-08-04, auditoría prepublicación)
+═════════════════════════════════════════════════════════════
+✅ Código funciona:  index.html + movil.html + js/ + legal/, sin errores
+✅ Horario:          una sola fuente (js/itaca-horario.js), ya no duplicado
+✅ Formularios:      Web3Forms activo (clave puesta), casilla de consentimiento en los dos
+⚠️  Deuda técnica:   ver DECISIONS.md — DT-1, DT-2 y DT-4 resueltas, queda DT-3 (y DT-5, DT-6 nuevas)
+📊 Pruebas:         No hay suite automática (manual en navegador + Playwright puntual)
+🔴 Bloqueadores:    ninguno crítico — ver DT-5 (revisión legal de terminos.html) como pendiente importante
+📦 Deploy:          Vercel preview OK en cada push a claude/new-session-oa3wjo, PR #1 abierto. main no existe todavía
+```
+
+### 4. Memoria de Sesión vs Persistente
+
+| Tipo | Dónde | Duración | Qué contiene |
+|---|---|---|---|
+| **Persistente** | CLAUDE.md, DECISIONS.md, .claude/skills/ | Permanente | Reglas, decisiones, procesos, conocimiento |
+| **Sesión** | Conversación chat, logs terminal | Una sesión | Contexto vivo, debugs, experimentos |
+
+Al finalizar sesión o saturar contexto: actualizar archivos persistentes.
+
+### 5. Memoria de Archivo: DECISIONS.md
+
+**Autoridad:** Cipri (decisiones de negocio) + Agente (arquitectura técnica).
+
+- **D1-D5:** Decisiones inquebrantables (no cambian sin aprobación)
+- **A1-A3:** Decisiones arquitectónicas (propuesta + OK)
+- **B1-B3:** Decisiones de negocio (Cipri solo)
+- **DT-1 a DT-4:** Deuda técnica registrada (auditar periódicamente)
+
+---
+
 ## 1. Qué es ITACA JIU JITSU
 
 La web de un gimnasio de Brazilian Jiu Jitsu en Logroño (La Rioja). Una sola página con toda la información: filosofía, instalaciones, instructores, horarios, ubicación y dos formularios para contactar o pedir una clase de prueba.
@@ -35,6 +201,7 @@ La web de un gimnasio de Brazilian Jiu Jitsu en Logroño (La Rioja). Una sola p�
 - ❌ **Precios en la web** — no aparecen por ninguna parte. La conversación de precio se tiene en persona o por correo.
 - ❌ **Framework o generador de sitios** (React, Next, Astro, WordPress) — es un único `index.html` sin dependencias ni compilación. Se abre con doble clic y funciona. No se cambia sin un motivo de peso.
 - ❌ **Cookies, analítica y píxeles de seguimiento** — la web no lleva ninguno. Eso es lo que le ahorra el cartelito de consentimiento de cookies.
+- ❌ **Formularios por `mailto:`** — descartado en julio de 2026. Abría el programa de correo del visitante, que en un móvil o con Gmail en el navegador no envía nada: los mensajes se perdían sin que nadie se enterara. Ahora se envían por Web3Forms.
 
 > Esta lista es de las partes más valiosas de este archivo. Cada vez que se descarte
 > algo, se apunta aquí para no perder tiempo reproponiéndolo dentro de tres meses.
@@ -43,18 +210,19 @@ La web de un gimnasio de Brazilian Jiu Jitsu en Logroño (La Rioja). Una sola p�
 
 ## 2. Stack
 
-- **Framework:** ninguno. HTML, CSS y JavaScript a pelo, todo dentro de `index.html` (~2.800 líneas: estilos en un `<style>`, lógica en un `<script>` al final).
-- **UI:** CSS propio con variables en `:root`. Tipografías **Bebas Neue** (títulos) y **Montserrat** (texto), más **Special Elite** y **Crimson Pro** solo para el poema. Se cargan desde Google Fonts.
+- **Framework:** ninguno. HTML, CSS y JavaScript a pelo. Ya **no** es un único archivo: `index.html` (escritorio, ~4.700 líneas) y `movil.html` (móvil, app completa con sus propios paneles y formularios) comparten dos módulos JS y las páginas legales — ver §3.
+- **UI:** CSS propio con variables en `:root`. Tipografía **Archivo** (títulos y textos de UI, pesos 500-900) y **Montserrat** (cuerpo de texto en escritorio), más **Special Elite** y **Crimson Pro** solo para el poema. Se cargan desde Google Fonts. Paleta sin color: blanco, negro y grises (decisión de Cipri, julio 2026 — no reproponer beige/verde).
 - **Auth + BD:** **no hay.** Ni base de datos, ni cuentas, ni servidor propio. Es una web estática.
-- **Servicios externos:** Google Fonts (tipografías) · Google Maps (mapa incrustado en un `iframe`) · `mailto:` (los dos formularios abren el programa de correo del visitante).
-- **Deploy:** **pendiente de decidir.** Todavía no está publicada en ningún sitio.
-- **Pruebas:** no hay pruebas automáticas todavía. La comprobación se hace abriendo la web (§7).
+- **Servicios externos:** Google Fonts (tipografías) · Google Maps (mapa incrustado en un `iframe`) · **Web3Forms** (envío de los dos formularios).
+  - ✅ La clave de Web3Forms **ya está puesta**: vive en `js/itaca-formularios.js`, `CONFIG.claveWeb3Forms` (no en `index.html`). Los formularios envían de verdad.
+- **Deploy:** Vercel, con vista previa automática en cada push a `claude/new-session-oa3wjo` (PR #1). `main` todavía no existe — ver §9.
+- **Pruebas:** no hay suite automática. La comprobación se hace abriendo la web (§7); en esta sesión también se usó Playwright puntualmente para verificar capturas y accesibilidad, sin dejar una suite permanente.
 - **Control automático:** no hay GitHub Actions. Los automatismos locales sí están puestos (§8).
 
-**Comandos:** no hay `npm`, ni `build`, ni `lint`. Para verla:
+**Comandos:** no hay `npm`, ni `build`, ni `lint` (no hay `package.json`: se probó añadir una dependencia de Vercel en algún momento y se retiró por no usarse — no la vuelvas a añadir sin un motivo concreto). Para verla:
 
 ```bash
-python3 -m http.server 8899   # y abrir http://127.0.0.1:8899/index.html
+python3 -m http.server 8899   # y abrir http://127.0.0.1:8899/index.html (o /movil.html)
 ```
 
 ---
@@ -62,25 +230,34 @@ python3 -m http.server 8899   # y abrir http://127.0.0.1:8899/index.html
 ## 3. Contenido y archivos (estado real)
 
 > Mantén esto al día. Una memoria que describe un sistema que ya no existe
-> hace que la IA tome decisiones sobre una realidad falsa. Ya ha pasado.
+> hace que la IA tome decisiones sobre una realidad falsa. Ya ha pasado una vez
+> en este mismo archivo: decía que la clave de Web3Forms estaba vacía cuando
+> llevaba semanas puesta. Actualiza esta tabla en el mismo cambio que toque los archivos.
 
 No hay base de datos. Lo que hace las veces de "modelo de datos" son los archivos y los bloques de contenido dentro del HTML.
 
 | Qué | Dónde vive | Notas / trampas |
 |---|---|---|
-| Toda la web | `index.html` | Estilos y JavaScript incluidos. Un solo archivo. |
-| Fotos del gimnasio | `images/Itaca/Gym1.webp` … `Gym10.webp` | Las lee el array `photos` del JS (línea ~2582). Si añades una foto, hay que añadirla **también** ahí o no sale. |
-| Fotos de instructores | `images/Profesores/Cipri.png`, `Boris.png`, `Marta_Pozo.png` | Puestas a mano en el HTML. |
-| Vídeo de portada | `videos/Itaca_Hero_Video.mp4` | Sin imagen de respaldo (`poster`): mientras carga se ve gris. |
-| Vídeos verticales | `videos/Boris_instagram.mp4`, `Cipri_instagram.mp4`, `Marta_instagram.mp4`, `Boris2_instagram.mp4` | Solo se reproducen al pasar el ratón por encima. |
-| **Horarios** | **duplicados en dos sitios** | La tabla visible (HTML, ~línea 1820) **y** el objeto `classesForAdult` / `classesForNino46` / `classesForNino710` del JS (~línea 2324). ⚠️ Si cambias un horario en un sitio y no en el otro, el formulario de clase de prueba ofrece clases que ya no existen. |
-| Textos legales | dentro de `index.html`, modales `#termsModal` y `#privacyModal` | |
+| Web de escritorio | `index.html` | Estilos y JavaScript incluidos. |
+| Web de móvil | `movil.html` | App completa aparte, no una versión reducida: sus propios paneles, sus propios formularios. Se sirve automáticamente por debajo de 760px (redirección en el `<head>` de `index.html`, ver §6). |
+| Horario de clases | `js/itaca-horario.js` | **Única fuente.** Lo leen `index.html` y `movil.html` para pintar la tabla/pestañas y para filtrar las clases del formulario de clase de prueba. Cambia aquí y cambia en los dos sitios a la vez. |
+| Envío de formularios | `js/itaca-formularios.js` | Compartido por las dos webs. Aquí vive `CONFIG.claveWeb3Forms`, el teléfono, el email y (si se activa) la URL de la hoja de cálculo de seguimiento — ver `docs/hoja-de-calculo.md`. |
+| Textos legales | `legal/privacidad.html`, `legal/terminos.html` | Páginas aparte, no modales — así el texto existe una sola vez para las dos webs. Enlazadas desde la casilla de consentimiento de ambos formularios. |
+| Fotos del gimnasio | `images/Itaca/Gym1.webp` … `Gym7.webp` (7, no 10) | Las lee el array `photos` del JS de `index.html` y el array `FOTOS` de `movil.html`. Si añades una foto, hay que añadirla en los dos sitios. |
+| Fotos de instructores | `images/Profesores/Cipri.webp`, `Boris.webp`, `Marta_Pozo.webp` (WebP, no PNG) | Puestas a mano en el HTML de las dos webs. |
+| Portada de escritorio | imagen fija `images/Itaca/Gym1.webp` | Ya no es un vídeo: el que había (`Itaca_Hero_Video.mp4`) era una animación de logo casi en negro, inservible como fondo, y se borró del repositorio. Si algún día se graba un vídeo apaisado del gimnasio, puede volver a ser vídeo. |
+| Portada de móvil | vídeo `videos/Itaca_Hero_Mobile.mp4`, con `poster="images/Itaca/Portada-movil.jpg"` | Grabado en vertical (9:16), solo se crea/carga por debajo de 760px. |
+| Vídeos verticales (reels) | `videos/Boris_instagram.mp4`, `Cipri_instagram.mp4`, `Marta_instagram.mp4`, `Itaca_gi_instagram.mp4` | `preload="none"`: no se descargan hasta que el visitante interactúa. En escritorio se reproducen al pasar el ratón; en móvil, al tocar. |
 
-⚠️ **Los archivos de `images/` y `videos/` no están en el repositorio todavía.** Están en el ordenador de Cipri. Ver `docs/PENDIENTE-archivos.md`.
+⚠️ **`docs/PENDIENTE-archivos.md`, `docs/material-fotografo.md` y `DECISIONS.md` pueden tener nombres de archivo antiguos** (mencionan `Gym8-10`, `Boris2_instagram.mp4`, fotos en `.png`). Esta tabla es la que manda; si hay contradicción, créela a ella y corrige el resto.
 
-**Secciones de la página, en orden:** portada (`#home`) · filosofía y poema (`#about`) · carrusel de fotos (`#academy`) · vídeos verticales (`#reels`) · instructores (`#instructors`) · horarios (`#schedule`) · ubicación (`#location`) · llamada final (`#join`) · pie (`#contact`).
+**Secciones de `index.html`, en orden:** portada (`#home`) · filosofía y poema (`#about`) · carrusel de fotos (`#academy`) · vídeos verticales (`#reels`) · instructores (`#instructors`) · horarios y leyenda (`#schedule`) · tu primer día (`#firstday`) · niños (`#kids`) · ubicación (`#location`) · llamada final (`#join`) · pie (`#contact`). Todo el contenido entre la cabecera y el pie va dentro de un `<main>`.
 
-**Modales:** contacto (`#contactModal`) · clase de prueba (`#trialModal`) · datos de contacto (`#infoContactModal`) · términos (`#termsModal`) · privacidad (`#privacyModal`).
+**Paneles de `movil.html`, en orden:** horarios · tu primer día · el gimnasio (fotos) · en movimiento (vídeos) · instructores · niños · filosofía · dónde estamos · clase de prueba · contacto. Se abren como paneles a pantalla completa (`position: fixed`), no como scroll normal — si capturas la página con una herramienta que fuerza `full page`, el contenido de un panel abierto puede no salir completo en la captura sin ser un fallo real: comprueba con la página en su tamaño normal.
+
+⚠️ **Los textos de `#firstday`, `#kids` y la leyenda del horario los redactó la IA a partir de lo que es habitual en un gimnasio de BJJ, no de datos que diera Cipri.** Están pendientes de que él los confirme o los corrija: qué clases admiten a alguien sin experiencia, si hay kimonos de préstamo, si los padres pueden ver la clase. Hasta entonces, tratarlos como borrador.
+
+**Modales de `index.html`:** contacto (`#contactModal`) · clase de prueba (`#trialModal`) · datos de contacto (`#infoContactModal`). Tienen trampa de foco (Tab no se escapa hacia la página de detrás) y se cierran con `Escape`, la X o clicando fuera.
 
 ---
 
@@ -92,13 +269,17 @@ No hay base de datos. Lo que hace las veces de "modelo de datos" son los archivo
 
 | Formulario | Qué pide | A dónde va |
 |---|---|---|
-| Contacto (`#contactForm`) | Nombre, email, teléfono, mensaje | `mailto:itacajiujitsu@gmail.com` |
-| Clase de prueba (`#trialForm`) | Nombre, email, teléfono, categoría (adulto/niño), **edad del niño**, fecha, clase | `mailto:itacajiujitsu@gmail.com` |
+| Contacto (`#contactForm`) | Nombre, email, teléfono, mensaje, consentimiento | Web3Forms → itacajiujitsu@gmail.com |
+| Clase de prueba (`#trialForm`) | Nombre, email, teléfono, categoría (adulto/niño), **edad del niño**, fecha, clase, consentimiento | Web3Forms → itacajiujitsu@gmail.com |
+
+Los dos tienen **casilla de consentimiento obligatoria** con enlace a la política de privacidad, y el de clase de prueba avisa de que lo rellena el padre, madre o tutor.
 
 **Reglas que no se tocan:**
 - **El formulario de clase de prueba recoge datos de menores** (4-6 y 7-10 años). Eso exige consentimiento del padre, madre o tutor. No se toca ese formulario sin pasar por la skill `seguridad-datos`.
 - **Ningún formulario nuevo sin casilla de consentimiento y enlace a la política de privacidad.**
+- **Si se quita o se relaja el consentimiento, es un retroceso legal.** No se hace.
 - **Nada de analítica, cookies ni píxeles** sin avisar antes: en cuanto entra uno, hace falta el aviso de cookies.
+- ✅ **Razón social y NIF ya puestos** en la política de privacidad (`ITACA JIU JITSU · NIF G26554923`, aportado por Cipri el 4 de agosto de 2026). Los datos personales del propio Cipri como representante (DNI, domicilio particular, teléfono) no se han publicado — no hacen falta en una web pública.
 
 ---
 
@@ -117,7 +298,9 @@ No hay base de datos. Lo que hace las veces de "modelo de datos" son los archivo
 
 **Es una sola página.** No hay rutas: la navegación son anclas (`#about`, `#academy`, `#reels`, `#instructors`, `#schedule`) que hacen scroll dentro de la misma página.
 
-**Cómo se comporta la cabecera:** transparente sobre la portada; al bajar de 50 píxeles se vuelve blanca, encoge, el logo se va a la izquierda y aparece el menú. En móvil (menos de 768 px) el menú son las tres rayas.
+**Cómo se comporta la cabecera:** transparente sobre la portada; al bajar de 50 píxeles se vuelve blanca, encoge, el logo se va a la izquierda y aparece el menú.
+
+⚠️ **El menú de enlaces va centrado en posición absoluta sobre TODO el ancho de la cabecera, sin tener en cuenta el hueco fijo que ocupa el botón "Hazte Miembro" a la derecha.** Si no hay sitio, el último enlace ("NIÑOS") se mete debajo del botón — pasó de verdad en esta auditoría, en una franja de anchos donde a simple vista parecía haber espacio de sobra (medido con Playwright, no a ojo). Por eso el menú de las tres rayas se mantiene hasta **1600 px** y solo a partir de ahí aparecen los enlaces — con margen de sobra comprobado, no en el punto exacto donde deja de solaparse. **Si añades un enlace, cambias el texto de alguno o cambias la tipografía de la cabecera, vuelve a medir con Playwright en todo el rango 1180-2000 px** (bounding box del último enlace contra el botón), no solo mirando dos o tres capturas — así es como se coló este fallo la primera vez. La maquetación del resto (instructores, vídeos) sigue cambiando en 1024 px y 768 px, que es independiente.
 
 **Los dos caminos que importan:**
 1. "HAZTE MIEMBRO" (portada, cabecera, menú móvil y llamada final) → abre el modal de **contacto**.
@@ -183,7 +366,9 @@ Si no, la rama arrastra commits duplicados y provoca conflictos. Ver la skill `f
 | FILOSOFÍA | sección `#about` |
 | SOMOS ITACA | sección `#academy` (carrusel de fotos) |
 | MOVIMIENTO | sección `#reels` (vídeos verticales) |
-| HORARIOS | sección `#schedule` |
+| HORARIOS | sección `#schedule` (incluye la leyenda de niveles) |
+| TU PRIMER DÍA | sección `#firstday` |
+| NIÑOS | sección `#kids` |
 | Hazte Miembro | `.modal-trigger` → `#contactModal` |
 | Clase de Prueba | `.trial-trigger` → `#trialModal` |
 | Gi | con kimono |

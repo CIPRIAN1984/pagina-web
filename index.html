@@ -4,26 +4,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ITACA JIU JITSU | Excelencia en Artes Marciales</title>
+
+    <script>
+        // Reparto entre las dos versiones. Va en la cabecera, antes de que se
+        // parsee nada del cuerpo: puesto más abajo, la redirección cortaba el
+        // parseo a media página y el navegador se quedaba colgado.
+        //
+        // `?full=1` es la vía de escape: quien pide la versión completa desde el
+        // móvil se queda en ella durante toda la visita. Se recuerda en la
+        // pestaña, no en una cookie, así que no hace falta aviso de cookies.
+        (function () {
+            try {
+                if (location.search.indexOf('full=1') > -1 ||
+                    sessionStorage.getItem('itaca-completa') === '1') {
+                    sessionStorage.setItem('itaca-completa', '1');
+                    return;
+                }
+                if (window.matchMedia('(max-width: 760px)').matches) {
+                    location.replace('movil.html' + location.hash);
+                }
+            } catch (e) {
+                /* Si algo falla, se queda en esta versión: nunca se bloquea el acceso. */
+            }
+        })();
+    </script>
+    <title>ITACA JIU JITSU | Brazilian Jiu Jitsu en Logroño</title>
+    <meta name="description"
+        content="Escuela de Brazilian Jiu Jitsu en Logroño. Horarios, clases para niños y adultos, y clase de prueba gratuita.">
+    <!-- Pareja móvil de esta página, para que los buscadores no las traten
+         como contenido duplicado. -->
+    <link rel="alternate" media="only screen and (max-width: 760px)" href="movil.html">
+    <link rel="canonical" href="index.html">
+    <!-- Vista previa al compartir en redes/WhatsApp. og:image reutiliza una
+         foto real del gimnasio (recortada a 1200×630) en vez de un diseño
+         inventado: eso es decisión de contenido de Cipri, no técnica. -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Itaca Jiu Jitsu | Brazilian Jiu Jitsu en Logroño">
+    <meta property="og:description" content="Técnica bien explicada, entrenamiento exigente y gente que te ayuda a mejorar. Aquí se empieza de cero.">
+    <meta property="og:image" content="images/og-image.jpg">
+    <meta property="og:locale" content="es_ES">
+    <meta name="twitter:card" content="summary_large_image">
+    <!-- Icono de pestaña: marca provisional en blanco y negro a juego con la
+         paleta de la web. Cipri puede sustituirlo por el logo real cuando lo
+         tenga — es una decisión de contenido, no técnica. -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#ffffff">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Montserrat:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <link
         href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Crimson+Pro:ital,wght@0,300;1,300&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --bg-light: #f8f8f8;
+            /* Blanco puro, sin tinte cálido: es la referencia (fondo blanco
+               absoluto), no un crema a medias. */
+            --bg-light: #ffffff;
             --bg-white: #ffffff;
-            --text-dark: #1a1a1a;
-            --text-gray: #4a4a4a;
-            --accent: #d4cfb6;
-            --accent-dark: #b8b29c;
-            --font-heading: 'Bebas Neue', Impact, sans-serif;
+            --text-dark: #141414;
+            --text-gray: #545454;
+            /* Paleta sin color por decisión de Cipri: negro, blanco y grises,
+               en la línea de la referencia (artofjiujitsu.com). Se conservan los
+               nombres --accent* porque son los que usa todo el CSS; lo que ha
+               cambiado es el valor, no el papel de cada uno:
+                 --accent      destaque sobre fondo OSCURO (blanco)
+                 --accent-dark texto secundario sobre fondo claro
+                 --accent-ink  texto pequeño sobre fondo claro (cumple AA) */
+            --accent: #ffffff;
+            --accent-soft: #bdbdbd;
+            --accent-dark: #6f6f6f;
+            --accent-ink: #5f5f5f;
+            --surface-dark: #101010;
+            --hairline: rgba(20, 20, 20, 0.10);
+            --font-heading: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
             --font-body: 'Montserrat', Helvetica, sans-serif;
             --nav-height: 80px;
+
+            /* Escala tipográfica fluida: un solo valor sirve de móvil a escritorio
+               sin necesidad de redefinir tamaños en cada media query. */
+            --step-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.82rem);
+            --step-sm: clamp(0.87rem, 0.84rem + 0.16vw, 0.95rem);
+            --step-0: clamp(1rem, 0.97rem + 0.18vw, 1.09rem);
+            --step-1: clamp(1.12rem, 1.06rem + 0.3vw, 1.3rem);
+            --step-2: clamp(1.5rem, 1.3rem + 1vw, 2.1rem);
+            --step-3: clamp(2rem, 1.5rem + 2.4vw, 3.4rem);
+            --step-4: clamp(2.6rem, 1.7rem + 4.2vw, 5rem);
+
+            /* Escala de espaciado: evita el "cada sección con su propio margen". */
+            --space-2xs: clamp(0.5rem, 0.45rem + 0.25vw, 0.75rem);
+            --space-xs: clamp(0.75rem, 0.65rem + 0.5vw, 1.25rem);
+            --space-sm: clamp(1.25rem, 1rem + 1vw, 2rem);
+            --space-md: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+            --space-lg: clamp(3rem, 2rem + 4vw, 6rem);
+            --space-xl: clamp(4rem, 2.5rem + 6vw, 8rem);
+
+            --wa-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.34 4.95L2 22l5.23-1.37a9.9 9.9 0 0 0 4.8 1.23c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2zm-2.4 6.08c.15 0 .3-.07.46-.06.15.01.35-.06.54.41.2.48.68 1.66.74 1.78.06.12.1.26.02.42-.08.16-.12.26-.24.4-.12.14-.25.31-.36.42-.12.12-.24.25-.1.49.14.24.63 1.04 1.35 1.69.93.83 1.72 1.09 1.96 1.21.24.12.38.1.52-.06.14-.16.6-.71.76-.95.16-.24.32-.2.54-.12.22.08 1.42.67 1.66.79.24.12.4.18.46.28.06.1.06.59-.14 1.16-.2.57-1.17 1.09-1.64 1.16-.42.06-.95.09-1.53-.1-.35-.11-.8-.26-1.38-.51-2.43-1.04-4.01-3.48-4.13-3.64-.12-.16-.98-1.3-.98-2.48s.62-1.76.84-2c.22-.24.48-.3.64-.3z'/%3E%3C/svg%3E");
+            --gutter: clamp(1.15rem, 5vw, 4rem);
+            --measure: 62ch;
+            --radius: 14px;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
@@ -34,6 +117,12 @@
 
         html {
             scroll-behavior: smooth;
+        }
+
+        /* Sin esto, al pulsar un enlace del menú la cabecera fija tapa el título
+           de la sección a la que se acaba de saltar. */
+        section[id] {
+            scroll-margin-top: var(--nav-height);
         }
 
         body {
@@ -52,29 +141,68 @@
         h4,
         .bebas {
             font-family: var(--font-heading);
-            font-weight: 400;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            line-height: 1.1;
+            /* Archivo es una fuente ancha: al pasar de Bebas Neue (letra muy
+               estrecha, necesitaba separar caracteres) a esta, el trazo
+               apretado es lo que da el aire editorial, no espaciado. */
+            letter-spacing: -0.02em;
+            line-height: 1.02;
         }
 
         h1 {
-            font-size: clamp(3.5rem, 8vw, 7rem);
+            font-size: clamp(3.2rem, 11vw, 7rem);
         }
 
         h2 {
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            margin-bottom: 1.5rem;
+            font-size: var(--step-3);
+            margin-bottom: var(--space-sm);
+            /* Reparte las líneas de un titular en vez de dejar una palabra suelta. */
+            text-wrap: balance;
         }
 
         h3 {
-            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-size: var(--step-2);
         }
 
         p {
-            font-size: 1.1rem;
+            font-size: var(--step-0);
             color: var(--text-gray);
-            font-weight: 300;
+            font-weight: 400;
+            text-wrap: pretty;
+        }
+
+        /* Etiqueta pequeña sobre los titulares: da jerarquía y sitúa al lector
+           sin gastar una línea entera de texto. */
+        .eyebrow {
+            display: block;
+            font-family: var(--font-body);
+            font-size: var(--step-xs);
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent-ink);
+            margin-bottom: var(--space-2xs);
+        }
+
+        .eyebrow::before {
+            content: '';
+            display: inline-block;
+            width: 26px;
+            height: 1px;
+            background: currentColor;
+            vertical-align: middle;
+            margin-right: 0.6em;
+        }
+
+        .text-center .eyebrow::after {
+            content: '';
+            display: inline-block;
+            width: 26px;
+            height: 1px;
+            background: currentColor;
+            vertical-align: middle;
+            margin-left: 0.6em;
         }
 
         a {
@@ -85,7 +213,28 @@
 
         /* Layout Utilities */
         .section {
-            padding: 6rem 5%;
+            padding: var(--space-xl) var(--gutter);
+        }
+
+        /* Sección oscura: rompe la sucesión de fondos claros y da ritmo visual.
+           Invierte los colores de texto de sus hijos de una sola vez. */
+        .section-dark {
+            background-color: var(--surface-dark);
+            color: var(--bg-white);
+        }
+
+        .section-dark h2,
+        .section-dark h3,
+        .section-dark h4 {
+            color: var(--bg-white);
+        }
+
+        .section-dark p {
+            color: #a8a5a0;
+        }
+
+        .section-dark .eyebrow {
+            color: var(--accent);
         }
 
         .bg-white {
@@ -123,8 +272,8 @@
 
         .btn-primary:hover,
         .btn-primary:focus {
-            background-color: var(--accent);
-            color: var(--text-dark);
+            background-color: #3d3d3d;
+            color: var(--bg-white);
         }
 
         .btn-outline {
@@ -148,19 +297,32 @@
             color: var(--bg-white);
         }
 
-        /* Animation utilities */
+        /* Animation utilities.
+           Sin blur ni scale: en un móvil de gama media esos dos repintan toda la
+           capa en cada fotograma y es lo que hacía que la página "fuera lenta". */
         .reveal {
             opacity: 0;
-            transform: translateY(60px) scale(0.95);
-            filter: blur(8px);
-            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: opacity, transform, filter;
+            transform: translateY(24px);
+            transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
         }
 
         .reveal.active {
             opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0);
+            transform: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .reveal,
+            .reveal.active {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
         }
 
         .delay-1 {
@@ -255,7 +417,7 @@
         }
 
         .nav-links a:hover:not(.active) {
-            color: var(--accent) !important;
+            color: var(--text-gray) !important;
         }
 
         .header-cta-wrapper {
@@ -333,9 +495,71 @@
             font-family: var(--font-body);
         }
 
+        /* .nav-links centra su caja sobre el header ENTERO (left:50%), sin tener
+           en cuenta el ancho fijo de .header-cta-wrapper a la derecha. Con la
+           tipografía Archivo (más ancha que la Bebas Neue original) el enlace
+           final del menú puede meterse debajo del botón "Hazte Miembro" en un
+           rango de anchos donde a simple vista parecía haber sitio de sobra.
+           Medido con Playwright: la colisión empieza justo por encima de
+           1330px y no despeja del todo hasta ~1530px. El breakpoint del menú
+           de hamburguesa se pone en 1600px, con margen, en vez de calcular el
+           punto exacto — cualquier cambio en los enlaces (añadir uno, texto
+           más largo) puede volver a mover ese punto. */
+        @media (max-width: 1600px) {
+            .nav-links,
+            .header-cta {
+                display: none;
+            }
+
+            .mobile-menu {
+                top: 0;
+                left: auto;
+                right: -100%;
+                width: 100%;
+                height: 100vh;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                border-radius: 0;
+                box-shadow: none;
+                gap: 2rem;
+                opacity: 1;
+                pointer-events: auto;
+                transform: none;
+            }
+
+            .mobile-menu.open {
+                right: 0;
+                opacity: 1;
+                transform: none;
+            }
+
+            .mobile-menu a {
+                font-size: 2.5rem;
+                font-family: var(--font-heading);
+            }
+
+            .hamburger {
+                display: flex;
+                position: relative;
+                left: auto;
+                color: inherit;
+            }
+
+            header.scrolled .hamburger {
+                opacity: 1;
+                pointer-events: auto;
+                color: var(--text-dark);
+            }
+        }
+
         /* Hero */
         .hero {
             position: relative;
+            /* z-index crea un contexto de apilamiento propio: sin esto, el
+               background-color de aquí abajo se pintaba ENCIMA de la imagen/vídeo
+               con z-index negativo en vez de detrás. Causa del "hero en negro". */
+            z-index: 0;
             height: 100vh;
             height: 100svh;
             /* Ajuste perfecto para móviles, ignorando la barra del navegador */
@@ -346,6 +570,8 @@
             overflow: hidden;
             color: var(--bg-white);
             text-align: center;
+            /* Fondo oscuro mientras carga el vídeo: sin esto se ve un rectángulo gris */
+            background-color: var(--text-dark);
         }
 
         .hero-video {
@@ -368,7 +594,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.5) 100%);
+            /* Más oscuro en el centro que antes: ahí es donde va el texto y el
+               vídeo tiene fotogramas claros (kimonos blancos) que se lo comían. */
+            background:
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.42) 45%, rgba(0, 0, 0, 0.72) 100%);
             z-index: -1;
         }
 
@@ -377,6 +606,33 @@
             max-width: 900px;
             padding: 0 1rem;
             margin-top: 50px;
+        }
+
+        .hero-kicker {
+            display: block;
+            font-family: var(--font-body);
+            font-size: var(--step-xs);
+            font-weight: 600;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: var(--space-xs);
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+        }
+
+        /* El texto va encima de un vídeo que cambia todo el rato: sin sombra
+           propia, hay fotogramas claros en los que no se lee nada. */
+        .hero-content h1 {
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.55);
+        }
+
+        .hero-content p {
+            color: rgba(255, 255, 255, 0.92);
+            font-size: var(--step-1);
+            font-weight: 400;
+            max-width: 54ch;
+            margin: 0 auto;
+            text-shadow: 0 2px 16px rgba(0, 0, 0, 0.75);
         }
 
         .hero-subtitle {
@@ -473,7 +729,7 @@
         #itaca-poem {
             font-family: 'Special Elite', cursive;
             background: transparent;
-            color: #1a1209;
+            color: var(--text-dark);
             width: 100%;
             height: 100%;
             min-height: 520px;
@@ -488,7 +744,7 @@
             font-size: 2rem;
             letter-spacing: .12em;
             text-align: center;
-            color: #1a1209;
+            color: var(--text-dark);
             margin: 0 0 1.5rem;
             text-transform: uppercase;
         }
@@ -507,7 +763,7 @@
             display: inline-block;
             width: 2px;
             height: 1.1em;
-            background: #1a1209;
+            background: var(--text-dark);
             margin-left: 1px;
             vertical-align: text-bottom;
             animation: blink .65s step-end infinite;
@@ -522,7 +778,7 @@
         .byline {
             font-family: 'Special Elite', cursive;
             font-size: .78rem;
-            color: #8b6f47;
+            color: var(--accent-ink);
             text-align: right;
             margin-top: 1.5rem;
             letter-spacing: .08em;
@@ -530,21 +786,35 @@
             transition: opacity 1s ease;
         }
 
-        /* Carousel Content */
+        /* Carousel Content.
+           El ancho de tarjeta vive aquí y lo lee el JS: si se cambia, el paso del
+           carrusel se ajusta solo. Antes estaba fijo en 320px y en un móvil la
+           tarjeta central no cabía ni quedaba centrada. */
         .carousel-wrap {
-            width: 100vw;
+            --arrow-size: 50px;
+            --wrap-pad: 24px;
+            --wrap-gap: 16px;
+            --card-gap: 20px;
+            --card-h: 420px;
+            --card-h-center: 460px;
+            /* Lo que queda para la foto una vez descontadas las dos flechas.
+               Calculado, no a ojo: así la tarjeta nunca se sale de su hueco. */
+            --scene-w: calc(100vw - 2 * var(--wrap-pad) - 2 * var(--arrow-size) - 2 * var(--wrap-gap));
+            --card-w: min(320px, calc(var(--scene-w) - 12px));
+            width: 100%;
             max-width: 1260px;
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 0 24px;
+            gap: var(--wrap-gap);
+            padding: 0 var(--wrap-pad);
             margin: 0 auto;
         }
 
         .carousel-scene {
             position: relative;
             flex: 1;
-            height: 540px;
+            min-width: 0;
+            height: calc(var(--card-h-center) + 40px);
             overflow: hidden;
         }
 
@@ -554,7 +824,7 @@
             position: absolute;
             top: 0;
             height: 100%;
-            width: 90px;
+            width: clamp(20px, 7vw, 90px);
             z-index: 10;
             pointer-events: none;
         }
@@ -572,8 +842,10 @@
         .carousel-track {
             display: flex;
             align-items: center;
-            gap: 20px;
-            padding: 20px calc(50% - 160px);
+            gap: var(--card-gap);
+            /* El relleno lateral es media tarjeta: es lo que deja la del medio
+               centrada en la escena, sea cual sea el ancho de tarjeta. */
+            padding: 20px calc(50% - var(--card-w) / 2);
             height: 100%;
             will-change: transform;
         }
@@ -581,8 +853,8 @@
         /* ── Arrows ───────────────────────────────────────────── */
         .arrow {
             flex-shrink: 0;
-            width: 50px;
-            height: 50px;
+            width: var(--arrow-size);
+            height: var(--arrow-size);
             border-radius: 50%;
             border: 1.5px solid rgba(0, 0, 0, 0.25);
             background: var(--bg-white);
@@ -624,9 +896,9 @@
 
         /* ── Cards ────────────────────────────────────────────── */
         .card {
-            flex: 0 0 320px;
-            width: 320px;
-            height: 420px;
+            flex: 0 0 var(--card-w);
+            width: var(--card-w);
+            height: var(--card-h);
             border-radius: 18px;
             overflow: hidden;
             position: relative;
@@ -639,7 +911,7 @@
         }
 
         .card.is-center {
-            height: 460px;
+            height: var(--card-h-center);
             opacity: 1;
             cursor: ns-resize;
             box-shadow: 0 14px 44px rgba(0, 0, 0, .17), 0 0 0 1.5px rgba(255, 255, 255, .11);
@@ -662,12 +934,20 @@
             right: 0;
             padding: 32px 20px 20px;
             background: linear-gradient(to top, rgba(0, 0, 0, .72), transparent);
-            transform: translateY(100%);
+            transform: translateY(0);
             transition: transform .38s cubic-bezier(.23, 1, .32, 1);
         }
 
-        .card.is-center:hover .card-label {
-            transform: translateY(0);
+        /* Con ratón la etiqueta se esconde y aparece al pasar por encima.
+           En un móvil no hay ratón, así que se queda siempre visible. */
+        @media (hover: hover) and (pointer: fine) {
+            .card-label {
+                transform: translateY(100%);
+            }
+
+            .card.is-center:hover .card-label {
+                transform: translateY(0);
+            }
         }
 
         .card-label span {
@@ -681,7 +961,7 @@
             display: block;
             font-size: .8rem;
             font-family: var(--font-body);
-            color: var(--accent);
+            color: var(--accent-soft);
             text-transform: uppercase;
             margin-top: 4px;
         }
@@ -705,8 +985,34 @@
             transition: opacity .3s;
         }
 
-        .card.is-center:hover .scroll-hint {
+        .card.is-center .scroll-hint {
             opacity: 1;
+        }
+
+        /* En móvil la tarjeta se adapta al ancho de pantalla y las flechas
+           encogen: con 320px fijos la del medio se salía y quedaba descentrada. */
+        @media (max-width: 760px) {
+            .carousel-wrap {
+                --arrow-size: 40px;
+                --wrap-pad: 8px;
+                --wrap-gap: 6px;
+                --card-gap: 12px;
+                --card-h: 340px;
+                --card-h-center: 400px;
+            }
+
+            .arrow svg {
+                width: 17px;
+                height: 17px;
+            }
+
+            .card-label {
+                padding: 26px 16px 16px;
+            }
+
+            .card-label span {
+                font-size: 1.25rem;
+            }
         }
 
         /* ── Dots ─────────────────────────────────────────────── */
@@ -746,6 +1052,8 @@
 
         #zoomOverlay.on {
             opacity: 1;
+            /* Sin esto el fondo no recibe clics y no se podría cerrar pulsando fuera. */
+            pointer-events: auto;
         }
 
         #zoomBackdrop {
@@ -817,6 +1125,32 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
             width: 100%;
+        }
+
+        /* En móvil los cuatro vídeos apilados eran 3,4 pantallas de scroll para
+           un contenido que se consume deslizando. Pasan a una fila deslizable. */
+        @media (max-width: 900px) {
+            .reels-grid {
+                display: flex;
+                gap: var(--space-xs);
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                /* Sangra hasta el borde de la pantalla: se ve que hay más al lado. */
+                margin-inline: calc(var(--gutter) * -1);
+                padding-inline: var(--gutter);
+                padding-bottom: var(--space-2xs);
+            }
+
+            .reels-grid::-webkit-scrollbar {
+                display: none;
+            }
+
+            .reels-grid .reel-item {
+                flex: 0 0 min(72vw, 300px);
+                scroll-snap-align: center;
+            }
         }
 
         .reel-item {
@@ -915,6 +1249,15 @@
             opacity: 1;
         }
 
+        /* Sin ratón la miniatura no reproduce nada: al tocarla se abre el visor a
+           pantalla completa, que tiene su propio botón de sonido. Aquí sobra y
+           además dejaba un punto muerto donde el toque no abría el visor. */
+        @media (hover: none) {
+            .reel-mute-btn {
+                display: none;
+            }
+        }
+
         .reel-mute-btn:hover {
             background: rgba(0, 0, 0, 0.8);
             transform: scale(1.1);
@@ -948,14 +1291,23 @@
             height: 100%;
             object-fit: cover;
             transition: all 0.6s ease;
-            opacity: 0.8;
-            filter: grayscale(20%);
+            /* Sin ratón la ficha se ve entera desde el principio, así que la foto
+               va más apagada para que el texto encima se lea. */
+            opacity: 0.35;
+            filter: grayscale(0%);
         }
 
-        .instructor-card:hover img {
-            opacity: 0.3;
-            transform: scale(1.05);
-            filter: grayscale(0%);
+        @media (hover: hover) and (pointer: fine) {
+            .instructor-card img {
+                opacity: 0.8;
+                filter: grayscale(20%);
+            }
+
+            .instructor-card:hover img {
+                opacity: 0.3;
+                transform: scale(1.05);
+                filter: grayscale(0%);
+            }
         }
 
         .instructor-content {
@@ -967,6 +1319,18 @@
             color: var(--bg-white);
             z-index: 2;
             transition: all 0.4s ease;
+        }
+
+        .instructor-role {
+            display: block;
+            font-family: var(--font-body);
+            font-size: var(--step-xs);
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent-soft);
+            margin-bottom: 0.4rem;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
         }
 
         .instructor-card h3 {
@@ -983,24 +1347,63 @@
             font-weight: 500;
             color: #ffffff;
             text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
-            opacity: 0;
-            transform: translateY(20px);
+            opacity: 1;
+            transform: translateY(0);
             transition: all 0.4s ease;
         }
 
-        .instructor-card:hover p {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        /* El texto solo se esconde donde hay ratón para descubrirlo. En móvil
+           se ve siempre: si no, la mitad de los visitantes nunca lo leería. */
+        @media (hover: hover) and (pointer: fine) {
+            .instructor-card p {
+                opacity: 0;
+                transform: translateY(20px);
+            }
 
-        .instructor-card:hover h3 {
-            transform: translateY(-10px);
+            .instructor-card:hover p {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .instructor-card:hover h3 {
+                transform: translateY(-10px);
+            }
         }
 
         /* Schedule */
         .schedule-table-wrap {
             overflow-x: auto;
-            margin-top: 3rem;
+            margin-top: var(--space-md);
+        }
+
+        /* Las pestañas de día solo existen en móvil (ver media query de abajo). */
+        .day-tabs {
+            display: none;
+        }
+
+        .day-tab {
+            flex: 0 0 auto;
+            scroll-snap-align: center;
+            padding: 0.6rem 1.1rem;
+            min-height: 44px;
+            border: 1px solid var(--hairline);
+            border-radius: 999px;
+            background: transparent;
+            font-family: var(--font-body);
+            font-size: var(--step-xs);
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-gray);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .day-tab[aria-selected="true"] {
+            background: var(--text-dark);
+            border-color: var(--text-dark);
+            color: var(--bg-white);
         }
 
         .schedule-table {
@@ -1044,6 +1447,186 @@
             font-family: var(--font-heading);
             font-size: 1.2rem;
             display: block;
+        }
+
+        /* Leyenda del horario: sin esto, "Gi", "No Gi" u "Open Mat" no le dicen
+           nada a quien no ha entrenado nunca, que es justo a quien queremos convencer. */
+        .legend-classes {
+            font-size: var(--step-xs);
+            color: var(--accent-ink);
+            font-weight: 600;
+            line-height: 1.7;
+        }
+
+        .legend-terms {
+            margin-top: var(--space-md);
+            padding-top: var(--space-sm);
+            border-top: 1px solid var(--hairline);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--space-sm) var(--space-md);
+            text-align: left;
+        }
+
+        .legend-terms p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .legend-terms strong {
+            font-family: var(--font-heading);
+            font-size: 1.15rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            color: var(--text-dark);
+            display: block;
+        }
+
+        /* Acordeón (dudas del primer día y niveles del horario).
+           `<details>` nativo: sin JavaScript, accesible con teclado y buscable. */
+        .faq {
+            max-width: 760px;
+            margin: var(--space-md) auto 0;
+            text-align: left;
+            border-top: 1px solid var(--hairline);
+        }
+
+        .faq-intro {
+            font-size: var(--step-sm);
+            color: var(--text-gray);
+            margin: var(--space-sm) 0 var(--space-xs);
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .faq-item summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-xs);
+            padding: var(--space-xs) 0;
+            cursor: pointer;
+            list-style: none;
+            font-family: var(--font-heading);
+            font-size: var(--step-1);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-dark);
+            transition: color 0.2s ease;
+            /* Zona de toque cómoda en móvil sin engordar la fila. */
+            min-height: 48px;
+        }
+
+        .faq-item summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .faq-item summary::after {
+            content: '';
+            flex: 0 0 auto;
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid var(--accent-ink);
+            border-bottom: 2px solid var(--accent-ink);
+            transform: rotate(45deg) translate(-2px, -2px);
+            transition: transform 0.3s var(--ease);
+        }
+
+        .faq-item[open] summary::after {
+            transform: rotate(-135deg) translate(-2px, -2px);
+        }
+
+        .faq-item summary:hover {
+            color: var(--accent-ink);
+        }
+
+        .faq-body {
+            padding: 0 0 var(--space-sm);
+            max-width: var(--measure);
+        }
+
+        .faq-body p {
+            font-size: var(--step-sm);
+            margin-bottom: var(--space-2xs);
+        }
+
+        .faq-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .legend-faq {
+            margin-top: var(--space-md);
+        }
+
+        .section-intro {
+            max-width: var(--measure);
+            margin: 0 auto;
+            font-size: var(--step-1);
+        }
+
+        .kids-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 3rem;
+            text-align: left;
+        }
+
+        /* Sin esto los tres párrafos van pegados y se leen como un bloque. */
+        .kids-layout p {
+            margin-bottom: var(--space-xs);
+        }
+
+        .kids-ages p {
+            margin-bottom: 0;
+        }
+
+        .kids-ages {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .age-card {
+            /* La sección de niños ya es blanca: la tarjeta va en el gris claro
+               para que se distinga del fondo. */
+            background: var(--bg-light);
+            padding: 1.5rem 1.75rem;
+            border-left: 3px solid var(--text-dark);
+            border-radius: 2px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .age-card span {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .age-card small {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-dark);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .age-card p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        @media (max-width: 900px) {
+            .kids-layout {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
         }
 
         /* Location */
@@ -1119,10 +1702,13 @@
 
         .cta-final p {
             color: #b3b3b3;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-size: 1rem;
+            font-size: var(--step-1);
             line-height: 1.6;
+            max-width: 46ch;
+        }
+
+        .cta-final .eyebrow {
+            color: var(--accent);
         }
 
         .cta-final .hero-buttons {
@@ -1142,14 +1728,34 @@
         }
 
         @media (max-width: 900px) {
+            .cta-final {
+                padding: var(--space-xl) var(--gutter);
+            }
+
             .cta-final .container {
                 flex-direction: column;
                 text-align: center;
+                gap: var(--space-sm);
             }
 
             .cta-final h2,
             .cta-final .cta-content {
                 text-align: center;
+            }
+
+            .cta-final p {
+                margin-inline: auto;
+            }
+
+            /* Centrado: la rayita del "eyebrow" tiene que ir a los dos lados. */
+            .cta-final .eyebrow::after {
+                content: '';
+                display: inline-block;
+                width: 26px;
+                height: 1px;
+                background: currentColor;
+                vertical-align: middle;
+                margin-left: 0.6em;
             }
 
             .cta-final .hero-buttons {
@@ -1242,7 +1848,413 @@
         }
 
         .back-to-top:hover {
-            background-color: var(--accent);
+            background-color: #3d3d3d;
+        }
+
+        /* Galería completa de fotos.
+           El carrusel enseña una selección; aquí se ven todas de golpe. Pensado
+           para ir subiendo material y rotar las mejores sin tocar el diseño. */
+        .gallery {
+            position: fixed;
+            inset: 0;
+            z-index: 1700;
+            background: var(--bg-light);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            display: none;
+        }
+
+        .gallery.open {
+            display: block;
+        }
+
+        .gallery__bar {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--gutter);
+            padding-top: calc(var(--space-sm) + env(safe-area-inset-top));
+            background: rgba(246, 245, 242, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .gallery__title {
+            font-family: var(--font-heading);
+            font-size: var(--step-2);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .gallery__close {
+            flex: 0 0 auto;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--hairline);
+            background: var(--bg-white);
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .gallery__close svg,
+        .gallery__nav svg {
+            width: 19px;
+            height: 19px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.1;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Rejilla que se adapta sola: da igual que haya 7 fotos que 60. */
+        .gallery__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.5rem;
+            padding: var(--space-sm) var(--gutter) var(--space-lg);
+        }
+
+        @media (min-width: 700px) {
+            .gallery__grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 0.75rem;
+            }
+        }
+
+        .gallery__item {
+            position: relative;
+            aspect-ratio: 3 / 4;
+            border: 0;
+            padding: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #e6e4e0;
+            cursor: pointer;
+        }
+
+        .gallery__item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s var(--ease);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .gallery__item:hover img {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Foto a tamaño grande dentro de la galería. */
+        .gallery__lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            background: rgba(10, 10, 10, 0.94);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+        }
+
+        .gallery__lightbox.open {
+            display: flex;
+        }
+
+        .gallery__lightbox img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .gallery__nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .gallery__nav--prev {
+            left: 0.75rem;
+        }
+
+        .gallery__nav--next {
+            right: 0.75rem;
+        }
+
+        .gallery__close--light {
+            position: absolute;
+            top: calc(0.9rem + env(safe-area-inset-top));
+            right: 0.9rem;
+            background: rgba(255, 255, 255, 0.14);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .gallery__counter {
+            position: absolute;
+            left: 50%;
+            bottom: calc(1.1rem + env(safe-area-inset-bottom));
+            transform: translateX(-50%);
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+        }
+
+        /* Visor de reels a pantalla completa (solo móvil).
+           El público llega de Instagram: ahí los vídeos se ven a pantalla completa
+           y se pasa deslizando. Un recuadro pequeño con el dedo encima no compite. */
+        .reels-viewer {
+            position: fixed;
+            inset: 0;
+            z-index: 1800;
+            background: #000;
+            display: none;
+        }
+
+        .reels-viewer.open {
+            display: block;
+        }
+
+        .reels-viewer__track {
+            height: 100%;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            overscroll-behavior: contain;
+        }
+
+        .reels-viewer__track::-webkit-scrollbar {
+            display: none;
+        }
+
+        .reels-viewer__slide {
+            position: relative;
+            height: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reels-viewer__slide video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        .reels-viewer__close,
+        .reels-viewer__sound {
+            position: absolute;
+            top: calc(1rem + env(safe-area-inset-top));
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        .reels-viewer__close {
+            right: 1rem;
+        }
+
+        .reels-viewer__sound {
+            left: 1rem;
+        }
+
+        .reels-viewer__close svg,
+        .reels-viewer__sound svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Pista de que hay más vídeos debajo: sin esto mucha gente ve uno y sale. */
+        .reels-viewer__hint {
+            position: absolute;
+            left: 50%;
+            bottom: calc(1.6rem + env(safe-area-inset-bottom));
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            z-index: 3;
+            transition: opacity 0.4s ease;
+        }
+
+        .reels-viewer__hint::after {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-right: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+            transform: rotate(45deg) translate(-1px, -1px);
+            animation: nudge 1.5s ease-in-out infinite;
+        }
+
+        @keyframes nudge {
+
+            0%,
+            100% {
+                transform: rotate(45deg) translate(-1px, -1px);
+            }
+
+            50% {
+                transform: rotate(45deg) translate(2px, 2px);
+            }
+        }
+
+        .reels-viewer__hint.hidden {
+            opacity: 0;
+        }
+
+        /* Barra de acción del móvil.
+           En un móvil la mano llega cómodamente a la parte de abajo, no a la de
+           arriba. Con esto la clase de prueba, el teléfono y el WhatsApp están
+           siempre a un dedo, sin tener que buscar nada scrolleando. */
+        .action-bar {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .action-bar {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 950;
+                display: flex;
+                align-items: stretch;
+                gap: 0.5rem;
+                padding: 0.6rem var(--gutter);
+                /* padding-bottom extra para no quedar debajo de la barra de
+                   gestos del iPhone. */
+                padding-bottom: calc(0.6rem + env(safe-area-inset-bottom));
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-top: 1px solid var(--hairline);
+                transform: translateY(110%);
+                transition: transform 0.35s var(--ease);
+            }
+
+            /* Aparece al salir de la portada: sobre el hero ya hay dos botones
+               grandes y taparlos con una barra sería redundante. */
+            .action-bar.visible {
+                transform: translateY(0);
+            }
+
+            .action-bar__cta {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 50px;
+                padding: 0 1rem;
+                background: var(--text-dark);
+                color: var(--bg-white);
+                border: none;
+                border-radius: 10px;
+                font-family: var(--font-heading);
+                font-size: 1.2rem;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                /* En una línea siempre: partido en dos, el botón crece y la barra
+                   se come media pantalla. */
+                white-space: nowrap;
+                cursor: pointer;
+            }
+
+            .action-bar__icon {
+                flex: 0 0 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 50px;
+                border: 1px solid var(--hairline);
+                border-radius: 10px;
+                background: var(--bg-white);
+                color: var(--text-dark);
+            }
+
+            .action-bar__icon svg {
+                width: 21px;
+                height: 21px;
+                stroke: currentColor;
+                fill: none;
+                stroke-width: 1.9;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+
+            .action-bar__icon--wa svg {
+                fill: currentColor;
+                stroke: none;
+            }
+
+            /* El botón de volver arriba se sube para no pisar la barra. */
+            .back-to-top {
+                bottom: calc(4.6rem + env(safe-area-inset-bottom));
+                right: 1rem;
+            }
+
+            /* Hueco al final para que la barra no tape el pie de página. */
+            body {
+                padding-bottom: calc(3.9rem + env(safe-area-inset-bottom));
+            }
         }
 
         /* Responsive Design */
@@ -1275,53 +2287,8 @@
             }
         }
 
+        /* Por debajo de 1180 px el menú de enlaces ya no cabe entre el logo y el
         @media (max-width: 768px) {
-
-            .nav-links,
-            .header-cta {
-                display: none;
-            }
-
-            .mobile-menu {
-                top: 0;
-                left: auto;
-                right: -100%;
-                width: 100%;
-                height: 100vh;
-                align-items: center;
-                justify-content: center;
-                padding: 0;
-                border-radius: 0;
-                box-shadow: none;
-                gap: 2rem;
-                opacity: 1;
-                pointer-events: auto;
-                transform: none;
-            }
-
-            .mobile-menu.open {
-                right: 0;
-                opacity: 1;
-                transform: none;
-            }
-
-            .mobile-menu a {
-                font-size: 2.5rem;
-                font-family: var(--font-heading);
-            }
-
-            .hamburger {
-                display: flex;
-                position: relative;
-                left: auto;
-                color: inherit;
-            }
-
-            header.scrolled .hamburger {
-                opacity: 1;
-                pointer-events: auto;
-                color: var(--text-dark);
-            }
 
             .hero-buttons {
                 flex-direction: column;
@@ -1330,16 +2297,33 @@
                 margin: 2rem auto 0;
             }
 
+            /* Tres fichas apiladas eran 2,2 pantallas de scroll. Deslizables
+               ocupan una y se entiende igual de bien. */
             .instructors-grid {
-                grid-template-columns: 1fr;
-                gap: 4rem;
+                display: flex;
+                grid-template-columns: none;
+                gap: var(--space-xs);
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                margin-top: var(--space-md);
+                padding-inline: var(--gutter);
+                padding-bottom: var(--space-2xs);
             }
 
-            .reels-grid {
-                grid-template-columns: 1fr;
-                max-width: 400px;
-                margin: 0 auto;
+            .instructors-grid::-webkit-scrollbar {
+                display: none;
             }
+
+            .instructors-grid .instructor-card {
+                flex: 0 0 min(78vw, 320px);
+                scroll-snap-align: center;
+                border-radius: var(--radius);
+            }
+
+            /* La rejilla de reels ya es una fila deslizable por debajo de 900px;
+               aquí no se vuelve a apilar. */
 
             .footer-grid {
                 grid-template-columns: 1fr;
@@ -1352,8 +2336,136 @@
                 text-align: center;
             }
 
+        }
+
+        /* La tabla de 6 columnas no cabe en un móvil: se desliza en horizontal y
+           casi nadie descubre que hay más días a la derecha. Debajo de 760px se
+           muestra un día cada vez, elegido con las pestañas. */
+        @media (max-width: 760px) {
+            .day-tabs {
+                display: flex;
+                gap: 0.5rem;
+                margin-top: var(--space-sm);
+                overflow-x: auto;
+                scroll-snap-type: x proximity;
+                scrollbar-width: none;
+                margin-inline: calc(var(--gutter) * -1);
+                padding-inline: var(--gutter);
+            }
+
+            .day-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .schedule-table-wrap {
+                overflow-x: visible;
+                margin-top: var(--space-sm);
+            }
+
+            .schedule-table,
+            .schedule-table tbody,
+            .schedule-table tr {
+                display: block;
+                min-width: 0;
+                width: 100%;
+            }
+
+            .schedule-table thead {
+                display: none;
+            }
+
+            .schedule-table td {
+                display: none;
+                padding: 0;
+                border-bottom: 0;
+            }
+
+            .schedule-table td.is-active-day {
+                display: block;
+            }
+
+            /* Repite el día elegido dentro del panel: si se hace scroll, las
+               pestañas se quedan arriba y hay que saber qué se está mirando. */
+            .schedule-table td.is-active-day::before {
+                content: attr(data-day);
+                display: block;
+                font-family: var(--font-heading);
+                font-size: var(--step-2);
+                letter-spacing: 0.05em;
+                color: var(--text-dark);
+                margin-bottom: var(--space-2xs);
+            }
+
+            .class-block {
+                margin-bottom: 0.6rem;
+            }
+        }
+
+        /* Densidad real de móvil. Sin esto la página eran 18 pantallas de scroll:
+           los márgenes pensados para escritorio se arrastraban tal cual. */
+        @media (max-width: 560px) {
             .section {
-                padding: 4rem 5%;
+                padding: var(--space-lg) var(--gutter);
+            }
+
+            /* Un párrafo largo centrado obliga a buscar dónde empieza cada línea.
+               En pantalla estrecha va alineado a la izquierda; los titulares se
+               quedan centrados. */
+            .editorial,
+            .editorial-content {
+                text-align: left;
+                gap: var(--space-md);
+            }
+
+            .editorial-content h2,
+            .editorial-content .eyebrow {
+                text-align: center;
+                display: block;
+            }
+
+            .section-intro {
+                text-align: left;
+            }
+
+            .editorial-content p {
+                margin-bottom: var(--space-sm);
+            }
+
+            /* En escritorio reserva sitio para el poema mientras se escribe solo;
+               en móvil esa reserva era una pantalla en blanco. */
+            #itaca-poem {
+                min-height: 0;
+                padding: var(--space-sm) 0;
+            }
+
+            .location-details {
+                gap: var(--space-md);
+                margin-top: var(--space-sm);
+            }
+
+            .map-wrapper {
+                height: 320px !important;
+                min-height: 0;
+                margin-top: var(--space-sm) !important;
+            }
+
+            .legend-terms {
+                gap: var(--space-xs);
+            }
+
+            /* Con la pantalla estrecha los botones ocupan el ancho y bajan de
+               tamaño: es lo que evita que el texto parta en dos líneas. */
+            .btn {
+                padding: 0.95rem 1.5rem;
+                font-size: 1.25rem;
+                width: 100%;
+                max-width: 320px;
+            }
+
+            .hero-buttons,
+            .kids-layout .btn,
+            #firstday .btn {
+                margin-inline: auto;
             }
         }
 
@@ -1367,11 +2479,17 @@
             background-color: rgba(0, 0, 0, 0.7);
             z-index: 2000;
             display: flex;
-            align-items: center;
+            /* `flex-start` + `margin: auto` en el hijo: centrado cuando cabe, y
+               desplazable cuando no. Con `align-items: center` a secas, en una
+               pantalla de móvil el botón de enviar quedaba fuera y no se podía pulsar. */
+            align-items: flex-start;
             justify-content: center;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            padding: 1.5rem 1rem;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .modal-overlay.active {
@@ -1386,8 +2504,9 @@
             max-width: 600px;
             padding: 4rem 3rem;
             position: relative;
+            margin: auto;
             transform: translateY(20px);
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
@@ -1496,6 +2615,38 @@
             margin-bottom: 0.5rem;
         }
 
+        /* Canal de respuesta: en botones y no en redondelitos sueltos, para que en
+           un móvil se acierte con el dedo a la primera. */
+        .channel-options {
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .channel-options .radio-label {
+            flex: 1 1 0;
+            min-width: 92px;
+            justify-content: center;
+            gap: 0.4rem;
+            min-height: 46px;
+            padding: 0.5rem 0.6rem;
+            border: 1px solid var(--hairline);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .channel-options .radio-label:has(input:checked) {
+            border-color: var(--text-dark);
+            background-color: rgba(20, 20, 20, 0.04);
+            font-weight: 600;
+        }
+
+        /* Respaldo para navegadores sin :has(): el punto del radio sigue viéndose,
+           así que la opción marcada nunca queda sin señalar. */
+        .channel-options .radio-label input {
+            accent-color: var(--text-dark);
+        }
+
         .radio-label {
             display: flex;
             align-items: center;
@@ -1530,8 +2681,132 @@
         }
 
         .contact-form .submit-btn:hover {
-            background-color: var(--accent);
+            background-color: #3d3d3d;
             color: var(--text-dark);
+        }
+
+        .contact-form .submit-btn:disabled {
+            opacity: 0.55;
+            cursor: default;
+            background-color: var(--text-dark);
+            color: var(--bg-white);
+        }
+
+        /* Consentimiento */
+        .consent-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            text-align: left;
+        }
+
+        .consent-group input[type="checkbox"] {
+            width: auto;
+            margin: 0.25rem 0 0;
+            padding: 0;
+            flex-shrink: 0;
+            accent-color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .consent-group label {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-gray);
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .consent-group a {
+            color: var(--text-dark);
+            text-decoration: underline;
+        }
+
+        .form-note {
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: var(--text-gray);
+            text-align: left;
+            margin: 0;
+        }
+
+        /* Aviso de resultado del envío */
+        /* Campo trampa para robots: fuera de la pantalla en vez de display:none,
+           porque algunos programas de spam saltan lo que está oculto del todo. */
+        .hp-field {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .form-status {
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            padding: 1rem;
+            text-align: left;
+            display: none;
+        }
+
+        .form-status.visible {
+            display: block;
+        }
+
+        .form-status.ok {
+            background-color: #eef3ee;
+            border-left: 3px solid #2f6b3f;
+            color: #23512f;
+        }
+
+        /* Atajo a WhatsApp tras enviar: el correo puede tardar, esto no. */
+        .form-status__wa {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 46px;
+            margin-top: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background-color: #1f7a4d;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .form-status__wa::before {
+            content: '';
+            flex: 0 0 18px;
+            height: 18px;
+            background-color: currentColor;
+            /* Icono de WhatsApp como máscara: así hereda el color y no hace falta
+               cargar ninguna imagen. */
+            -webkit-mask: var(--wa-icon) center / contain no-repeat;
+            mask: var(--wa-icon) center / contain no-repeat;
+        }
+
+        .form-status__wa:hover,
+        .form-status__wa:focus {
+            background-color: #18603c;
+            color: #ffffff;
+        }
+
+        .form-status.error {
+            background-color: #fbeeed;
+            border-left: 3px solid #b3261e;
+            color: #8c1d18;
+        }
+
+        .form-status a {
+            color: inherit;
+            text-decoration: underline;
         }
 
         @media (max-width: 600px) {
@@ -1541,8 +2816,8 @@
             }
 
             .modal-container {
-                padding: 3rem 1.5rem;
-                margin: 1rem;
+                padding: 2.5rem 1.5rem;
+                margin: auto;
             }
 
             .modal-title {
@@ -1554,6 +2829,7 @@
 
 <body>
 
+
     <!-- Header -->
     <header id="header">
         <a href="#" class="logo">ITACA JIU JITSU</a>
@@ -1563,6 +2839,7 @@
             <a href="#reels" class="nav-item">MOVIMIENTO</a>
             <a href="#instructors" class="nav-item">INSTRUCTORES</a>
             <a href="#schedule" class="nav-item">HORARIOS</a>
+            <a href="#kids" class="nav-item">NIÑOS</a>
         </nav>
         <div class="header-cta-wrapper">
             <a href="#" class="btn btn-primary btn-header header-cta modal-trigger">Hazte Miembro</a>
@@ -1581,55 +2858,75 @@
         <a href="#reels" class="menu-link">MOVIMIENTO</a>
         <a href="#instructors" class="menu-link">INSTRUCTORES</a>
         <a href="#schedule" class="menu-link">HORARIOS</a>
+        <a href="#firstday" class="menu-link">PRIMER DÍA</a>
+        <a href="#kids" class="menu-link">NIÑOS</a>
         <a href="#" class="menu-link modal-trigger"
             style="color: var(--bg-white); background-color: var(--text-dark); padding: 0.5rem 1rem; border-radius: 4px; text-transform: uppercase;">HAZTE
             MIEMBRO</a>
     </div>
 
+    <main>
     <!-- Hero -->
     <section class="hero" id="home">
-        <!-- RUTA DEL VÍDEO -->
-        <video class="hero-video" id="hero-video" autoplay loop playsinline>
-            <source src="videos/Itaca_Hero_Video.mp4" type="video/mp4">
-        </video>
+        <!-- Escritorio: foto. El vídeo que había (Itaca_Hero_Video.mp4) es una
+             animación de logo, casi todo negro: como fondo en bucle no vale.
+             Falta grabar uno apaisado del gimnasio para poner aquí. -->
+        <img class="hero-video" id="hero-photo" src="images/Itaca/Gym1.webp"
+            alt="Entrenamiento en Itaca Jiu Jitsu">
+        <script>
+            // Móvil: vídeo vertical grabado a 9:16. El de escritorio es 1920x800 y
+            // en una pantalla estrecha solo se vería el 19% del centro del
+            // fotograma. Se cambia aquí, junto al elemento, para que empiece a
+            // cargar sin esperar al resto de la página; y se crea solo en móvil,
+            // así un escritorio nunca descarga los 4 MB del vídeo.
+            (function () {
+                if (!window.matchMedia('(max-width: 760px)').matches) return;
+                var img = document.getElementById('hero-photo');
+                if (!img) return;
+                var v = document.createElement('video');
+                v.className = 'hero-video';
+                v.id = 'hero-video';
+                // `muted` antes que `autoplay`: ningún móvil arranca solo un vídeo
+                // con sonido, y si no está silenciado se queda congelado.
+                v.muted = true;
+                v.defaultMuted = true;
+                ['autoplay', 'loop', 'playsinline', 'muted'].forEach(function (a) {
+                    v.setAttribute(a, '');
+                });
+                v.preload = 'metadata';
+                v.poster = 'images/Itaca/Portada-movil.jpg';
+                v.src = 'videos/Itaca_Hero_Mobile.mp4';
+                img.replaceWith(v);
+                // Si el navegador se resiste al autoplay, la foto de poster se
+                // queda visible: no hay pantalla en negro en ningún caso.
+                v.play().catch(function () { });
+            })();
+        </script>
         <div class="hero-overlay"></div>
 
         <div class="hero-content reveal active">
+            <span class="hero-kicker">Brazilian Jiu Jitsu · Logroño</span>
             <h1>Itaca Jiu Jitsu</h1>
-            <p>ELEVAMOS EL ESTÁNDAR DEL BRAZILIAN JIU JITSU. TÉCNICA PROFUNDA, DISCIPLINA FÉRREA Y UNA COMUNIDAD FORJADA
-                EN LA EXCELENCIA.</p>
+            <p>Técnica bien explicada, entrenamiento exigente y gente que te ayuda a mejorar. Aquí se empieza de cero.
+            </p>
             <div class="hero-buttons">
                 <a href="#" class="btn btn-primary modal-trigger">Hazte Miembro</a>
                 <a href="#" class="btn btn-outline trial-trigger">Clase de Prueba</a>
             </div>
         </div>
-
-        <button class="video-control" id="mute-btn" aria-label="Toggle Sound">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" id="sound-icon-muted" style="display: none;">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <line x1="23" y1="9" x2="17" y2="15"></line>
-                <line x1="17" y1="9" x2="23" y2="15"></line>
-            </svg>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" id="sound-icon-unmuted">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-            </svg>
-        </button>
-
     </section>
 
     <!-- Editorial Presentation -->
     <section class="section bg-white" id="about">
         <div class="container editorial">
             <div class="editorial-content reveal">
+                <span class="eyebrow">Filosofía</span>
                 <h2>Camino a Itaca</h2>
-                <p>ITACA JIU JITSU NO ES SOLO UN TATAMI, ES UNA ESCUELA DE PERFECCIONAMIENTO. CREEMOS EN EL JIU JITSU
-                    COMO UNA HERRAMIENTA DE TRANSFORMACIÓN PERSONAL, DONDE CADA DETALLE CUENTA Y LA TÉCNICA PREVALECE
-                    SOBRE LA FUERZA.</p>
-                <p>NUESTRAS INSTALACIONES PREMIUM Y NUESTRO ENFOQUE METODOLÓGICO ESTÁN DISEÑADOS PARA ALUMNOS QUE BUSCAN
-                    EL MÁS ALTO NIVEL DE INSTRUCCIÓN EN UN ENTORNO LIMPIO, RESPETUOSO Y ALTAMENTE MOTIVADOR.</p>
+                <p>Itaca Jiu Jitsu no es solo un tatami, es una escuela de perfeccionamiento. Creemos en el jiu jitsu
+                    como una herramienta de transformación personal, donde cada detalle cuenta y la técnica prevalece
+                    sobre la fuerza.</p>
+                <p>Nuestras instalaciones y nuestro enfoque metodológico están diseñados para alumnos que buscan el más
+                    alto nivel de instrucción, en un entorno limpio, respetuoso y altamente motivador.</p>
             </div>
             <div class="reveal delay-1" id="itaca-poem">
                 <h2>Ítaca</h2>
@@ -1642,7 +2939,9 @@
     <!-- Photo Carousel -->
     <section class="section" id="academy" style="padding-left: 0; padding-right: 0;">
         <div class="container" style="padding: 0 5%; margin-bottom: 3rem;">
-            <h2 class="text-center reveal">SOMOS ITACA</h2>
+            <div class="text-center reveal"><span class="eyebrow">El gimnasio</span>
+                <h2>Somos Itaca</h2>
+            </div>
         </div>
         <div class="carousel-wrap reveal delay-1">
             <button class="arrow" id="btnLeft" aria-label="Anterior">
@@ -1662,6 +2961,11 @@
 
         <div class="hint reveal delay-1" id="hint"></div>
 
+        <div class="text-center reveal delay-1" style="margin-top: var(--space-sm);">
+            <!-- El texto lo pone el JS con el número real de fotos de la lista. -->
+            <button class="btn btn-dark-outline" id="galleryOpen" type="button">Ver la galería</button>
+        </div>
+
         <div id="zoomOverlay">
             <div id="zoomBackdrop"></div>
             <div id="zoomBox">
@@ -1679,15 +2983,16 @@
     <!-- Vertical Videos (Reels) -->
     <section class="section bg-white" id="reels">
         <div class="container">
-            <div class="text-center reveal" style="margin-bottom: 4rem;">
-                <h2>ITACA EN MOVIMIENTO</h2>
+            <div class="text-center reveal" style="margin-bottom: var(--space-md);">
+                <span class="eyebrow">En movimiento</span>
+                <h2>Itaca en movimiento</h2>
             </div>
 
             <div class="reels-grid reveal delay-1">
                 <!-- Reel 1 -->
                 <div class="reel-item" data-video="reel-1">
                     <div class="reel-icon"></div>
-                    <video muted loop playsinline preload="metadata">
+                    <video muted loop playsinline preload="none" poster="images/posters/Boris_instagram.webp">
                         <source src="videos/Boris_instagram.mp4#t=1" type="video/mp4">
                     </video>
                     <button class="reel-mute-btn" aria-label="Toggle Sound">
@@ -1709,7 +3014,7 @@
                 <!-- Reel 2 -->
                 <div class="reel-item" data-video="reel-2">
                     <div class="reel-icon"></div>
-                    <video muted loop playsinline preload="metadata">
+                    <video muted loop playsinline preload="none" poster="images/posters/Cipri_instagram.webp">
                         <source src="videos/Cipri_instagram.mp4#t=1" type="video/mp4">
                     </video>
                     <button class="reel-mute-btn" aria-label="Toggle Sound">
@@ -1731,7 +3036,7 @@
                 <!-- Reel 3 -->
                 <div class="reel-item" data-video="reel-3">
                     <div class="reel-icon"></div>
-                    <video muted loop playsinline preload="metadata">
+                    <video muted loop playsinline preload="none" poster="images/posters/Marta_instagram.webp">
                         <source src="videos/Marta_instagram.mp4#t=1" type="video/mp4">
                     </video>
                     <button class="reel-mute-btn" aria-label="Toggle Sound">
@@ -1753,8 +3058,8 @@
                 <!-- Reel 4 -->
                 <div class="reel-item" data-video="reel-4">
                     <div class="reel-icon"></div>
-                    <video muted loop playsinline preload="metadata">
-                        <source src="videos/Boris2_instagram.mp4#t=1" type="video/mp4">
+                    <video muted loop playsinline preload="none" poster="images/posters/Itaca_gi_instagram.webp">
+                        <source src="videos/Itaca_gi_instagram.mp4#t=1" type="video/mp4">
                     </video>
                     <button class="reel-mute-btn" aria-label="Toggle Sound">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1777,36 +3082,57 @@
     </section>
 
     <!-- Instructors -->
-    <section class="section" id="instructors" style="padding-bottom: 0; padding-left: 0; padding-right: 0;">
+    <section class="section section-dark" id="instructors" style="padding-bottom: 0; padding-left: 0; padding-right: 0;">
         <div class="text-center reveal">
+            <span class="eyebrow">Quién enseña</span>
             <h2>Instructores</h2>
         </div>
         <div class="container">
             <div class="instructors-grid reveal delay-1">
                 <div class="instructor-card">
-                    <img src="images/Profesores/Cipri.png" alt="Cipri">
+                    <img src="images/Profesores/Cipri.webp" alt="Cipri" loading="lazy" decoding="async">
                     <div class="instructor-content">
+                        <span class="instructor-role">Head coach · Cinturón negro</span>
                         <h3 class="bebas">CIPRI</h3>
-                        <p>HEAD COACH. CINTURÓN NEGRO. ESPECIALISTA EN GUARDIA MODERNA Y TRANSICIONES. MÚLTIPLE CAMPEÓN
-                            NACIONAL CON 10 AÑOS DE EXPERIENCIA.</p>
+                        <p>Especialista en guardia moderna y transiciones. Múltiple campeón nacional con 10 años de
+                            experiencia.</p>
                     </div>
                 </div>
                 <div class="instructor-card">
-                    <img src="images/Profesores/Boris.png" alt="Boris">
+                    <img src="images/Profesores/Boris.webp" alt="Boris" loading="lazy" decoding="async">
                     <div class="instructor-content">
+                        <span class="instructor-role">Instructor · Cinturón morado</span>
                         <h3 class="bebas">BORIS</h3>
-                        <p>INSTRUCTOR. CINTURÓN MARRÓN. EXPERTO EN TÁCTICAS NO-GI Y PREPARACIÓN FÍSICA. INSTRUCTOR
-                            PRINCIPAL DE LAS CLASES MATUTINAS.</p>
+                        <p>Muy técnico y muy estructurado: explica el porqué de cada movimiento. Formado en Itaca desde
+                            cero, es la prueba de hasta dónde se puede llegar aquí.</p>
                     </div>
                 </div>
                 <div class="instructor-card">
-                    <img src="images/Profesores/Marta_Pozo.png" alt="Marta">
+                    <img src="images/Profesores/Marta_Pozo.webp" alt="Marta Pozo" loading="lazy" decoding="async">
                     <div class="instructor-content">
+                        <span class="instructor-role">Instructora · Cinturón morado</span>
                         <h3 class="bebas">MARTA POZO</h3>
-                        <p>INSTRUCTORA. CINTURÓN MORADO. ENCARGADA DE LAS CLASES INTRODUCTORIAS Y DEL PROGRAMA DE
-                            BIENVENIDA A NUEVOS MIEMBROS.</p>
+                        <p>Competidora destacada de la escuela y profesora de profesión: da clase en un instituto y en
+                            el tatami. Se le nota en cómo enseña.</p>
                     </div>
                 </div>
+
+                <!-- HUECO PARA LOS TRES QUE FALTAN (infantiles y mañanas).
+                     Para añadir uno: copia el bloque de aquí abajo, quítale los
+                     marcadores de comentario, y cambia foto, nombre y texto.
+                     La foto va en images/Profesores/ en formato .webp y conviene que sea vertical
+                     (más alta que ancha), como las tres que ya hay.
+
+                <div class="instructor-card">
+                    <img src="images/Profesores/NOMBRE.webp" alt="Nombre" loading="lazy" decoding="async">
+                    <div class="instructor-content">
+                        <span class="instructor-role">Instructor · Programa infantil</span>
+                        <h3 class="bebas">NOMBRE</h3>
+                        <p>Dos frases: qué hace en la escuela y por qué merece la pena entrenar con esta persona.</p>
+                    </div>
+                </div>
+                -->
+
             </div>
         </div>
     </section>
@@ -1814,77 +3140,180 @@
     <!-- Schedule -->
     <section class="section bg-white" id="schedule">
         <div class="container">
-            <h2 class="text-center reveal">Horarios de Clase</h2>
+            <div class="text-center reveal"><span class="eyebrow">Cuándo se entrena</span>
+                <h2>Horarios de clase</h2>
+            </div>
+
+            <!-- Selector de día: solo se ve en móvil. Lo rellena el JS leyendo las
+                 cabeceras de la tabla, así el horario sigue teniendo un único sitio
+                 donde se edita (la tabla de aquí abajo). -->
+            <div class="day-tabs reveal delay-1" id="dayTabs" role="tablist" aria-label="Día de la semana"></div>
 
             <div class="schedule-table-wrap reveal delay-1">
                 <table class="schedule-table">
                     <thead>
-                        <tr>
-                            <th>Lunes</th>
-                            <th>Martes</th>
-                            <th>Miércoles</th>
-                            <th>Jueves</th>
-                            <th>Viernes</th>
-                            <th>Sábado</th>
-                        </tr>
+                        <tr id="scheduleHead"></tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <!-- Lunes -->
-                            <td style="vertical-align: top;">
-                                <div class="class-block"><span class="class-time">07:00 - 08:00</span><span
-                                        class="class-name">Fundamentos</span></div>
-                                <div class="class-block"><span class="class-time">17:00 - 18:00</span><span
-                                        class="class-name">Fundamentos (Gi)</span></div>
-                            </td>
-                            <!-- Martes -->
-                            <td style="vertical-align: top;">
-                                <div class="class-block"><span class="class-time">10:00 - 11:30</span><span
-                                        class="class-name">Grappling No Gi</span></div>
-                                <div class="class-block"><span class="class-time">16:45 - 17:45</span><span
-                                        class="class-name">Kids 7/10 Años</span></div>
-                                <div class="class-block"><span class="class-time">18:00 - 20:00</span><span
-                                        class="class-name">Avanzados No Gi</span></div>
-                                <div class="class-block"><span class="class-time">20:00 - 21:00</span><span
-                                        class="class-name">Iniciación No Gi</span></div>
-                            </td>
-                            <!-- Miércoles -->
-                            <td style="vertical-align: top;">
-                                <div class="class-block"><span class="class-time">07:00 - 08:00</span><span
-                                        class="class-name">Fundamentos No Gi</span></div>
-                                <div class="class-block"><span class="class-time">17:00 - 18:00</span><span
-                                        class="class-name">No Gi Grappling</span></div>
-                            </td>
-                            <!-- Jueves -->
-                            <td style="vertical-align: top;">
-                                <div class="class-block"><span class="class-time">10:00 - 11:30</span><span
-                                        class="class-name">BJJ Gi</span></div>
-                                <div class="class-block"><span class="class-time">16:45 - 17:45</span><span
-                                        class="class-name">Kids 4/6 Años</span></div>
-                                <div class="class-block"><span class="class-time">18:00 - 20:00</span><span
-                                        class="class-name">Avanzados Gi</span></div>
-                                <div class="class-block"><span class="class-time">20:00 - 21:00</span><span
-                                        class="class-name">Iniciación Gi</span></div>
-                            </td>
-                            <!-- Viernes -->
-                            <td style="vertical-align: top;">
-                                <div class="class-block"><span class="class-time">07:00 - 08:00</span><span
-                                        class="class-name">Específico Sparring</span></div>
-                                <div class="class-block"><span class="class-time">16:45 - 17:45</span><span
-                                        class="class-name">BJJ Kids Gi 7/10 Años</span></div>
-                                <div class="class-block"><span class="class-time">18:30 - 20:00</span><span
-                                        class="class-name">Avanzado Gi</span></div>
-                            </td>
-                            <!-- Sábado -->
-                            <td style="vertical-align: top;">
-                                <div class="class-block"><span class="class-time">10:00 - 11:00</span><span
-                                        class="class-name">BJJ Gi Libre</span></div>
-                                <div class="class-block"><span class="class-time">11:00 - 12:30</span><span
-                                        class="class-name">Open Mat</span></div>
-                            </td>
-                        </tr>
+                        <tr id="scheduleRow"></tr>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="legend-terms reveal delay-1">
+                <p><strong>Gi</strong>Con kimono. Es el jiu jitsu clásico: se usa la tela para agarrar y controlar.</p>
+                <p><strong>No Gi</strong>Sin kimono, con camiseta ajustada y mallas. Más rápido y más resbaladizo.</p>
+                <p><strong>Open Mat</strong>Tatami abierto. Vienes y entrenas libremente con quien quieras.</p>
+            </div>
+
+            <!-- Los cinco niveles ocupaban dos pantallas abiertos a la vez. Plegados,
+                 quien no sabe por dónde empezar sigue encontrándolo igual. -->
+            <div class="faq legend-faq reveal delay-1">
+                <p class="faq-intro">¿No sabes qué clase te toca? Despliega tu caso:</p>
+                <details class="faq-item" open>
+                    <summary>Empiezo de cero</summary>
+                    <div class="faq-body">
+                        <p>No hace falta ninguna experiencia previa. Se trabaja técnica desde el principio y a tu
+                            ritmo. Si nunca has entrenado, tu sitio está aquí.</p>
+                        <p class="legend-classes">Iniciación Gi · Iniciación No Gi · Fundamentos · Fundamentos (Gi) ·
+                            Fundamentos No Gi</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Llevo unos meses</summary>
+                    <div class="faq-body">
+                        <p>Clases abiertas a todos los niveles en las que ya se entrena a ritmo normal. Recomendadas
+                            cuando te manejas con lo básico.</p>
+                        <p class="legend-classes">BJJ Gi · Grappling No Gi · No Gi Grappling</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Tengo experiencia</summary>
+                    <div class="faq-body">
+                        <p>Para alumnos con rodaje. Se entra por criterio del profesor: si tienes dudas, pregúntanos y
+                            te decimos por dónde empezar.</p>
+                        <p class="legend-classes">Avanzados Gi · Avanzados No Gi · Avanzado Gi · Específico Sparring</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Es para mi hijo o hija</summary>
+                    <div class="faq-body">
+                        <p>Grupos separados por edad, con su propio ritmo y su propia forma de enseñar.</p>
+                        <p class="legend-classes">Kids 4/6 Años · Kids 7/10 Años · BJJ Kids Gi 7/10 Años</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Quiero entrenar por libre</summary>
+                    <div class="faq-body">
+                        <p>Sin clase dirigida: se entrena lo que cada uno necesita. Mejor cuando ya llevas un tiempo y
+                            sabes en qué quieres trabajar.</p>
+                        <p class="legend-classes">BJJ Gi Libre · Open Mat</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Primera clase: lo que frena a la gente no es el precio, es no saber
+         qué se van a encontrar. Esta sección existe para quitar ese miedo. -->
+    <section class="section" id="firstday">
+        <div class="container">
+            <div class="text-center reveal"><span class="eyebrow">Antes de venir</span>
+                <h2>Tu primer día</h2>
+            </div>
+            <p class="section-intro text-center reveal">Todo el mundo ha tenido un primer día. Esto es lo que pasa
+                en el tuyo, para que vengas sabiendo a qué atenerte.</p>
+
+            <!-- Acordeón en vez de seis tarjetas abiertas: el visitante busca UNA
+                 duda concreta, no leerse las seis. -->
+            <div class="faq reveal delay-1">
+                <details class="faq-item" open>
+                    <summary>¿Necesito experiencia?</summary>
+                    <div class="faq-body">
+                        <p>Ninguna. Las clases de iniciación y fundamentos están pensadas exactamente para quien nunca
+                            ha pisado un tatami. Nadie espera que sepas nada.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>¿Hay que estar en forma?</summary>
+                    <div class="faq-body">
+                        <p>No. Se entrena a tu ritmo y paras cuando lo necesitas. La forma física llega entrenando,
+                            no al revés.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>¿Qué me pongo?</summary>
+                    <div class="faq-body">
+                        <p>Ropa deportiva cómoda y ajustada, chanclas para andar fuera del tatami y una botella de
+                            agua. Para tu primera clase no necesitas kimono: ya te contaremos.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>¿Me van a hacer daño?</summary>
+                    <div class="faq-body">
+                        <p>No. En las clases de iniciación se trabaja técnica y se va por pasos. Aquí nadie tiene que
+                            demostrar nada a costa del que acaba de llegar.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>¿Cuánto dura?</summary>
+                    <div class="faq-body">
+                        <p>Alrededor de una hora. Ven diez minutos antes para cambiarte con calma y para que te
+                            expliquemos cuatro cosas antes de empezar.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Dos normas del tatami</summary>
+                    <div class="faq-body">
+                        <p>Uñas de manos y pies cortas, y pies limpios: se entrena descalzo y muy cerca de los demás.
+                            Con eso vas sobrado.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="text-center reveal delay-2" style="margin-top: 3.5rem;">
+                <a href="#" class="btn btn-primary trial-trigger">Reservar clase de prueba</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Niños: un padre decide con otros criterios que un adulto que se apunta él. -->
+    <section class="section bg-white" id="kids">
+        <div class="container">
+            <div class="text-center reveal"><span class="eyebrow">De 4 a 10 años</span>
+                <h2>Jiu jitsu para niños</h2>
+            </div>
+            <p class="section-intro text-center reveal">Empezamos por lo que preocupa a un padre o una madre, no por
+                la técnica.</p>
+
+            <div class="kids-layout reveal delay-1">
+                <div>
+                    <p>El jiu jitsu infantil no va de pegar. No hay golpes: se trabaja el control, el equilibrio y
+                        la manera de salir de una situación incómoda sin hacer daño a nadie. Es de los pocos
+                        deportes en los que un niño aprende a defenderse sin aprender a golpear.</p>
+                    <p>Lo que más se nota fuera del tatami es otra cosa: la confianza de saber que puede con algo
+                        difícil, la costumbre de intentarlo otra vez cuando sale mal y el respeto por el compañero
+                        con el que acaba de entrenar.</p>
+                    <p>Las clases son en grupos reducidos, separadas por edad, y siempre con un instructor
+                        delante. Si quieres ver una clase antes de decidir, ven y la ves.</p>
+                    <div style="margin-top: 2.5rem;">
+                        <a href="#" class="btn btn-dark-outline trial-trigger">Pedir clase de prueba</a>
+                    </div>
+                </div>
+                <div class="kids-ages">
+                    <div class="age-card">
+                        <span>4 a 6 años</span>
+                        <small>Jueves · 16:45 - 17:45</small>
+                        <p>A esta edad se trabaja sobre todo el movimiento, el equilibrio y aprender a estar en
+                            grupo. Se juega mucho y se aprende sin darse cuenta.</p>
+                    </div>
+                    <div class="age-card">
+                        <span>7 a 10 años</span>
+                        <small>Martes y viernes · 16:45 - 17:45</small>
+                        <p>Ya entran la técnica de verdad y las primeras posiciones. Es la edad en la que empiezan
+                            a ver que el esfuerzo de hoy se nota dentro de unos meses.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1892,7 +3321,8 @@
     <!-- Location -->
     <section class="section" id="location" style="padding-left: 0; padding-right: 0;">
         <div class="text-center reveal">
-            <h2>UBICACIÓN</h2>
+            <span class="eyebrow">Dónde estamos</span>
+            <h2>Ubicación</h2>
         </div>
 
         <div class="map-wrapper reveal delay-1"
@@ -1919,16 +3349,20 @@
     <!-- Final CTA -->
     <section class="cta-final" id="join">
         <div class="container reveal">
-            <h2>COMIENZA TU VIAJE</h2>
+            <div>
+                <span class="eyebrow">Empieza hoy</span>
+                <h2>Comienza tu viaje</h2>
+            </div>
             <div class="cta-content">
-                <p>ÚNETE A ITACA JIU JITSU Y TRANSFORMA TU VIDA A TRAVÉS DEL DEPORTE.</p>
+                <p>La primera clase es de prueba y no cuesta nada. Ven, mira cómo se entrena y decide después.</p>
                 <div class="hero-buttons">
-                    <button class="btn btn-outline modal-trigger">HAZTE MIEMBRO</button>
-                    <button class="btn btn-outline trial-trigger">CLASE DE PRUEBA</button>
+                    <button class="btn btn-outline modal-trigger">Hazte miembro</button>
+                    <button class="btn btn-outline trial-trigger">Clase de prueba</button>
                 </div>
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Footer -->
     <footer id="contact">
@@ -1936,8 +3370,8 @@
             <div class="footer-simple">
                 <div class="footer-links">
                     <a href="#" class="info-contact-trigger">CONTACTO</a>
-                    <a href="#" class="terms-trigger">TÉRMINOS</a>
-                    <a href="#" class="privacy-trigger">PRIVACIDAD</a>
+                    <a href="legal/terminos.html" target="_blank" rel="noopener">TÉRMINOS</a>
+                    <a href="legal/privacidad.html" target="_blank" rel="noopener">PRIVACIDAD</a>
                 </div>
                 <div class="footer-copy">
                     <span>ITACA JIU JITSU &copy; 2026</span>
@@ -1951,26 +3385,58 @@
         <div class="modal-container">
             <button class="modal-close" id="closeModal" aria-label="Cerrar">&times;</button>
             <h2 class="modal-title">CONTACTO</h2>
-            <form class="contact-form" id="contactForm" action="mailto:itacajiujitsu@gmail.com" method="post"
-                enctype="text/plain">
+            <form class="contact-form" id="contactForm" novalidate>
                 <div class="form-group">
-                    <label>NOMBRE Y APELLIDOS <span>*</span></label>
-                    <input type="text" name="Nombre" placeholder="NOMBRE" required>
+                    <label for="contactNombre">NOMBRE Y APELLIDOS <span>*</span></label>
+                    <input type="text" id="contactNombre" name="Nombre" placeholder="NOMBRE" required
+                        autocomplete="name">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>EMAIL <span>*</span></label>
-                        <input type="email" name="Email" placeholder="EMAIL" required>
+                        <label for="contactEmail">EMAIL <span>*</span></label>
+                        <input type="email" id="contactEmail" name="Email" placeholder="EMAIL" required
+                            autocomplete="email">
                     </div>
                     <div class="form-group">
-                        <label>TELÉFONO</label>
-                        <input type="tel" name="Telefono" placeholder="TELÉFONO">
+                        <label for="contactTelefono">TELÉFONO</label>
+                        <input type="tel" id="contactTelefono" name="Telefono" placeholder="TELÉFONO"
+                            autocomplete="tel">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>MENSAJE <span>*</span></label>
-                    <textarea name="Mensaje" rows="4" placeholder="MENSAJE" required></textarea>
+                    <label for="contactMensaje">MENSAJE <span>*</span></label>
+                    <textarea id="contactMensaje" name="Mensaje" rows="4" placeholder="MENSAJE" required></textarea>
                 </div>
+                <!-- Saber por dónde quiere que le contesten evita perder a quien no
+                     mira el correo, y le dice a la escuela por dónde empezar. -->
+                <div class="form-group">
+                    <label>¿CÓMO PREFIERES QUE TE CONTESTEMOS? <span>*</span></label>
+                    <div class="radio-options channel-options">
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferido" value="WhatsApp" data-needs-phone="1"
+                                id="contactViaWhatsapp" checked> WhatsApp
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferido" value="Llamada" data-needs-phone="1"
+                                id="contactViaLlamada"> Llamada
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferido" value="Email" id="contactViaEmail"> Email
+                        </label>
+                    </div>
+                </div>
+                <!-- Trampa para robots ("honeypot"). Va oculta y ninguna persona la ve
+                     ni la puede rellenar; los programas que envían spam sí la rellenan.
+                     Web3Forms descarta el mensaje si viene marcada. Hace falta porque la
+                     clave de acceso está a la vista en el código, como exige su API. -->
+                <input type="checkbox" name="botcheck" class="hp-field" tabindex="-1" autocomplete="off"
+                    aria-hidden="true">
+                <div class="form-group consent-group">
+                    <input type="checkbox" id="contactConsent" name="Consentimiento" required>
+                    <label for="contactConsent">He leído y acepto la <a href="legal/privacidad.html" target="_blank" rel="noopener">política de
+                            privacidad</a>. Usaremos tus datos únicamente para responderte.</label>
+                </div>
+                <div class="form-status" id="contactStatus" role="status" aria-live="polite"></div>
                 <button type="submit" class="submit-btn" id="submitFormBtn">ENVIAR MENSAJE</button>
             </form>
         </div>
@@ -1981,19 +3447,21 @@
         <div class="modal-container">
             <button class="modal-close" id="closeTrialModal" aria-label="Cerrar">&times;</button>
             <h2 class="modal-title" style="font-size: 3rem;">CLASE DE PRUEBA</h2>
-            <form class="contact-form" id="trialForm">
+            <form class="contact-form" id="trialForm" novalidate>
+                <p class="form-note">La primera clase no tiene coste. Si es para un niño o una niña, este formulario
+                    lo rellena su padre, madre o tutor legal.</p>
                 <div class="form-group">
-                    <label>NOMBRE Y APELLIDOS <span>*</span></label>
-                    <input type="text" id="trialNombre" placeholder="NOMBRE" required>
+                    <label for="trialNombre">NOMBRE Y APELLIDOS <span>*</span></label>
+                    <input type="text" id="trialNombre" placeholder="NOMBRE" required autocomplete="name">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>EMAIL <span>*</span></label>
-                        <input type="email" id="trialEmail" placeholder="EMAIL" required>
+                        <label for="trialEmail">EMAIL <span>*</span></label>
+                        <input type="email" id="trialEmail" placeholder="EMAIL" required autocomplete="email">
                     </div>
                     <div class="form-group">
-                        <label>TELÉFONO <span>*</span></label>
-                        <input type="tel" id="trialTelefono" placeholder="TELÉFONO" required>
+                        <label for="trialTelefono">TELÉFONO <span>*</span></label>
+                        <input type="tel" id="trialTelefono" placeholder="TELÉFONO" required autocomplete="tel">
                     </div>
                 </div>
 
@@ -2023,17 +3491,48 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>FECHA <span>*</span></label>
+                        <label for="trialDate">FECHA <span>*</span></label>
                         <input type="date" id="trialDate" required>
                     </div>
                     <div class="form-group">
-                        <label>CLASE DISPONIBLE <span>*</span></label>
+                        <label for="trialClassSelect">CLASE DISPONIBLE <span>*</span></label>
                         <select id="trialClassSelect" required>
                             <option value="">Selecciona modalidad y fecha</option>
                         </select>
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label>¿CÓMO PREFIERES QUE TE CONFIRMEMOS LA PLAZA? <span>*</span></label>
+                    <div class="radio-options channel-options">
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferidoPrueba" value="WhatsApp" data-needs-phone="1"
+                                id="trialViaWhatsapp" checked> WhatsApp
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferidoPrueba" value="Llamada" data-needs-phone="1"
+                                id="trialViaLlamada"> Llamada
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="ContactoPreferidoPrueba" value="Email" id="trialViaEmail"> Email
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Trampa para robots ("honeypot"). Va oculta y ninguna persona la ve
+                     ni la puede rellenar; los programas que envían spam sí la rellenan.
+                     Web3Forms descarta el mensaje si viene marcada. Hace falta porque la
+                     clave de acceso está a la vista en el código, como exige su API. -->
+                <input type="checkbox" name="botcheck" class="hp-field" tabindex="-1" autocomplete="off"
+                    aria-hidden="true">
+                <div class="form-group consent-group">
+                    <input type="checkbox" id="trialConsent" required>
+                    <label for="trialConsent">He leído y acepto la <a href="legal/privacidad.html" target="_blank" rel="noopener">política de
+                            privacidad</a>. Si la solicitud es para un menor, confirmo que soy su padre, madre o tutor
+                        legal y autorizo el tratamiento de sus datos para gestionar la clase de prueba.</label>
+                </div>
+
+                <div class="form-status" id="trialStatus" role="status" aria-live="polite"></div>
                 <button type="submit" class="submit-btn" id="submitTrialBtn">SOLICITAR CLASE</button>
             </form>
         </div>
@@ -2063,67 +3562,103 @@
     </div>
 
     <!-- Terms Modal -->
-    <div class="modal-overlay" id="termsModal">
-        <div class="modal-container" style="max-height: 80vh; overflow-y: auto;">
-            <button class="modal-close" id="closeTermsModal" aria-label="Cerrar">&times;</button>
-            <h2 class="modal-title" style="font-size: 2.5rem;">TÉRMINOS Y CONDICIONES</h2>
-            <div
-                style="text-align: left; padding: 2rem 0; font-family: var(--font-body); font-size: 1rem; color: var(--text-gray);">
-                <p style="margin-bottom: 1rem;">Bienvenido a ITACA JIU JITSU. Al acceder a nuestras instalaciones y
-                    utilizar nuestros servicios, aceptas estar sujeto a los presentes términos y condiciones.</p>
-                <h3
-                    style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
-                    1. Inscripción y Pagos</h3>
-                <p style="margin-bottom: 1rem;">Las cuotas deben abonarse en los plazos establecidos. El impago podrá
-                    suponer la restricción del acceso a las clases.</p>
-                <h3
-                    style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
-                    2. Normas de Comportamiento</h3>
-                <p style="margin-bottom: 1rem;">Exigimos respeto mutuo dentro del tatami. Cualquier conducta inapropiada
-                    puede ser motivo de expulsión sin reembolso.</p>
-                <h3
-                    style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
-                    3. Salud Física</h3>
-                <p style="margin-bottom: 1rem;">El usuario declara estar en condiciones físicas óptimas para la práctica
-                    de artes marciales y exime a Itaca Jiu Jitsu de toda responsabilidad por lesiones sufridas durante
-                    el entrenamiento normal.</p>
-                <p>Fecha de actualización: Marzo de 2026</p>
-            </div>
-        </div>
-    </div>
 
     <!-- Privacy Modal -->
-    <div class="modal-overlay" id="privacyModal">
-        <div class="modal-container" style="max-height: 80vh; overflow-y: auto;">
-            <button class="modal-close" id="closePrivacyModal" aria-label="Cerrar">&times;</button>
-            <h2 class="modal-title" style="font-size: 2.5rem;">POLÍTICA DE PRIVACIDAD</h2>
-            <div
-                style="text-align: left; padding: 2rem 0; font-family: var(--font-body); font-size: 1rem; color: var(--text-gray);">
-                <p style="margin-bottom: 1rem;">En cumplimiento de lo dispuesto en la normativa vigente sobre Protección
-                    de Datos Personales, le informamos de lo siguiente:</p>
-                <h3
-                    style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
-                    Responsable del Tratamiento</h3>
-                <p style="margin-bottom: 1rem;">Identidad: ITACA JIU JITSU<br>Email: itacajiujitsu@gmail.com</p>
-                <h3
-                    style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
-                    Finalidad</h3>
-                <p style="margin-bottom: 1rem;">Tratamos la información para gestionar su inscripción, responder a sus
-                    consultas de contacto y enviarle información relevante sobre horarios o modalidades.</p>
-                <h3
-                    style="margin-bottom: 0.5rem; font-size: 1.2rem; font-family: var(--font-heading); color: var(--text-dark);">
-                    Derechos del Usuario</h3>
-                <p style="margin-bottom: 1rem;">Tiene derecho a acceder a sus datos personales, solicitar la
-                    rectificación o eliminación de los mismos contactándonos a través de nuestro email.</p>
+
+    <!-- Back to top -->
+    <!-- Galería completa. La rejilla y el visor grande los rellena el JS con la
+         MISMA lista `photos` que usa el carrusel: para añadir fotos solo se toca
+         esa lista (ver el comentario que hay encima de ella). -->
+    <div class="gallery" id="gallery" role="dialog" aria-modal="true" aria-label="Fotos de Itaca Jiu Jitsu">
+        <div class="gallery__bar">
+            <div>
+                <span class="eyebrow">El gimnasio</span>
+                <h3 class="gallery__title">Somos Itaca</h3>
             </div>
+            <button class="gallery__close" id="galleryClose" type="button" aria-label="Cerrar galería">
+                <svg viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <div class="gallery__grid" id="galleryGrid"></div>
+
+        <div class="gallery__lightbox" id="galleryLightbox">
+            <img id="galleryLightboxImg" src="" alt="">
+            <button class="gallery__nav gallery__nav--prev" id="galleryPrev" type="button" aria-label="Foto anterior">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+            </button>
+            <button class="gallery__nav gallery__nav--next" id="galleryNext" type="button" aria-label="Foto siguiente">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="9 6 15 12 9 18" />
+                </svg>
+            </button>
+            <button class="gallery__close gallery__close--light" id="galleryLightboxClose" type="button"
+                aria-label="Cerrar foto">
+                <svg viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="gallery__counter" id="galleryLightboxCounter"></div>
         </div>
     </div>
 
-    <!-- Back to top -->
+    <!-- Visor de reels a pantalla completa. Las diapositivas las crea el JS a
+         partir de los vídeos de la sección MOVIMIENTO: no hay que mantener la
+         lista de vídeos en dos sitios. -->
+    <div class="reels-viewer" id="reelsViewer" role="dialog" aria-modal="true" aria-label="Vídeos de Itaca">
+        <div class="reels-viewer__track" id="reelsViewerTrack"></div>
+        <button class="reels-viewer__sound" id="reelsViewerSound" type="button" aria-label="Activar sonido">
+            <svg viewBox="0 0 24 24">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <line x1="23" y1="9" x2="17" y2="15"></line>
+                <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+        </button>
+        <button class="reels-viewer__close" id="reelsViewerClose" type="button" aria-label="Cerrar vídeos">
+            <svg viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+        </button>
+        <div class="reels-viewer__hint" id="reelsViewerHint">Desliza</div>
+    </div>
+
+    <!-- Barra de acción: solo se ve en móvil (ver CSS .action-bar) -->
+    <div class="action-bar" id="actionBar">
+        <button class="action-bar__cta trial-trigger" type="button">Clase de prueba</button>
+        <a class="action-bar__icon" href="tel:+34664784121" aria-label="Llamar a Itaca Jiu Jitsu">
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+        </a>
+        <a class="action-bar__icon action-bar__icon--wa" href="https://wa.me/34664784121" target="_blank"
+            rel="noopener" aria-label="Escribir por WhatsApp">
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.34 4.95L2 22l5.23-1.37a9.9 9.9 0 0 0 4.8 1.23h.01c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2zm0 1.68c2.21 0 4.29.86 5.85 2.43a8.23 8.23 0 0 1 2.43 5.85c0 4.57-3.72 8.28-8.29 8.28a8.27 8.27 0 0 1-4.22-1.16l-.3-.18-3.1.81.83-3.03-.2-.31a8.24 8.24 0 0 1-1.27-4.41c0-4.57 3.72-8.28 8.27-8.28zm-2.4 4.4c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.13 3.64.58.25 1.03.4 1.38.51.58.19 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.54.12-.16.24-.62.79-.76.95-.14.16-.28.18-.52.06-.24-.12-1.03-.38-1.96-1.21-.72-.65-1.21-1.45-1.35-1.69-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.47-.39-.4-.54-.41h-.46z" />
+            </svg>
+        </a>
+    </div>
+
     <button class="back-to-top" id="backToTop" aria-label="Volver arriba"></button>
+
+    <!-- La clave de envío y la lógica de los formularios viven en un único
+         archivo que comparten esta página y movil.html. Ver ese archivo. -->
+    <script src="js/itaca-horario.js"></script>
+    <script src="js/itaca-formularios.js"></script>
 
     <!-- JavaScript -->
     <script>
+        // Configuración y envío: js/itaca-formularios.js
+        const EMAIL_ITACA = Itaca.CONFIG.email;
+        const TELEFONO_ITACA = Itaca.CONFIG.telefono;
+
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- Poem Logic ---
@@ -2254,6 +3789,11 @@ entenderás ya qué significan las Ítacas.`;
             const trialClassSelect = document.getElementById('trialClassSelect');
             const trialForm = document.getElementById('trialForm');
 
+            // No se puede pedir una clase de prueba para un día que ya ha pasado.
+            const hoy = new Date();
+            const hoyISO = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+            trialDate.min = hoyISO;
+
             trialTriggers.forEach(trigger => {
                 trigger.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -2279,21 +3819,9 @@ entenderás ya qué significan las Ítacas.`;
             if (closeInfoContactModal) closeInfoContactModal.addEventListener('click', () => { infoContactModal.classList.remove('active'); });
             if (infoContactModal) infoContactModal.addEventListener('click', (e) => { if (e.target === infoContactModal) infoContactModal.classList.remove('active'); });
 
-            const termsTrigger = document.querySelector('.terms-trigger');
-            const termsModal = document.getElementById('termsModal');
-            const closeTermsModal = document.getElementById('closeTermsModal');
-
-            if (termsTrigger) termsTrigger.addEventListener('click', (e) => { e.preventDefault(); termsModal.classList.add('active'); });
-            if (closeTermsModal) closeTermsModal.addEventListener('click', () => { termsModal.classList.remove('active'); });
-            if (termsModal) termsModal.addEventListener('click', (e) => { if (e.target === termsModal) termsModal.classList.remove('active'); });
-
-            const privacyTrigger = document.querySelector('.privacy-trigger');
-            const privacyModal = document.getElementById('privacyModal');
-            const closePrivacyModal = document.getElementById('closePrivacyModal');
-
-            if (privacyTrigger) privacyTrigger.addEventListener('click', (e) => { e.preventDefault(); privacyModal.classList.add('active'); });
-            if (closePrivacyModal) closePrivacyModal.addEventListener('click', () => { privacyModal.classList.remove('active'); });
-            if (privacyModal) privacyModal.addEventListener('click', (e) => { if (e.target === privacyModal) privacyModal.classList.remove('active'); });
+            // Los textos legales ya no son modales: viven en legal/privacidad.html y
+            // legal/terminos.html, que usa también la versión móvil. Así el texto legal
+            // existe una sola vez y no puede divergir entre las dos webs.
 
             tipoAdulto.addEventListener('change', () => {
                 subCategoriaNino.style.display = 'none';
@@ -2318,42 +3846,20 @@ entenderás ya qué significan las Ítacas.`;
                     return;
                 }
 
-                const dateSelected = new Date(trialDate.value);
-                const dayOfWeek = dateSelected.getDay(); // 0=Domingo, 1=Lunes, ..., 6=Sábado
+                // Las clases salen de js/itaca-horario.js, que es el único sitio
+                // donde se editan. Antes había aquí una copia que podía quedarse
+                // desfasada respecto a la tabla de horarios de más arriba.
+                let categoria = null;
+                if (tipoAdulto.checked) categoria = 'adulto';
+                else if (tipoNino.checked && nino4a6.checked) categoria = 'nino46';
+                else if (tipoNino.checked && nino7a10.checked) categoria = 'nino710';
 
-                const classesForAdult = {
-                    1: ["07:00 - Fundamentos", "17:00 - Fundamentos (Gi)"],
-                    2: ["10:00 - Grappling No Gi", "18:00 - Avanzados No Gi", "20:00 - Iniciación No Gi"],
-                    3: ["07:00 - Fundamentos No Gi", "17:00 - No Gi Grappling"],
-                    4: ["10:00 - BJJ Gi", "18:00 - Avanzados Gi", "20:00 - Iniciación Gi"],
-                    5: ["07:00 - Específico Sparring", "18:30 - Avanzado Gi"],
-                    6: ["10:00 - BJJ Gi Libre", "11:00 - Open Mat"],
-                    0: []
-                };
-
-                const classesForNino46 = {
-                    4: ["16:45 - Kids 4/6 Años"]
-                };
-
-                const classesForNino710 = {
-                    2: ["16:45 - Kids 7/10 Años"],
-                    5: ["16:45 - BJJ Kids Gi 7/10 Años"]
-                };
-
-                let optionsConfig = [];
-
-                if (tipoAdulto.checked) {
-                    optionsConfig = classesForAdult[dayOfWeek] || [];
-                } else if (tipoNino.checked) {
-                    if (nino4a6.checked) {
-                        optionsConfig = classesForNino46[dayOfWeek] || [];
-                    } else if (nino7a10.checked) {
-                        optionsConfig = classesForNino710[dayOfWeek] || [];
-                    }
-                } else {
+                if (!categoria) {
                     trialClassSelect.innerHTML = '<option value="">Primero selecciona una modalidad</option>';
                     return;
                 }
+
+                const optionsConfig = ItacaHorario.clasesParaReserva(trialDate.value, categoria);
 
                 trialClassSelect.innerHTML = '';
                 if (optionsConfig.length > 0) {
@@ -2371,38 +3877,147 @@ entenderás ya qué significan las Ítacas.`;
                 }
             }
 
+            // Envío, canal preferido y copia en la hoja: js/itaca-formularios.js
+            const enlaceWhatsApp = Itaca.enlaceWhatsApp;
+            const enlaceRespuesta = Itaca.enlaceRespuesta;
+            const textoCanal = Itaca.textoCanal;
+            const canalElegido = Itaca.canalElegido;
+
+            function mostrarEstado(el, tipo, mensaje) {
+                el.className = 'form-status visible ' + tipo;
+                el.innerHTML = mensaje;
+            }
+
+            function bloqueWhatsApp(texto, canal) {
+                const rotulo = canal === 'WhatsApp'
+                    ? 'Adelanta la conversación por WhatsApp'
+                    : '¿Prefieres que hablemos por WhatsApp?';
+                return '<a class="form-status__wa" href="' + enlaceWhatsApp(texto) + '" target="_blank" ' +
+                    'rel="noopener">' + rotulo + '</a>';
+            }
+
+            // Adapta la llamada compartida al aviso que usa esta página.
+            function enviarFormulario({ form, boton, estado, asunto, datos, textoBoton, cuerpoCorreo, exito, whatsapp, tipo, canal }) {
+                Itaca.enviar({
+                    form, boton, asunto, datos, textoBoton, cuerpoCorreo, whatsapp, tipo,
+                    exito: exito + (whatsapp ? bloqueWhatsApp(whatsapp, canal) : ''),
+                    pintar: (t, html) => {
+                        if (!t) { estado.className = 'form-status'; estado.innerHTML = ''; return; }
+                        mostrarEstado(estado, t, html);
+                    }
+                });
+            }
+
+            function vincularCanalConTelefono(nombreGrupo, campo, grupo) {
+                Itaca.vincularCanalConTelefono(nombreGrupo, campo,
+                    grupo ? grupo.querySelector('label') : null);
+            }
+
+            const contactTelefonoEl = document.getElementById('contactTelefono');
+            vincularCanalConTelefono('ContactoPreferido', contactTelefonoEl,
+                contactTelefonoEl ? contactTelefonoEl.closest('.form-group') : null);
+
+            const trialTelefonoEl = document.getElementById('trialTelefono');
+            vincularCanalConTelefono('ContactoPreferidoPrueba', trialTelefonoEl,
+                trialTelefonoEl ? trialTelefonoEl.closest('.form-group') : null);
+
+            // Formulario de contacto
+            const contactForm = document.getElementById('contactForm');
+            const contactStatus = document.getElementById('contactStatus');
+            const submitFormBtn = document.getElementById('submitFormBtn');
+
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const nombre = document.getElementById('contactNombre').value.trim();
+                const email = document.getElementById('contactEmail').value.trim();
+                const telefono = document.getElementById('contactTelefono').value.trim();
+                const mensaje = document.getElementById('contactMensaje').value.trim();
+                const canal = canalElegido('ContactoPreferido');
+                const responder = enlaceRespuesta(telefono,
+                    'Hola ' + nombre + ', soy de Itaca Jiu Jitsu. Te escribo por tu consulta desde la web.');
+
+                enviarFormulario({
+                    form: contactForm,
+                    boton: submitFormBtn,
+                    estado: contactStatus,
+                    // El canal va en el asunto: se ve en la lista del correo, sin abrirlo.
+                    asunto: '[' + canal + '] Consulta desde la web: ' + nombre,
+                    textoBoton: 'ENVIAR MENSAJE',
+                    datos: {
+                        Nombre: nombre,
+                        Email: email,
+                        'Teléfono': telefono || '(no indicado)',
+                        'Contestar por': canal,
+                        ...(responder ? { 'Responder por WhatsApp': responder } : {}),
+                        Mensaje: mensaje,
+                        Consentimiento: 'Aceptada la política de privacidad'
+                    },
+                    canal: canal,
+                    cuerpoCorreo: `Hola Itaca Jiu Jitsu,\n\nNombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}\n\n${mensaje}\n\nUn saludo.`,
+                    exito: '<strong>Mensaje enviado.</strong> Te contestamos ' + textoCanal(canal) +
+                        ', normalmente en menos de 24 horas.',
+                    tipo: 'Contacto',
+                    whatsapp: `Hola, soy ${nombre}. Os he escrito por la web: ${mensaje}`
+                });
+            });
+
+            // Formulario de clase de prueba
+            const trialStatus = document.getElementById('trialStatus');
+            const submitTrialBtn = document.getElementById('submitTrialBtn');
+
             trialForm.addEventListener('submit', (e) => {
                 e.preventDefault();
+
                 if (!trialClassSelect.value) {
-                    alert("Por favor, selecciona una combinación de fecha válida que contenga clases.");
+                    mostrarEstado(trialStatus, 'error',
+                        'Ese día no hay clases para la categoría que has elegido. Prueba con otra fecha.');
                     return;
                 }
-                const email = document.getElementById('trialEmail').value;
-                const nombre = document.getElementById('trialNombre').value;
-                const telefono = document.getElementById('trialTelefono').value;
-                const cat = tipoAdulto.checked ? "Adulto" : "Niño (" + (nino4a6.checked ? "4 a 6 años" : "7 a 10 años") + ")";
-                const date = trialDate.value;
+
+                const nombre = document.getElementById('trialNombre').value.trim();
+                const email = document.getElementById('trialEmail').value.trim();
+                const telefono = document.getElementById('trialTelefono').value.trim();
+                const cat = tipoAdulto.checked ? 'Adulto' : 'Niño (' + (nino4a6.checked ? '4 a 6 años' : '7 a 10 años') + ')';
+                const fecha = trialDate.value;
                 const clase = trialClassSelect.value;
+                const canal = canalElegido('ContactoPreferidoPrueba');
+                const responder = enlaceRespuesta(telefono,
+                    'Hola ' + nombre + ', soy de Itaca Jiu Jitsu. Te confirmo tu clase de prueba del ' +
+                    fecha + ' (' + clase + '). ¡Nos vemos!');
 
-                const subject = encodeURIComponent("Reserva de Clase de Prueba: " + nombre);
-                const body = encodeURIComponent(
-                    "Hola Itaca Jiu Jitsu,\n\n" +
-                    "Me gustaría asistir a una clase de prueba. Estos son mis datos:\n\n" +
-                    "Nombre: " + nombre + "\n" +
-                    "Email: " + email + "\n" +
-                    "Teléfono: " + telefono + "\n" +
-                    "Categoría: " + cat + "\n" +
-                    "Fecha Seleccionada: " + date + "\n" +
-                    "Clase: " + clase + "\n\n" +
-                    "Un saludo."
-                );
-
-                window.location.href = `mailto:itacajiujitsu@gmail.com?subject=${subject}&body=${body}`;
+                enviarFormulario({
+                    form: trialForm,
+                    boton: submitTrialBtn,
+                    estado: trialStatus,
+                    asunto: '[' + canal + '] Reserva de clase de prueba: ' + nombre,
+                    textoBoton: 'SOLICITAR CLASE',
+                    datos: {
+                        Nombre: nombre,
+                        Email: email,
+                        'Teléfono': telefono,
+                        'Contestar por': canal,
+                        ...(responder ? { 'Responder por WhatsApp': responder } : {}),
+                        'Categoría': cat,
+                        Fecha: fecha,
+                        Clase: clase,
+                        Consentimiento: 'Aceptada la política de privacidad. En caso de menor, consentimiento del tutor legal.'
+                    },
+                    canal: canal,
+                    cuerpoCorreo: `Hola Itaca Jiu Jitsu,\n\nMe gustaría asistir a una clase de prueba. Estos son mis datos:\n\nNombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}\nCategoría: ${cat}\nFecha: ${fecha}\nClase: ${clase}\n\nUn saludo.`,
+                    exito: '<strong>Solicitud enviada.</strong> Te confirmamos la plaza ' + textoCanal(canal) +
+                        ' antes de la clase.',
+                    tipo: 'Clase de prueba',
+                    whatsapp: `Hola, soy ${nombre}. He pedido una clase de prueba por la web: ${clase}, el ${fecha} (${cat}).`
+                });
             });
 
             // Header Scroll & Back to Top behavior
             const header = document.getElementById('header');
             const backToTop = document.getElementById('backToTop');
+
+            // La barra de acción del móvil aparece al dejar atrás la portada:
+            // encima del hero ya hay dos botones grandes y sería redundante.
+            const actionBar = document.getElementById('actionBar');
 
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
@@ -2412,7 +4027,11 @@ entenderás ya qué significan las Ítacas.`;
                     header.classList.remove('scrolled');
                     backToTop.classList.remove('visible');
                 }
-            });
+
+                if (actionBar) {
+                    actionBar.classList.toggle('visible', window.scrollY > window.innerHeight * 0.6);
+                }
+            }, { passive: true });
 
             backToTop.addEventListener('click', () => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2447,54 +4066,6 @@ entenderás ya qué significan las Ítacas.`;
                 });
             });
 
-            // Video Mute/Unmute Logic
-            const heroVideo = document.getElementById('hero-video');
-            const muteBtn = document.getElementById('mute-btn');
-            const iconMuted = document.getElementById('sound-icon-muted');
-            const iconUnmuted = document.getElementById('sound-icon-unmuted');
-
-            // Force play just in case auto-play policy blocks it silently
-            heroVideo.play().catch(e => {
-                console.log("Autoplay con sonido prevenido por el navegador. Forzando mute temporalmente para reproducir.");
-                // Si el navegador impide el autoplay de videos con sonido, lo muteamos de forma automática para que no se quede la pantalla congelada
-                heroVideo.muted = true;
-                iconMuted.style.display = 'block';
-                iconUnmuted.style.display = 'none';
-                heroVideo.play().catch(err => console.log("Final fallback falló", err));
-            });
-
-            muteBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Toggle without pausing
-                heroVideo.muted = !heroVideo.muted;
-
-                if (heroVideo.muted) {
-                    iconMuted.style.display = 'block';
-                    iconUnmuted.style.display = 'none';
-                } else {
-                    iconMuted.style.display = 'none';
-                    iconUnmuted.style.display = 'block';
-                }
-            });
-
-            // Hero Video Intersection Observer (Pause when out of view, Play when in view)
-            const heroSection = document.getElementById('home');
-            const heroObserverOptions = {
-                threshold: 0.8 // Se activa solo cuando al menos el 80% de la sección es visible
-            };
-
-            const heroObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (!entry.isIntersecting) {
-                        heroVideo.pause(); // Pausa reproducción y sonido
-                    } else {
-                        heroVideo.play().catch(e => console.log("Play interrupted: ", e)); // Reanuda reproducción y sonido
-                    }
-                });
-            }, heroObserverOptions);
-
-            if (heroSection) heroObserver.observe(heroSection);
-
             // Reveal on Scroll (Intersection Observer)
             const revealElements = document.querySelectorAll('.reveal');
 
@@ -2512,6 +4083,167 @@ entenderás ya qué significan las Ítacas.`;
             }, revealOptions);
 
             revealElements.forEach(el => revealObserver.observe(el));
+
+            // La tabla de horarios se pinta desde js/itaca-horario.js. Antes
+            // estaba escrita a mano en el HTML y era una segunda copia que
+            // podía contradecir a la que usa el formulario de clase de prueba.
+            (function pintarTablaHorario() {
+                const cabecera = document.getElementById('scheduleHead');
+                const fila = document.getElementById('scheduleRow');
+                if (!cabecera || !fila) return;
+
+                ItacaHorario.DIAS.forEach(dia => {
+                    const th = document.createElement('th');
+                    th.textContent = dia;
+                    cabecera.appendChild(th);
+
+                    const td = document.createElement('td');
+                    td.style.verticalAlign = 'top';
+                    td.dataset.day = dia;
+                    ItacaHorario.clasesDe(dia).forEach(c => {
+                        const bloque = document.createElement('div');
+                        bloque.className = 'class-block';
+                        bloque.innerHTML = '<span class="class-time"></span><span class="class-name"></span>';
+                        bloque.querySelector('.class-time').textContent = c.hora;
+                        bloque.querySelector('.class-name').textContent = c.nombre;
+                        td.appendChild(bloque);
+                    });
+                    fila.appendChild(td);
+                });
+            })();
+
+            // Horario en móvil: un día cada vez.
+            // Las pestañas se construyen leyendo la propia tabla, así el horario
+            // se sigue editando en un único sitio.
+            const dayTabs = document.getElementById('dayTabs');
+            const dayCells = document.querySelectorAll('.schedule-table td[data-day]');
+
+            if (dayTabs && dayCells.length) {
+                const showDay = (index) => {
+                    dayCells.forEach((cell, i) => cell.classList.toggle('is-active-day', i === index));
+                    dayTabs.querySelectorAll('.day-tab').forEach((tab, i) => {
+                        tab.setAttribute('aria-selected', String(i === index));
+                        tab.tabIndex = i === index ? 0 : -1;
+                    });
+                };
+
+                dayCells.forEach((cell, i) => {
+                    const tab = document.createElement('button');
+                    tab.type = 'button';
+                    tab.className = 'day-tab';
+                    tab.role = 'tab';
+                    tab.textContent = cell.dataset.day;
+                    tab.addEventListener('click', () => showDay(i));
+                    dayTabs.appendChild(tab);
+                });
+
+                // Arranca en el día de hoy si hay clase; el domingo, en lunes.
+                const todayIndex = (new Date().getDay() + 6) % 7; // 0 = lunes
+                showDay(todayIndex < dayCells.length ? todayIndex : 0);
+            }
+
+            // Visor de reels a pantalla completa (solo móvil).
+            // Sustituye al "tocar para reproducir" dentro del recuadro pequeño:
+            // el vídeo se abre grande y se pasa al siguiente deslizando.
+            const rvRoot = document.getElementById('reelsViewer');
+            const rvTrack = document.getElementById('reelsViewerTrack');
+            const rvHint = document.getElementById('reelsViewerHint');
+            const rvSound = document.getElementById('reelsViewerSound');
+            const rvClose = document.getElementById('reelsViewerClose');
+            const isTouch = window.matchMedia('(hover: none)').matches;
+            let rvMuted = true;
+
+            if (rvRoot && rvTrack && isTouch) {
+                const sources = Array.from(document.querySelectorAll('#reels .reel-item video'))
+                    .map(v => ({
+                        src: (v.querySelector('source') || {}).src || v.src,
+                        poster: v.poster
+                    }));
+
+                sources.forEach(s => {
+                    const slide = document.createElement('div');
+                    slide.className = 'reels-viewer__slide';
+                    const vid = document.createElement('video');
+                    vid.loop = true;
+                    vid.muted = true;
+                    vid.defaultMuted = true;
+                    ['loop', 'playsinline', 'muted'].forEach(a => vid.setAttribute(a, ''));
+                    vid.preload = 'none';
+                    vid.poster = s.poster;
+                    vid.src = s.src;
+                    slide.appendChild(vid);
+                    rvTrack.appendChild(slide);
+                });
+
+                const rvVideos = Array.from(rvTrack.querySelectorAll('video'));
+
+                const setSoundIcon = () => {
+                    rvSound.innerHTML = rvMuted
+                        ? '<svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>'
+                        : '<svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+                    rvSound.setAttribute('aria-label', rvMuted ? 'Activar sonido' : 'Silenciar');
+                };
+
+                // Solo reproduce el que se está viendo: cuatro vídeos a la vez
+                // calientan el teléfono y se comen los datos.
+                const rvObserver = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        const vid = entry.target;
+                        if (entry.isIntersecting) {
+                            vid.muted = rvMuted;
+                            vid.play().catch(() => { });
+                        } else {
+                            vid.pause();
+                            vid.currentTime = 0;
+                        }
+                    });
+                }, { root: rvTrack, threshold: 0.6 });
+
+                rvVideos.forEach(v => rvObserver.observe(v));
+
+                const openViewer = (index) => {
+                    rvRoot.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                    rvHint.classList.toggle('hidden', sources.length < 2);
+                    // El scroll hay que fijarlo con el visor ya visible: mientras
+                    // está en `display:none` no tiene altura y no se puede desplazar.
+                    requestAnimationFrame(() => {
+                        rvTrack.scrollTop = index * rvTrack.clientHeight;
+                    });
+                };
+
+                const closeViewer = () => {
+                    rvRoot.classList.remove('open');
+                    document.body.style.overflow = '';
+                    rvVideos.forEach(v => v.pause());
+                };
+
+                document.querySelectorAll('#reels .reel-item').forEach((item, i) => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openViewer(i);
+                    });
+                });
+
+                rvClose.addEventListener('click', closeViewer);
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && rvRoot.classList.contains('open')) closeViewer();
+                });
+
+                rvSound.addEventListener('click', () => {
+                    rvMuted = !rvMuted;
+                    rvVideos.forEach(v => { v.muted = rvMuted; });
+                    setSoundIcon();
+                });
+
+                let hintTimer;
+                rvTrack.addEventListener('scroll', () => {
+                    rvHint.classList.add('hidden');
+                    clearTimeout(hintTimer);
+                }, { passive: true });
+
+                setSoundIcon();
+            }
 
             // Reels Hover Logic
             const reels = document.querySelectorAll('.reel-item');
@@ -2559,6 +4291,10 @@ entenderás ya qué significan las Ítacas.`;
                     userHasMuted = false;
                 });
 
+                // En móvil el recuadro no reproduce nada: al tocarlo se abre el
+                // visor a pantalla completa (ver arriba). Reproducir además aquí
+                // dejaría dos vídeos sonando a la vez.
+
                 if (btnMute) {
                     btnMute.addEventListener('click', (e) => {
                         e.stopPropagation(); // Evitar otros clicks
@@ -2579,18 +4315,40 @@ entenderás ya qué significan las Ítacas.`;
             });
 
             // ── Carousel Zoom ─────────────────────────────────────────────────────────────
+            /* ══════════════════════════════════════════════════════════════════
+               LISTA DE FOTOS DEL GIMNASIO — el único sitio que hay que tocar.
+
+               Para añadir una foto:
+                 1. Sube el archivo a la carpeta images/Itaca/
+                 2. Añade una línea aquí, copiando una de las de abajo y
+                    cambiando el nombre del archivo y la etiqueta.
+
+               Las PRIMERAS 8 son las que salen en el carrusel de la portada.
+               Todas, sin límite, salen en "Ver todas las fotos".
+               Para ascender una foto al carrusel, sube su línea en la lista.
+               ══════════════════════════════════════════════════════════════════ */
             const photos = [
-                { src: 'images/Itaca/Gym1.webp', label: 'Instalaciones', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym2.webp', label: 'Entrenamiento', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym3.webp', label: 'Tatami', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym4.webp', label: 'Equipamiento', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym5.webp', label: 'Jiu Jitsu', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym6.webp', label: 'Recepción', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym7.webp', label: 'Detalles', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym8.webp', label: 'Comunidad', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym9.webp', label: 'Disciplina', sub: 'ITACA', w: 1200, h: 800 },
-                { src: 'images/Itaca/Gym10.webp', label: 'Excelencia', sub: 'ITACA', w: 1200, h: 800 }
+                { src: 'images/Itaca/Gym1.webp', label: 'Instalaciones' },
+                { src: 'images/Itaca/Gym2.webp', label: 'Entrenamiento' },
+                { src: 'images/Itaca/Gym3.webp', label: 'Tatami' },
+                { src: 'images/Itaca/Gym4.webp', label: 'Equipamiento' },
+                { src: 'images/Itaca/Gym5.webp', label: 'Jiu Jitsu' },
+                { src: 'images/Itaca/Gym6.webp', label: 'Recepción' },
+                { src: 'images/Itaca/Gym7.webp', label: 'Detalles' }
             ];
+
+            // Valores por defecto: así una línea nueva puede ser solo `{ src: '...' }`
+            // y no hay que acordarse de rellenar nada más.
+            photos.forEach(p => {
+                p.label = p.label || 'Itaca';
+                p.sub = p.sub || 'ITACA';
+                p.w = p.w || 1200;
+                p.h = p.h || 800;
+            });
+
+            // Cuántas van al carrusel. El resto solo se ven en la galería.
+            const CAROUSEL_MAX = 8;
+            const carouselPhotos = photos.slice(0, CAROUSEL_MAX);
 
             const zoomClose = document.getElementById('zoomClose');
             const newTrack = document.getElementById('track');
@@ -2602,17 +4360,18 @@ entenderás ya qué significan las Ítacas.`;
             const zoomImg = document.getElementById('zoomImg');
 
             if (newTrack && btnLeft && btnRight) {
-                photos.forEach((p, i) => {
+                carouselPhotos.forEach((p, i) => {
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.dataset.idx = i;
                     card.innerHTML = `
                         <img src="${p.src}" alt="${p.label}" loading="lazy" draggable="false">
+                        <div class="scroll-hint">Pulsa para ampliar</div>
                         <div class="card-label"><span>${p.label}</span><small>${p.sub}</small></div>`;
                     newTrack.appendChild(card);
                 });
 
-                photos.forEach(() => {
+                carouselPhotos.forEach(() => {
                     const d = document.createElement('div');
                     d.className = 'hint-dot';
                     hintEl.appendChild(d);
@@ -2621,11 +4380,20 @@ entenderás ya qué significan las Ítacas.`;
                 const cards = Array.from(newTrack.querySelectorAll('.card'));
                 const dots = Array.from(hintEl.querySelectorAll('.hint-dot'));
 
-                const STEP = 340;
-                const CARD_W = 320;
-                const CARD_H_C = 460;
-                const INIT = Math.floor((photos.length - 1) / 2);
-                const minOff = -(photos.length - 1) * STEP;
+                // El paso se mide del DOM, no de la variable CSS: `--card-w` vale
+                // `min(74vw, 320px)` en móvil y getComputedStyle devuelve ese texto
+                // sin resolver, que no es un número. Midiendo la tarjeta real el
+                // carrusel queda centrado en cualquier ancho de pantalla.
+                const measureStep = () => {
+                    const first = newTrack.querySelector('.card');
+                    if (!first) return 340;
+                    const gap = parseFloat(getComputedStyle(newTrack).columnGap) || 0;
+                    return first.getBoundingClientRect().width + gap;
+                };
+
+                let STEP = measureStep();
+                const INIT = Math.floor((carouselPhotos.length - 1) / 2);
+                let minOff = -(carouselPhotos.length - 1) * STEP;
                 const maxOff = 0;
 
                 let carX = -INIT * STEP;
@@ -2634,26 +4402,21 @@ entenderás ya qué significan las Ítacas.`;
 
                 let zoomLevel = 0;
                 let zoomTgt = 0;
-                let overCenter = false;
                 let zoomFor = -1;
                 let zoomLocked = false;
-                let mouseX = -999;
-                let mouseY = -999;
-
-                window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
 
                 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
                 const lerp = (a, b, t) => a + (b - a) * t;
 
                 function expandedSize(i) {
-                    const p = photos[i];
+                    const p = carouselPhotos[i];
                     const s = Math.min(1, window.innerWidth * 0.82 / p.w, window.innerHeight * 0.80 / p.h);
                     return { w: Math.round(p.w * s), h: Math.round(p.h * s) };
                 }
 
                 function syncUI() {
                     btnLeft.disabled = centerIdx <= 0;
-                    btnRight.disabled = centerIdx >= photos.length - 1;
+                    btnRight.disabled = centerIdx >= carouselPhotos.length - 1;
                     cards.forEach((c, i) => c.classList.toggle('is-center', i === centerIdx));
                     dots.forEach((d, i) => d.classList.toggle('active', i === centerIdx));
                 }
@@ -2662,11 +4425,23 @@ entenderás ya qué significan las Ítacas.`;
                     carTgt = clamp(-i * STEP, minOff, maxOff);
                     zoomTgt = 0;
                     zoomLocked = false;
-                    overCenter = false;
                 }
 
                 btnLeft.addEventListener('click', () => goTo(centerIdx - 1));
                 btnRight.addEventListener('click', () => goTo(centerIdx + 1));
+
+                // Al girar el móvil o cambiar de ventana el ancho de tarjeta cambia:
+                // sin esto el carrusel se quedaría desplazado a media tarjeta.
+                let resizeTimer;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        STEP = measureStep();
+                        minOff = -(carouselPhotos.length - 1) * STEP;
+                        carTgt = clamp(-centerIdx * STEP, minOff, maxOff);
+                        carX = carTgt;
+                    }, 150);
+                });
 
                 function renderZoom() {
                     if (zoomLevel < 0.003) {
@@ -2677,14 +4452,18 @@ entenderás ya qué significan las Ítacas.`;
                     }
 
                     if (zoomFor !== centerIdx) {
-                        zoomImg.src = photos[centerIdx].src;
+                        zoomImg.src = carouselPhotos[centerIdx].src;
                         zoomFor = centerIdx;
                     }
 
                     const { w: eW, h: eH } = expandedSize(centerIdx);
+                    // Punto de partida del zoom: el tamaño real que tiene ahora
+                    // la tarjeta central, no el de escritorio.
+                    const centerCard = newTrack.querySelector('.card.is-center') || newTrack.querySelector('.card');
+                    const cr = centerCard.getBoundingClientRect();
                     // Prevent crash if calculation fails
-                    const curW = Math.round(lerp(CARD_W, eW || CARD_W, zoomLevel));
-                    const curH = Math.round(lerp(CARD_H_C, eH || CARD_H_C, zoomLevel));
+                    const curW = Math.round(lerp(cr.width, eW || cr.width, zoomLevel));
+                    const curH = Math.round(lerp(cr.height, eH || cr.height, zoomLevel));
 
                     zoomBox.style.width = curW + 'px';
                     zoomBox.style.height = curH + 'px';
@@ -2703,40 +4482,45 @@ entenderás ya qué significan las Ítacas.`;
                     if (Math.abs(carX - carTgt) < 0.1) carX = carTgt;
                     newTrack.style.transform = `translateX(${carX}px)`;
 
-                    const ci = clamp(Math.round(-carX / STEP), 0, photos.length - 1);
+                    const ci = clamp(Math.round(-carX / STEP), 0, carouselPhotos.length - 1);
                     if (ci !== centerIdx) {
                         centerIdx = ci;
                         syncUI();
                     }
 
-                    const centerCard = cards[centerIdx];
-                    if (centerCard) {
-                        const r = centerCard.getBoundingClientRect();
-                        overCenter = mouseX >= r.left && mouseX <= r.right && mouseY >= r.top && mouseY <= r.bottom;
-                        if (!overCenter && zoomTgt > 0 && !zoomLocked) { zoomTgt = 0; }
-                    }
-
-                    zoomLevel = lerp(zoomLevel, zoomTgt, 0.09);
-                    if (Math.abs(zoomLevel - zoomTgt) < 0.001) zoomLevel = zoomTgt;
+                    // Abrir con calma queda bien; cerrar despacio se percibe como que
+                    // la web no responde. Al cerrar se va más rápido.
+                    zoomLevel = lerp(zoomLevel, zoomTgt, zoomTgt === 0 ? 0.22 : 0.09);
+                    if (Math.abs(zoomLevel - zoomTgt) < 0.006) zoomLevel = zoomTgt;
                     renderZoom();
 
                     requestAnimationFrame(tick);
                 }
 
-                window.addEventListener('wheel', function (e) {
-                    if (!overCenter && !zoomLocked) return;
-                    e.preventDefault();
-                    const direction = e.deltaY < 0 ? 0.25 : -0.25;
-                    if (zoomLocked && direction > 0) return;
-                    if (zoomLocked && direction < 0) zoomLocked = false;
-                    zoomTgt = clamp(zoomTgt + direction, 0, 1);
-                }, { passive: false });
+                // El zoom se abre con un CLIC, no con la rueda del ratón.
+                //
+                // Antes la rueda sobre la foto central hacía zoom y bloqueaba el scroll de
+                // la página: quien bajaba con la rueda y pasaba por encima se quedaba
+                // atrapado, y lo que percibía es que la web se había colgado.
 
-                zoomClose.addEventListener('click', () => { zoomLocked = false; zoomTgt = 0; });
+                function cerrarZoom() {
+                    zoomLocked = false;
+                    zoomTgt = 0;
+                }
+
+                zoomClose.addEventListener('click', cerrarZoom);
+                document.getElementById('zoomBackdrop').addEventListener('click', cerrarZoom);
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarZoom(); });
 
                 cards.forEach((card, i) => {
                     card.addEventListener('mouseenter', () => {
                         if (i !== centerIdx) goTo(i);
+                    });
+                    card.addEventListener('click', () => {
+                        // Una foto de los lados primero se coloca en el centro; la del
+                        // centro se amplía.
+                        if (i !== centerIdx) { goTo(i); return; }
+                        zoomTgt = 1;
                     });
                 });
 
@@ -2755,6 +4539,91 @@ entenderás ya qué significan las Ítacas.`;
 
                 syncUI();
                 requestAnimationFrame(tick);
+            }
+
+            // Galería completa: rejilla con TODAS las fotos de la lista `photos`,
+            // más un visor grande para verlas de una en una.
+            const galleryEl = document.getElementById('gallery');
+            const galleryGrid = document.getElementById('galleryGrid');
+            const galleryOpenBtn = document.getElementById('galleryOpen');
+            const lightbox = document.getElementById('galleryLightbox');
+            const lightboxImg = document.getElementById('galleryLightboxImg');
+            const lightboxCounter = document.getElementById('galleryLightboxCounter');
+
+            if (galleryEl && galleryGrid && galleryOpenBtn) {
+                // Decir cuántas hay invita a entrar más que un "ver galería" a secas.
+                galleryOpenBtn.textContent = photos.length === 1
+                    ? 'Ver la foto'
+                    : 'Ver las ' + photos.length + ' fotos';
+
+                photos.forEach((p, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'gallery__item';
+                    btn.type = 'button';
+                    btn.setAttribute('aria-label', 'Ampliar: ' + p.label);
+                    // loading="lazy": con 60 fotos, abrir la galería no puede
+                    // significar descargarlas las 60 de golpe.
+                    btn.innerHTML = '<img src="' + p.src + '" alt="' + p.label +
+                        '" loading="lazy" decoding="async">';
+                    btn.addEventListener('click', () => openLightbox(i));
+                    galleryGrid.appendChild(btn);
+                });
+
+                let lightboxIdx = 0;
+
+                const showPhoto = (i) => {
+                    lightboxIdx = (i + photos.length) % photos.length;
+                    lightboxImg.src = photos[lightboxIdx].src;
+                    lightboxImg.alt = photos[lightboxIdx].label;
+                    lightboxCounter.textContent = (lightboxIdx + 1) + ' / ' + photos.length;
+                };
+
+                function openLightbox(i) {
+                    showPhoto(i);
+                    lightbox.classList.add('open');
+                }
+
+                const closeLightbox = () => lightbox.classList.remove('open');
+
+                const openGallery = () => {
+                    galleryEl.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                };
+
+                const closeGallery = () => {
+                    closeLightbox();
+                    galleryEl.classList.remove('open');
+                    document.body.style.overflow = '';
+                };
+
+                galleryOpenBtn.addEventListener('click', openGallery);
+                document.getElementById('galleryClose').addEventListener('click', closeGallery);
+                document.getElementById('galleryLightboxClose').addEventListener('click', closeLightbox);
+                document.getElementById('galleryPrev').addEventListener('click', () => showPhoto(lightboxIdx - 1));
+                document.getElementById('galleryNext').addEventListener('click', () => showPhoto(lightboxIdx + 1));
+
+                document.addEventListener('keydown', (e) => {
+                    if (!galleryEl.classList.contains('open')) return;
+                    if (e.key === 'Escape') {
+                        lightbox.classList.contains('open') ? closeLightbox() : closeGallery();
+                    }
+                    if (!lightbox.classList.contains('open')) return;
+                    if (e.key === 'ArrowLeft') showPhoto(lightboxIdx - 1);
+                    if (e.key === 'ArrowRight') showPhoto(lightboxIdx + 1);
+                });
+
+                // Pasar foto deslizando: en un móvil es lo que se hace por instinto.
+                let swipeX = null;
+                lightbox.addEventListener('touchstart', (e) => {
+                    swipeX = e.touches[0].clientX;
+                }, { passive: true });
+
+                lightbox.addEventListener('touchend', (e) => {
+                    if (swipeX === null) return;
+                    const dx = e.changedTouches[0].clientX - swipeX;
+                    if (Math.abs(dx) > 45) showPhoto(lightboxIdx + (dx < 0 ? 1 : -1));
+                    swipeX = null;
+                }, { passive: true });
             }
 
             // ScrollSpy Navigation Links 
@@ -2793,6 +4662,67 @@ entenderás ya qué significan las Ítacas.`;
             sectionsForNav.forEach(section => {
                 scrollSpyObserver.observe(section);
             });
+
+            // La tecla Escape cierra cualquier ventana abierta. Es lo que todo el mundo
+            // intenta antes de buscar la X.
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape') return;
+                document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+            });
+
+            // Trampa de foco: con teclado, Tab no debe salir de un modal abierto hacia
+            // botones de la página que quedan tapados detrás (p. ej. el menú hamburguesa).
+            // Al abrir se guarda qué tenía el foco, para devolvérselo al cerrar.
+            (function () {
+                let lastFocused = null;
+                function focusables(modal) {
+                    return Array.from(modal.querySelectorAll(
+                        'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]'
+                    )).filter(el => el.tabIndex >= 0 && el.offsetParent !== null);
+                }
+                function enfocarPrimero(modal) {
+                    const items = focusables(modal);
+                    if (items.length) items[0].focus();
+                }
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    new MutationObserver(() => {
+                        if (modal.classList.contains('active')) {
+                            lastFocused = document.activeElement;
+                            // El overlay tiene "transition: visibility 0.3s": justo al
+                            // añadir la clase, sigue computando como invisible hasta que
+                            // termina la transición (comprobado, no da igual un frame de
+                            // margen). Se espera a que acabe de verdad (`transitionend`),
+                            // con un plazo de emergencia por si el evento no llega.
+                            let ya = false;
+                            const alTerminar = () => {
+                                if (ya) return;
+                                ya = true;
+                                enfocarPrimero(modal);
+                            };
+                            modal.addEventListener('transitionend', alTerminar, { once: true });
+                            setTimeout(alTerminar, 350);
+                        } else if (lastFocused) {
+                            lastFocused.focus();
+                            lastFocused = null;
+                        }
+                    }).observe(modal, { attributes: true, attributeFilter: ['class'] });
+                });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key !== 'Tab') return;
+                    const modal = document.querySelector('.modal-overlay.active');
+                    if (!modal) return;
+                    const items = focusables(modal);
+                    if (!items.length) return;
+                    const first = items[0], last = items[items.length - 1];
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                });
+            })();
         });
     </script>
 </body>
