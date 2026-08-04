@@ -42,10 +42,12 @@
         rel="stylesheet">
     <style>
         :root {
-            --bg-light: #f6f5f2;
+            /* Blanco puro, sin tinte cálido: es la referencia (fondo blanco
+               absoluto), no un crema a medias. */
+            --bg-light: #ffffff;
             --bg-white: #ffffff;
             --text-dark: #141414;
-            --text-gray: #55534e;
+            --text-gray: #545454;
             /* Paleta sin color por decisión de Cipri: negro, blanco y grises,
                en la línea de la referencia (artofjiujitsu.com). Se conservan los
                nombres --accent* porque son los que usa todo el CSS; lo que ha
@@ -673,7 +675,7 @@
         #itaca-poem {
             font-family: 'Special Elite', cursive;
             background: transparent;
-            color: #1a1209;
+            color: var(--text-dark);
             width: 100%;
             height: 100%;
             min-height: 520px;
@@ -688,7 +690,7 @@
             font-size: 2rem;
             letter-spacing: .12em;
             text-align: center;
-            color: #1a1209;
+            color: var(--text-dark);
             margin: 0 0 1.5rem;
             text-transform: uppercase;
         }
@@ -707,7 +709,7 @@
             display: inline-block;
             width: 2px;
             height: 1.1em;
-            background: #1a1209;
+            background: var(--text-dark);
             margin-left: 1px;
             vertical-align: text-bottom;
             animation: blink .65s step-end infinite;
@@ -722,7 +724,7 @@
         .byline {
             font-family: 'Special Elite', cursive;
             font-size: .78rem;
-            color: #8b6f47;
+            color: var(--accent-ink);
             text-align: right;
             margin-top: 1.5rem;
             letter-spacing: .08em;
