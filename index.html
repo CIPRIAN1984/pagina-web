@@ -35,7 +35,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Montserrat:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <link
         href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Crimson+Pro:ital,wght@0,300;1,300&display=swap"
@@ -61,7 +61,7 @@
             --accent-ink: #5f5f5f;
             --surface-dark: #101010;
             --hairline: rgba(20, 20, 20, 0.10);
-            --font-heading: 'Bebas Neue', Impact, sans-serif;
+            --font-heading: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
             --font-body: 'Montserrat', Helvetica, sans-serif;
             --nav-height: 80px;
 
@@ -122,10 +122,13 @@
         h4,
         .bebas {
             font-family: var(--font-heading);
-            font-weight: 400;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            line-height: 1.1;
+            /* Archivo es una fuente ancha: al pasar de Bebas Neue (letra muy
+               estrecha, necesitaba separar caracteres) a esta, el trazo
+               apretado es lo que da el aire editorial, no espaciado. */
+            letter-spacing: -0.02em;
+            line-height: 1.02;
         }
 
         h1 {
@@ -389,32 +392,6 @@
             transition: all 0.3s ease;
         }
 
-        /* El menú va centrado en absoluto, así que no "empuja" al logo ni al botón:
-           si no encoge, se les mete encima. En pantallas de portátil se aprieta. */
-        @media (max-width: 1550px) {
-            .nav-links {
-                gap: 0.4rem;
-            }
-
-            .nav-links a {
-                font-size: 0.78rem;
-                letter-spacing: 0.06em;
-                padding: 0.5rem 0.7rem;
-            }
-        }
-
-        @media (max-width: 1330px) {
-            .nav-links {
-                gap: 0.1rem;
-            }
-
-            .nav-links a {
-                font-size: 0.72rem;
-                letter-spacing: 0.02em;
-                padding: 0.5rem 0.45rem;
-            }
-        }
-
         .nav-links a.active {
             background-color: var(--text-dark) !important;
             color: var(--bg-white) !important;
@@ -497,6 +474,57 @@
             font-size: 1.1rem;
             font-weight: 500;
             font-family: var(--font-body);
+        }
+
+        /* Hamburger breakpoint moved from 1180px to 1330px to accommodate the
+           wider Archivo font (weight 800) without crowding. Below 1330px, the
+           hamburger menu is shown; above, the centered nav is visible. */
+        @media (max-width: 1330px) {
+            .nav-links,
+            .header-cta {
+                display: none;
+            }
+
+            .mobile-menu {
+                top: 0;
+                left: auto;
+                right: -100%;
+                width: 100%;
+                height: 100vh;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                border-radius: 0;
+                box-shadow: none;
+                gap: 2rem;
+                opacity: 1;
+                pointer-events: auto;
+                transform: none;
+            }
+
+            .mobile-menu.open {
+                right: 0;
+                opacity: 1;
+                transform: none;
+            }
+
+            .mobile-menu a {
+                font-size: 2.5rem;
+                font-family: var(--font-heading);
+            }
+
+            .hamburger {
+                display: flex;
+                position: relative;
+                left: auto;
+                color: inherit;
+            }
+
+            header.scrolled .hamburger {
+                opacity: 1;
+                pointer-events: auto;
+                color: var(--text-dark);
+            }
         }
 
         /* Hero */
@@ -2234,56 +2262,6 @@
         }
 
         /* Por debajo de 1180 px el menú de enlaces ya no cabe entre el logo y el
-           botón sin montarse encima: a partir de aquí manda el de las tres rayas. */
-        @media (max-width: 1180px) {
-
-            .nav-links,
-            .header-cta {
-                display: none;
-            }
-
-            .mobile-menu {
-                top: 0;
-                left: auto;
-                right: -100%;
-                width: 100%;
-                height: 100vh;
-                align-items: center;
-                justify-content: center;
-                padding: 0;
-                border-radius: 0;
-                box-shadow: none;
-                gap: 2rem;
-                opacity: 1;
-                pointer-events: auto;
-                transform: none;
-            }
-
-            .mobile-menu.open {
-                right: 0;
-                opacity: 1;
-                transform: none;
-            }
-
-            .mobile-menu a {
-                font-size: 2.5rem;
-                font-family: var(--font-heading);
-            }
-
-            .hamburger {
-                display: flex;
-                position: relative;
-                left: auto;
-                color: inherit;
-            }
-
-            header.scrolled .hamburger {
-                opacity: 1;
-                pointer-events: auto;
-                color: var(--text-dark);
-            }
-        }
-
         @media (max-width: 768px) {
 
             .hero-buttons {
