@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <title>Términos y condiciones · ITACA JIU JITSU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Página legal compartida por la web de ordenador y la de móvil.
+           Vive aparte para que el texto legal exista UNA sola vez: duplicado,
+           el día que se corrija uno de los dos, el otro seguiría mintiendo. */
+        :root {
+            --paper: #fff;
+            --ink: #0a0a0a;
+            --grey: #8b8b8b;
+            --grey-dark: #5f5f5f;
+            --rule: #e5e5e5;
+            --sans: 'Archivo', system-ui, 'Helvetica Neue', Arial, sans-serif;
+            --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--sans);
+            background: var(--paper);
+            color: var(--ink);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .wrap {
+            max-width: 44rem;
+            margin: 0 auto;
+            padding: calc(1.5rem + env(safe-area-inset-top, 0px)) 1.35rem
+                     calc(3.5rem + env(safe-area-inset-bottom, 0px));
+        }
+
+        .volver {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            min-height: 2.75rem;
+            font-family: var(--mono);
+            font-size: .68rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--grey);
+            text-decoration: none;
+        }
+
+        .volver::before {
+            content: '';
+            width: 9px; height: 9px;
+            border-left: 1.6px solid currentColor;
+            border-bottom: 1.6px solid currentColor;
+            transform: rotate(45deg) translate(1px, -1px);
+        }
+
+        h1 {
+            font-weight: 800;
+            font-size: clamp(2rem, 8vw, 2.8rem);
+            line-height: .95;
+            letter-spacing: -.03em;
+            text-transform: uppercase;
+            margin: 1.2rem 0 1.8rem;
+            text-wrap: balance;
+        }
+
+        h3 {
+            font-weight: 800;
+            font-size: 1.02rem;
+            text-transform: uppercase;
+            letter-spacing: -.005em;
+            margin: 2rem 0 .5rem;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--rule);
+        }
+
+        p {
+            font-size: .95rem;
+            color: var(--grey-dark);
+            margin-bottom: .9rem;
+        }
+
+        p strong { color: var(--ink); }
+        a { color: var(--ink); }
+
+        footer {
+            margin-top: 3rem;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--rule);
+            font-family: var(--mono);
+            font-size: .68rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--grey);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <a class="volver" href="#" id="volver">Volver</a>
+        <h1>Términos y condiciones</h1>
+        <div>
+        <p>Bienvenido a ITACA JIU JITSU. Al acceder a nuestras instalaciones y
+        utilizar nuestros servicios, aceptas estar sujeto a los presentes términos y condiciones.</p>
+        <h3>
+        1. Inscripción y Pagos</h3>
+        <p>Las cuotas deben abonarse en los plazos establecidos. El impago podrá
+        suponer la restricción del acceso a las clases.</p>
+        <h3>
+        2. Normas de Comportamiento</h3>
+        <p>Exigimos respeto mutuo dentro del tatami. Cualquier conducta inapropiada
+        puede ser motivo de expulsión sin reembolso.</p>
+        <h3>
+        3. Salud Física</h3>
+        <p>El usuario declara estar en condiciones físicas óptimas para la práctica
+        de artes marciales y exime a Itaca Jiu Jitsu de toda responsabilidad por lesiones sufridas durante
+        el entrenamiento normal.</p>
+        <p>Fecha de actualización: Marzo de 2026</p>
+        <footer>Itaca Jiu Jitsu · Logroño</footer>
+    </div>
+    <script>
+        // Vuelve a la página de la que se venía; si se ha entrado directo, a la portada.
+        document.getElementById('volver').addEventListener('click', function (e) {
+            e.preventDefault();
+            if (history.length > 1) history.back(); else location.href = '../index.html';
+        });
+    </script>
+</body>
+
+</html>
