@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
+    <meta name="robots" content="noindex">
+    <title>ITACA JIU JITSU · maqueta móvil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ─────────────────────────────────────────────────────────────
+           MAQUETA MÓVIL — no es la web publicada.
+           Dirección: la austeridad de las webs de academia americanas
+           (negro absoluto, condensada en mayúsculas, etiquetas en mono)
+           conservando el beige de Itaca como único color. Ese beige es
+           lo que impide que sea un clon.
+           ───────────────────────────────────────────────────────────── */
+        :root {
+            --void: #000000;
+            --surface: #0d0d0d;
+            --surface-2: #171717;
+            --paper: #ffffff;
+            --muted: #7e7e7e;
+            --accent: #d4cfb6;
+            --line: rgba(255, 255, 255, .13);
+
+            --display: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+            --body: 'Montserrat', system-ui, sans-serif;
+            --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+            --gutter: 1.15rem;
+            --safe-b: env(safe-area-inset-bottom, 0px);
+            /* El aviso de maqueta ocupa sitio arriba: se suma al margen seguro
+               para que no tape el rótulo ni los títulos de los paneles.
+               En la web definitiva esta variable pasa a 0. */
+            --banner-h: 2.1rem;
+            --safe-t: calc(env(safe-area-inset-top, 0px) + var(--banner-h));
+            --bar-h: calc(4.3rem + var(--safe-b));
+            --ease: cubic-bezier(.16, 1, .3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            background: var(--void);
+        }
+
+        body {
+            font-family: var(--body);
+            background: var(--void);
+            color: var(--paper);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        img,
+        video {
+            display: block;
+            max-width: 100%;
+        }
+
+        button {
+            font: inherit;
+            color: inherit;
+            background: none;
+            border: 0;
+            cursor: pointer;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+        /* ── voces tipográficas ─────────────────────────────────── */
+        .mono {
+            font-family: var(--mono);
+            font-size: .66rem;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .cond {
+            font-family: var(--display);
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            line-height: .95;
+            font-weight: 400;
+        }
+
+        /* ── PORTADA ────────────────────────────────────────────── */
+        .hero {
+            position: relative;
+            height: 100svh;
+            min-height: 34rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            /* Hueco abajo para el indicador de "desliza", que si no se monta
+               encima de los botones. */
+            padding: 0 var(--gutter) calc(3.6rem + var(--safe-b));
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .hero__media {
+            position: absolute;
+            inset: 0;
+            z-index: -2;
+        }
+
+        .hero__media img,
+        .hero__media video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: linear-gradient(to bottom,
+                    rgba(0, 0, 0, .55) 0%,
+                    rgba(0, 0, 0, .25) 38%,
+                    rgba(0, 0, 0, .88) 82%,
+                    #000 100%);
+        }
+
+        .hero__mark {
+            position: absolute;
+            top: calc(1.1rem + var(--safe-t));
+            left: var(--gutter);
+            right: var(--gutter);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hero__mark .cond {
+            font-size: 1.05rem;
+            letter-spacing: .16em;
+        }
+
+        .hero h1 {
+            font-family: var(--display);
+            text-transform: uppercase;
+            font-weight: 400;
+            font-size: clamp(3.6rem, 19vw, 6rem);
+            line-height: .84;
+            letter-spacing: .01em;
+            margin: .7rem 0 .55rem;
+        }
+
+        .hero p {
+            font-size: .93rem;
+            color: #d8d8d8;
+            max-width: 30ch;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero__cta {
+            display: flex;
+            gap: .55rem;
+        }
+
+        .btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 3.15rem;
+            font-family: var(--display);
+            font-size: clamp(1rem, 4.6vw, 1.28rem);
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            /* En una línea siempre: partido en dos, el botón crece y descuadra
+               la portada. */
+            white-space: nowrap;
+            padding: 0 .5rem;
+            border: 1px solid var(--paper);
+            transition: background .2s, color .2s;
+        }
+
+        .btn--solid {
+            background: var(--paper);
+            color: var(--void);
+        }
+
+        .btn:active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--void);
+        }
+
+        /* Indicador de que hay más abajo. Sin él, una portada a pantalla
+           completa parece el final de la página. */
+        .hero__more {
+            position: absolute;
+            left: 50%;
+            bottom: calc(.9rem + var(--safe-b));
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: .2rem;
+            opacity: .55;
+        }
+
+        .hero__more::after {
+            content: '';
+            width: 1px;
+            height: 16px;
+            background: var(--paper);
+            animation: drop 2s var(--ease) infinite;
+        }
+
+        @keyframes drop {
+
+            0%,
+            100% {
+                transform: scaleY(.35);
+                transform-origin: top;
+                opacity: .3;
+            }
+
+            50% {
+                transform: scaleY(1);
+                transform-origin: top;
+                opacity: 1;
+            }
+        }
+
+        /* ── REJILLA DE DESTINOS ────────────────────────────────── */
+        .grid-head {
+            padding: 2.6rem var(--gutter) 1.1rem;
+            display: flex;
+            flex-direction: column;
+            gap: .45rem;
+        }
+
+        .grid-head h2 {
+            font-family: var(--display);
+            text-transform: uppercase;
+            font-weight: 400;
+            font-size: 2.05rem;
+            line-height: .95;
+        }
+
+        .tiles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            padding: 0 2px;
+        }
+
+        .tile {
+            position: relative;
+            aspect-ratio: 3 / 4;
+            overflow: hidden;
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: var(--surface-2);
+        }
+
+        /* Una de cada seis a doble ancho: rompe la cuadrícula y evita el
+           aspecto de menú de aplicación genérica. */
+        .tile--wide {
+            grid-column: span 2;
+            aspect-ratio: 16 / 9;
+        }
+
+        .tile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(112%) brightness(.62);
+            transition: transform .7s var(--ease), filter .5s ease;
+        }
+
+        .tile:active img {
+            transform: scale(1.04);
+            filter: grayscale(0%) contrast(105%) brightness(.75);
+        }
+
+        .tile__label {
+            position: absolute;
+            inset: auto 0 0 0;
+            padding: 1rem .85rem .85rem;
+            display: flex;
+            flex-direction: column;
+            gap: .18rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, .85), transparent);
+        }
+
+        .tile__idx {
+            font-family: var(--mono);
+            font-size: .58rem;
+            letter-spacing: .22em;
+            color: var(--accent);
+        }
+
+        .tile__name {
+            font-family: var(--display);
+            text-transform: uppercase;
+            font-size: 1.42rem;
+            line-height: 1;
+            letter-spacing: .03em;
+        }
+
+        /* ── PIE ────────────────────────────────────────────────── */
+        .foot {
+            padding: 2.6rem var(--gutter) calc(2.6rem + var(--bar-h));
+            display: flex;
+            flex-direction: column;
+            gap: .55rem;
+            border-top: 1px solid var(--line);
+            margin-top: 2px;
+        }
+
+        .foot a {
+            font-size: .9rem;
+            color: #cfcfcf;
+        }
+
+        .foot .mono {
+            margin-bottom: .3rem;
+        }
+
+        /* ── PANELES A PANTALLA COMPLETA ────────────────────────── */
+        .panel {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: var(--void);
+            transform: translateY(100%);
+            transition: transform .42s var(--ease);
+            display: flex;
+            flex-direction: column;
+            visibility: hidden;
+        }
+
+        .panel.open {
+            transform: none;
+            visibility: visible;
+        }
+
+        .panel__bar {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            padding: calc(.7rem + var(--safe-t)) var(--gutter) .7rem;
+            background: rgba(0, 0, 0, .82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .panel__back {
+            width: 2.6rem;
+            height: 2.6rem;
+            margin-left: -.5rem;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+        }
+
+        .panel__back::before {
+            content: '';
+            width: 11px;
+            height: 11px;
+            border-left: 1.6px solid var(--paper);
+            border-bottom: 1.6px solid var(--paper);
+            transform: rotate(45deg) translate(1px, -1px);
+        }
+
+        .panel__title {
+            font-family: var(--display);
+            text-transform: uppercase;
+            font-size: 1.45rem;
+            letter-spacing: .05em;
+        }
+
+        .panel__body {
+            flex: 1;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+            padding: 1.6rem var(--gutter) calc(2.5rem + var(--bar-h));
+        }
+
+        .panel__body h3 {
+            font-family: var(--display);
+            text-transform: uppercase;
+            font-weight: 400;
+            font-size: 1.65rem;
+            line-height: 1;
+            margin-bottom: .5rem;
+        }
+
+        .panel__body p {
+            font-size: .93rem;
+            color: #c6c6c6;
+            margin-bottom: .9rem;
+            max-width: 42ch;
+        }
+
+        .panel__lede {
+            color: var(--paper) !important;
+            font-size: 1rem !important;
+            margin-bottom: 1.6rem !important;
+        }
+
+        /* ── horario ────────────────────────────────────────────── */
+        .days {
+            display: flex;
+            gap: .4rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            margin: 0 calc(var(--gutter) * -1) 1.4rem;
+            padding: 0 var(--gutter);
+        }
+
+        .days::-webkit-scrollbar {
+            display: none;
+        }
+
+        .day {
+            flex: 0 0 auto;
+            min-height: 2.6rem;
+            padding: .45rem .9rem;
+            border: 1px solid var(--line);
+            font-family: var(--mono);
+            font-size: .66rem;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .day[aria-selected="true"] {
+            background: var(--paper);
+            border-color: var(--paper);
+            color: var(--void);
+        }
+
+        .slot {
+            display: flex;
+            align-items: baseline;
+            gap: .9rem;
+            padding: .95rem 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .slot__time {
+            font-family: var(--mono);
+            font-size: .72rem;
+            letter-spacing: .04em;
+            color: var(--accent);
+            flex: 0 0 auto;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .slot__name {
+            font-family: var(--display);
+            text-transform: uppercase;
+            font-size: 1.3rem;
+            line-height: 1.05;
+        }
+
+        .empty {
+            padding: 2rem 0;
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        /* ── fichas y listas ────────────────────────────────────── */
+        .people {
+            display: grid;
+            gap: 2px;
+        }
+
+        .person {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            background: var(--surface-2);
+        }
+
+        .person img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 22%;
+            filter: grayscale(100%) brightness(.68);
+        }
+
+        .person__txt {
+            position: absolute;
+            inset: auto 0 0 0;
+            padding: 1.1rem .95rem .95rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, .9), transparent);
+        }
+
+        .person__txt .mono {
+            display: block;
+            margin-bottom: .15rem;
+        }
+
+        .person__txt h3 {
+            margin-bottom: .3rem !important;
+        }
+
+        .person__txt p {
+            font-size: .82rem;
+            margin: 0;
+            color: #b9b9b9;
+        }
+
+        .qa {
+            border-top: 1px solid var(--line);
+        }
+
+        .qa summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            min-height: 3rem;
+            list-style: none;
+            font-family: var(--display);
+            text-transform: uppercase;
+            font-size: 1.16rem;
+            letter-spacing: .03em;
+        }
+
+        .qa summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .qa summary::after {
+            content: '';
+            flex: 0 0 auto;
+            width: 9px;
+            height: 9px;
+            border-right: 1.6px solid var(--accent);
+            border-bottom: 1.6px solid var(--accent);
+            transform: rotate(45deg) translate(-2px, -2px);
+            transition: transform .3s var(--ease);
+        }
+
+        .qa[open] summary::after {
+            transform: rotate(-135deg) translate(-2px, -2px);
+        }
+
+        .qa .body {
+            padding-bottom: 1.1rem;
+        }
+
+        .qa .body p {
+            font-size: .88rem;
+            margin-bottom: .5rem;
+        }
+
+        .shots {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+        }
+
+        .shots img {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            background: var(--surface-2);
+        }
+
+        .reels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+        }
+
+        .reel {
+            position: relative;
+            aspect-ratio: 9/16;
+            overflow: hidden;
+            background: var(--surface-2);
+        }
+
+        .reel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(.8);
+        }
+
+        .reel::after {
+            content: '';
+            position: absolute;
+            inset: 50% auto auto 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 9px 0 9px 15px;
+            border-color: transparent transparent transparent #fff;
+        }
+
+        .map {
+            width: 100%;
+            aspect-ratio: 4/3;
+            border: 0;
+            filter: grayscale(100%) invert(92%) contrast(88%);
+            background: var(--surface-2);
+        }
+
+        .poem {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-style: italic;
+            font-size: 1rem;
+            line-height: 1.85;
+            color: #cfcabb;
+            white-space: pre-line;
+            border-left: 1px solid var(--accent);
+            padding-left: 1.1rem;
+        }
+
+        /* ── BARRA DE ACCIÓN ────────────────────────────────────── */
+        .bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 80;
+            display: flex;
+            gap: .45rem;
+            padding: .55rem var(--gutter) calc(.55rem + var(--safe-b));
+            background: rgba(0, 0, 0, .84);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--line);
+            transform: translateY(110%);
+            transition: transform .35s var(--ease);
+        }
+
+        .bar.show {
+            transform: none;
+        }
+
+        .bar__cta {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 3rem;
+            background: var(--paper);
+            color: var(--void);
+            font-family: var(--display);
+            font-size: 1.24rem;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .bar__ico {
+            flex: 0 0 3rem;
+            min-height: 3rem;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--line);
+        }
+
+        .bar__ico svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 90;
+            /* Usa el margen del sistema a pelo, NO --safe-t: esa variable ya
+               incluye la altura de este aviso y se retroalimentaría. */
+            padding: calc(.4rem + env(safe-area-inset-top, 0px)) var(--gutter) .4rem;
+            background: var(--accent);
+            color: #000;
+            font-family: var(--mono);
+            font-size: .6rem;
+            line-height: 1.4;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::after,
+            *::before {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="banner">Maqueta · no es la web publicada</div>
+
+    <!-- PORTADA -->
+    <header class="hero">
+        <div class="hero__media" id="heroMedia">
+            <img src="images/Itaca/Portada-movil.jpg" alt="Entrenamiento en Itaca Jiu Jitsu" id="heroPoster">
+        </div>
+        <div class="hero__mark">
+            <span class="cond">Itaca Jiu Jitsu</span>
+            <span class="mono">Logroño</span>
+        </div>
+        <span class="mono">Brazilian Jiu Jitsu</span>
+        <h1>Itaca<br>Jiu Jitsu</h1>
+        <p>Técnica bien explicada y entrenamiento exigente. Aquí se empieza de cero.</p>
+        <div class="hero__cta">
+            <button class="btn btn--solid" data-panel="prueba">Clase de prueba</button>
+            <button class="btn" data-panel="contacto">Contacto</button>
+        </div>
+        <div class="hero__more"><span class="mono">Desliza</span></div>
+    </header>
+
+    <!-- REJILLA -->
+    <div class="grid-head">
+        <span class="mono">La academia</span>
+        <h2>Todo, a un toque</h2>
+    </div>
+
+    <nav class="tiles">
+        <button class="tile tile--wide" data-panel="horarios">
+            <img src="images/Itaca/Gym3.webp" alt="" loading="lazy" decoding="async">
+            <span class="tile__label"><span class="tile__idx">01 — Cuándo</span><span
+                    class="tile__name">Horarios</span></span>
+        </button>
+        <button class="tile" data-panel="fotos">
+            <img src="images/Itaca/Gym1.webp" alt="" loading="lazy" decoding="async">
+            <span class="tile__label"><span class="tile__idx">02</span><span class="tile__name">El gimnasio</span></span>
+        </button>
+        <button class="tile" data-panel="videos">
+            <img src="images/posters/Boris_instagram.webp" alt="" loading="lazy" decoding="async">
+            <span class="tile__label"><span class="tile__idx">03</span><span class="tile__name">En
+                    movimiento</span></span>
+        </button>
+        <button class="tile" data-panel="instructores">
+            <img src="images/Profesores/Cipri.webp" alt="" loading="lazy" decoding="async">
+            <span class="tile__label"><span class="tile__idx">04</span><span
+                    class="tile__name">Instructores</span></span>
+        </button>
+        <button class="tile" data-panel="ninos">
+            <img src="images/Itaca/Gym5.webp" alt="" loading="lazy" decoding="async">
+            <span class="tile__label"><span class="tile__idx">05</span><span class="tile__name">Niños</span></span>
+        </button>
+        <button class="tile tile--wide" data-panel="primer">
+            <img src="images/Itaca/Gym4.webp" alt="" loading="lazy" decoding="async">
+            <span class="tile__label"><span class="tile__idx">06 — Sin experiencia</span><span class="tile__name">Tu
+                    primer día</span></span>
+        </button>
+        <button class="tile" data-panel="filosofia">
+            <img src="images/Itaca/Gym6.webp" alt="" loading="lazy" decoding="async">
+            <span class="tile__label"><span class="tile__idx">07</span><span class="tile__name">Filosofía</span></span>
+        </button>
+        <button class="tile" data-panel="donde">
+            <img src="images/Itaca/Gym7.webp" alt="" loading="lazy" decoding="async">
+            <span class="tile__label"><span class="tile__idx">08</span><span class="tile__name">Dónde
+                    estamos</span></span>
+        </button>
+    </nav>
+
+    <footer class="foot">
+        <span class="mono">Contacto</span>
+        <a href="tel:+34664784121">664 78 41 21</a>
+        <a href="mailto:itacajiujitsu@gmail.com">itacajiujitsu@gmail.com</a>
+        <a href="https://maps.google.com/?q=Pol%C3%ADgono+Cantabria,+C.+Barriguelo+4,+26009+Logro%C3%B1o"
+            target="_blank" rel="noopener">Polígono Cantabria, C. Barriguelo 4 · Logroño</a>
+    </footer>
+
+    <!-- BARRA DE ACCIÓN -->
+    <div class="bar" id="bar">
+        <button class="bar__cta" data-panel="prueba">Clase de prueba</button>
+        <a class="bar__ico" href="tel:+34664784121" aria-label="Llamar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+        </a>
+        <a class="bar__ico" href="https://wa.me/34664784121" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.34 4.95L2 22l5.23-1.37a9.9 9.9 0 0 0 4.8 1.23c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2zm0 1.68c2.21 0 4.29.86 5.85 2.43a8.23 8.23 0 0 1 2.43 5.85c0 4.57-3.72 8.28-8.29 8.28a8.27 8.27 0 0 1-4.22-1.16l-.3-.18-3.1.81.83-3.03-.2-.31a8.24 8.24 0 0 1-1.27-4.41c0-4.57 3.72-8.28 8.27-8.28zm-2.4 4.4c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.13 3.64.58.25 1.03.4 1.38.51.58.19 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.54.12-.16.24-.62.79-.76.95-.14.16-.28.18-.52.06-.24-.12-1.03-.38-1.96-1.21-.72-.65-1.21-1.45-1.35-1.69-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.47-.39-.4-.54-.41h-.46z" />
+            </svg>
+        </a>
+    </div>
+
+    <!-- PANELES -->
+    <section class="panel" id="p-horarios" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button>
+            <span class="panel__title">Horarios</span>
+        </div>
+        <div class="panel__body">
+            <p class="panel__lede">Elige el día. Se abre en el de hoy.</p>
+            <div class="days" id="days" role="tablist"></div>
+            <div id="slots"></div>
+        </div>
+    </section>
+
+    <section class="panel" id="p-fotos" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button>
+            <span class="panel__title">El gimnasio</span>
+        </div>
+        <div class="panel__body">
+            <p class="panel__lede">Polígono Cantabria. Tatami de competición, vestuarios y sitio para entrenar en serio.
+            </p>
+            <div class="shots" id="shots"></div>
+        </div>
+    </section>
+
+    <section class="panel" id="p-videos" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button>
+            <span class="panel__title">En movimiento</span>
+        </div>
+        <div class="panel__body">
+            <p class="panel__lede">Entrenamientos reales, grabados en el tatami.</p>
+            <div class="reels">
+                <div class="reel"><img src="images/posters/Boris_instagram.webp" alt="" loading="lazy"></div>
+                <div class="reel"><img src="images/posters/Cipri_instagram.webp" alt="" loading="lazy"></div>
+                <div class="reel"><img src="images/posters/Marta_instagram.webp" alt="" loading="lazy"></div>
+                <div class="reel"><img src="images/posters/Itaca_gi_instagram.webp" alt="" loading="lazy"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" id="p-instructores" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button>
+            <span class="panel__title">Instructores</span>
+        </div>
+        <div class="panel__body">
+            <div class="people">
+                <div class="person"><img src="images/Profesores/Cipri.webp" alt="Cipri" loading="lazy">
+                    <div class="person__txt"><span class="mono">Head coach · Cinturón negro</span>
+                        <h3>Cipri</h3>
+                        <p>Especialista en guardia moderna y transiciones. Múltiple campeón nacional con 10 años de
+                            experiencia.</p>
+                    </div>
+                </div>
+                <div class="person"><img src="images/Profesores/Boris.webp" alt="Boris" loading="lazy">
+                    <div class="person__txt"><span class="mono">Instructor · Cinturón morado</span>
+                        <h3>Boris</h3>
+                        <p>Muy técnico y muy estructurado. Formado en Itaca desde cero: la prueba de hasta dónde se puede
+                            llegar aquí.</p>
+                    </div>
+                </div>
+                <div class="person"><img src="images/Profesores/Marta_Pozo.webp" alt="Marta Pozo" loading="lazy">
+                    <div class="person__txt"><span class="mono">Instructora · Cinturón morado</span>
+                        <h3>Marta Pozo</h3>
+                        <p>Competidora destacada y profesora de profesión: da clase en un instituto y en el tatami.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" id="p-ninos" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button>
+            <span class="panel__title">Niños</span>
+        </div>
+        <div class="panel__body">
+            <p class="panel__lede">Empezamos por lo que preocupa a un padre o una madre, no por la técnica.</p>
+            <p>El jiu jitsu infantil no va de pegar. No hay golpes: se trabaja el control, el equilibrio y la manera de
+                salir de una situación incómoda sin hacer daño a nadie.</p>
+            <p>Lo que más se nota fuera del tatami es otra cosa: la confianza de saber que puede con algo difícil y el
+                respeto por el compañero.</p>
+            <div style="margin-top:1.6rem">
+                <div class="slot"><span class="slot__time">4–6 años</span><span class="slot__name">Jueves 16:45</span>
+                </div>
+                <div class="slot"><span class="slot__time">7–10 años</span><span class="slot__name">Martes y viernes
+                        16:45</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" id="p-primer" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button>
+            <span class="panel__title">Tu primer día</span>
+        </div>
+        <div class="panel__body">
+            <p class="panel__lede">Todo el mundo ha tenido un primer día. Esto es lo que pasa en el tuyo.</p>
+            <details class="qa" open>
+                <summary>¿Necesito experiencia?</summary>
+                <div class="body">
+                    <p>Ninguna. Las clases de iniciación están pensadas exactamente para quien nunca ha pisado un
+                        tatami.</p>
+                </div>
+            </details>
+            <details class="qa">
+                <summary>¿Hay que estar en forma?</summary>
+                <div class="body">
+                    <p>No. Se entrena a tu ritmo y paras cuando lo necesitas. La forma física llega entrenando, no al
+                        revés.</p>
+                </div>
+            </details>
+            <details class="qa">
+                <summary>¿Qué me pongo?</summary>
+                <div class="body">
+                    <p>Ropa deportiva ajustada, chanclas y una botella de agua. Para la primera clase no necesitas
+                        kimono.</p>
+                </div>
+            </details>
+            <details class="qa">
+                <summary>¿Me van a hacer daño?</summary>
+                <div class="body">
+                    <p>No. Se trabaja técnica y se va por pasos. Aquí nadie tiene que demostrar nada a costa del que
+                        acaba de llegar.</p>
+                </div>
+            </details>
+            <details class="qa">
+                <summary>Dos normas del tatami</summary>
+                <div class="body">
+                    <p>Uñas cortas y pies limpios: se entrena descalzo y muy cerca de los demás.</p>
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <section class="panel" id="p-filosofia" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button>
+            <span class="panel__title">Filosofía</span>
+        </div>
+        <div class="panel__body">
+            <p class="panel__lede">Itaca no es solo un tatami: es una escuela de perfeccionamiento. La técnica prevalece
+                sobre la fuerza.</p>
+            <span class="mono">Konstantino Kavafis</span>
+            <p class="poem" style="margin-top:.8rem">Cuando emprendas tu viaje a Ítaca
+                pide que el camino sea largo,
+                lleno de aventuras, lleno de experiencias.
+
+                Ten siempre a Ítaca en tu mente.
+                Llegar allí es tu destino.
+                Mas no apresures nunca el viaje.
+
+                Ítaca te brindó tan hermoso viaje.
+                Sin ella no habrías emprendido el camino.</p>
+        </div>
+    </section>
+
+    <section class="panel" id="p-donde" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button>
+            <span class="panel__title">Dónde estamos</span>
+        </div>
+        <div class="panel__body">
+            <p class="panel__lede">Polígono Cantabria, C. Barriguelo 4<br>26009 Logroño, La Rioja</p>
+            <iframe class="map" id="mapa" data-src="https://maps.google.com/maps?q=ITACA%20JIU%20JITSU%2C%20Pol%C3%ADgono%20Cantabria%2C%20C.%20Barriguelo%2C%204%2C%2026009%20Logro%C3%B1o&amp;z=14&amp;output=embed"
+                loading="lazy" title="Mapa"></iframe>
+            <div style="margin-top:1.4rem">
+                <a class="btn btn--solid" style="display:flex"
+                    href="https://maps.google.com/?q=Pol%C3%ADgono+Cantabria,+C.+Barriguelo+4,+26009+Logro%C3%B1o"
+                    target="_blank" rel="noopener">Cómo llegar</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel" id="p-prueba" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button>
+            <span class="panel__title">Clase de prueba</span>
+        </div>
+        <div class="panel__body">
+            <p class="panel__lede">En la maqueta el formulario no está montado: sirve para ver cómo se navega. En la web
+                real es el formulario de siempre.</p>
+            <a class="btn btn--solid" style="display:flex;margin-bottom:.6rem"
+                href="https://wa.me/34664784121?text=Hola%2C%20quiero%20una%20clase%20de%20prueba." target="_blank"
+                rel="noopener">Pedirla por WhatsApp</a>
+            <a class="btn" style="display:flex" href="tel:+34664784121">Llamar al 664 78 41 21</a>
+        </div>
+    </section>
+
+    <section class="panel" id="p-contacto" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button>
+            <span class="panel__title">Contacto</span>
+        </div>
+        <div class="panel__body">
+            <p class="panel__lede">Escríbenos por donde te venga mejor.</p>
+            <a class="btn btn--solid" style="display:flex;margin-bottom:.6rem" href="https://wa.me/34664784121"
+                target="_blank" rel="noopener">WhatsApp</a>
+            <a class="btn" style="display:flex;margin-bottom:.6rem" href="tel:+34664784121">Llamar</a>
+            <a class="btn" style="display:flex" href="mailto:itacajiujitsu@gmail.com">Email</a>
+        </div>
+    </section>
+
+    <script>
+        (function () {
+            'use strict';
+
+            /* ── Portada: el vídeo entra DESPUÉS de pintar la página, y solo
+               si la conexión da para ello. Con datos limitados se queda la
+               foto, que pesa 42 KB y se ve igual de bien. ───────────── */
+            function cargarVideo() {
+                var c = navigator.connection || {};
+                if (c.saveData) return;
+                if (/^(slow-)?2g$/.test(c.effectiveType || '')) return;
+                var v = document.createElement('video');
+                v.muted = true; v.defaultMuted = true;
+                ['autoplay', 'loop', 'playsinline', 'muted'].forEach(function (a) { v.setAttribute(a, ''); });
+                v.poster = 'images/Itaca/Portada-movil.jpg';
+                v.src = 'videos/Itaca_Hero_Mobile.mp4';
+                v.addEventListener('canplay', function () {
+                    var p = document.getElementById('heroPoster');
+                    if (p) p.remove();
+                }, { once: true });
+                document.getElementById('heroMedia').appendChild(v);
+                v.play().catch(function () { });
+            }
+            if (document.readyState === 'complete') setTimeout(cargarVideo, 200);
+            else window.addEventListener('load', function () { setTimeout(cargarVideo, 200); });
+
+            /* ── Paneles ─────────────────────────────────────────────── */
+            var abierto = null;
+
+            function abrir(nombre, empujarHistorial) {
+                var el = document.getElementById('p-' + nombre);
+                if (!el) return;
+                if (abierto) abierto.classList.remove('open');
+                el.classList.add('open');
+                el.setAttribute('aria-hidden', 'false');
+                el.querySelector('.panel__body').scrollTop = 0;
+                document.body.style.overflow = 'hidden';
+                abierto = el;
+                if (nombre === 'donde') {
+                    var m = document.getElementById('mapa');
+                    if (m && !m.src) m.src = m.dataset.src;
+                }
+                // El botón "atrás" del móvil tiene que cerrar el panel, no salir
+                // de la web: por eso cada panel añade una entrada al historial.
+                if (empujarHistorial !== false) history.pushState({ panel: nombre }, '', '#' + nombre);
+            }
+
+            function cerrar() {
+                if (!abierto) return;
+                abierto.classList.remove('open');
+                abierto.setAttribute('aria-hidden', 'true');
+                abierto = null;
+                document.body.style.overflow = '';
+            }
+
+            document.querySelectorAll('[data-panel]').forEach(function (b) {
+                b.addEventListener('click', function () { abrir(b.dataset.panel); });
+            });
+
+            document.querySelectorAll('.panel__back').forEach(function (b) {
+                b.addEventListener('click', function () { history.back(); });
+            });
+
+            window.addEventListener('popstate', function (e) {
+                if (e.state && e.state.panel) abrir(e.state.panel, false);
+                else cerrar();
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && abierto) history.back();
+            });
+
+            /* ── Barra de acción: aparece al dejar atrás la portada ──── */
+            var bar = document.getElementById('bar');
+            window.addEventListener('scroll', function () {
+                bar.classList.toggle('show', window.scrollY > window.innerHeight * .55);
+            }, { passive: true });
+
+            /* ── Horario ─────────────────────────────────────────────── */
+            var HORARIO = {"Lunes": [["07:00 - 08:00", "Fundamentos"], ["17:00 - 18:00", "Fundamentos (Gi)"]], "Martes": [["10:00 - 11:30", "Grappling No Gi"], ["16:45 - 17:45", "Kids 7/10 Años"], ["18:00 - 20:00", "Avanzados No Gi"], ["20:00 - 21:00", "Iniciación No Gi"]], "Miércoles": [["07:00 - 08:00", "Fundamentos No Gi"], ["17:00 - 18:00", "No Gi Grappling"]], "Jueves": [["10:00 - 11:30", "BJJ Gi"], ["16:45 - 17:45", "Kids 4/6 Años"], ["18:00 - 20:00", "Avanzados Gi"], ["20:00 - 21:00", "Iniciación Gi"]], "Viernes": [["07:00 - 08:00", "Específico Sparring"], ["16:45 - 17:45", "BJJ Kids Gi 7/10 Años"], ["18:30 - 20:00", "Avanzado Gi"]], "Sábado": [["10:00 - 11:00", "BJJ Gi Libre"], ["11:00 - 12:30", "Open Mat"]]};
+            var dias = Object.keys(HORARIO);
+            var elDias = document.getElementById('days');
+            var elSlots = document.getElementById('slots');
+
+            function pintarDia(i) {
+                var d = dias[i];
+                elSlots.innerHTML = HORARIO[d].length
+                    ? HORARIO[d].map(function (s) {
+                        return '<div class="slot"><span class="slot__time">' + s[0] +
+                            '</span><span class="slot__name">' + s[1] + '</span></div>';
+                    }).join('')
+                    : '<p class="empty">Ese día no hay clases.</p>';
+                Array.prototype.forEach.call(elDias.children, function (b, j) {
+                    b.setAttribute('aria-selected', String(j === i));
+                });
+            }
+
+            dias.forEach(function (d, i) {
+                var b = document.createElement('button');
+                b.className = 'day';
+                b.type = 'button';
+                b.setAttribute('role', 'tab');
+                b.textContent = d;
+                b.addEventListener('click', function () { pintarDia(i); });
+                elDias.appendChild(b);
+            });
+
+            var hoy = (new Date().getDay() + 6) % 7;   // 0 = lunes
+            pintarDia(hoy < dias.length ? hoy : 0);
+
+            /* ── Fotos ───────────────────────────────────────────────── */
+            var FOTOS = ['Gym1', 'Gym2', 'Gym3', 'Gym4', 'Gym5', 'Gym6', 'Gym7'];
+            document.getElementById('shots').innerHTML = FOTOS.map(function (f) {
+                return '<img src="images/Itaca/' + f + '.webp" alt="" loading="lazy" decoding="async">';
+            }).join('');
+
+            /* ── Abrir directamente si la dirección trae un panel ────── */
+            var inicial = location.hash.replace('#', '');
+            if (inicial && document.getElementById('p-' + inicial)) abrir(inicial, false);
+        })();
+    </script>
+</body>
+
+</html>
