@@ -28,10 +28,29 @@
             }
         })();
     </script>
-    <title>ITACA JIU JITSU | Excelencia en Artes Marciales</title>
+    <title>ITACA JIU JITSU | Brazilian Jiu Jitsu en Logroño</title>
+    <meta name="description"
+        content="Escuela de Brazilian Jiu Jitsu en Logroño. Horarios, clases para niños y adultos, y clase de prueba gratuita.">
     <!-- Pareja móvil de esta página, para que los buscadores no las traten
          como contenido duplicado. -->
     <link rel="alternate" media="only screen and (max-width: 760px)" href="movil.html">
+    <link rel="canonical" href="index.html">
+    <!-- Vista previa al compartir en redes/WhatsApp. og:image reutiliza una
+         foto real del gimnasio (recortada a 1200×630) en vez de un diseño
+         inventado: eso es decisión de contenido de Cipri, no técnica. -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Itaca Jiu Jitsu | Brazilian Jiu Jitsu en Logroño">
+    <meta property="og:description" content="Técnica bien explicada, entrenamiento exigente y gente que te ayuda a mejorar. Aquí se empieza de cero.">
+    <meta property="og:image" content="images/og-image.jpg">
+    <meta property="og:locale" content="es_ES">
+    <meta name="twitter:card" content="summary_large_image">
+    <!-- Icono de pestaña: marca provisional en blanco y negro a juego con la
+         paleta de la web. Cipri puede sustituirlo por el logo real cuando lo
+         tenga — es una decisión de contenido, no técnica. -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#ffffff">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -476,10 +495,17 @@
             font-family: var(--font-body);
         }
 
-        /* Hamburger breakpoint moved from 1180px to 1330px to accommodate the
-           wider Archivo font (weight 800) without crowding. Below 1330px, the
-           hamburger menu is shown; above, the centered nav is visible. */
-        @media (max-width: 1330px) {
+        /* .nav-links centra su caja sobre el header ENTERO (left:50%), sin tener
+           en cuenta el ancho fijo de .header-cta-wrapper a la derecha. Con la
+           tipografía Archivo (más ancha que la Bebas Neue original) el enlace
+           final del menú puede meterse debajo del botón "Hazte Miembro" en un
+           rango de anchos donde a simple vista parecía haber sitio de sobra.
+           Medido con Playwright: la colisión empieza justo por encima de
+           1330px y no despeja del todo hasta ~1530px. El breakpoint del menú
+           de hamburguesa se pone en 1600px, con margen, en vez de calcular el
+           punto exacto — cualquier cambio en los enlaces (añadir uno, texto
+           más largo) puede volver a mover ese punto. */
+        @media (max-width: 1600px) {
             .nav-links,
             .header-cta {
                 display: none;
@@ -2839,6 +2865,7 @@
             MIEMBRO</a>
     </div>
 
+    <main>
     <!-- Hero -->
     <section class="hero" id="home">
         <!-- Escritorio: foto. El vídeo que había (Itaca_Hero_Video.mp4) es una
@@ -3335,6 +3362,7 @@
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Footer -->
     <footer id="contact">
@@ -3420,8 +3448,8 @@
             <button class="modal-close" id="closeTrialModal" aria-label="Cerrar">&times;</button>
             <h2 class="modal-title" style="font-size: 3rem;">CLASE DE PRUEBA</h2>
             <form class="contact-form" id="trialForm" novalidate>
-                <p class="form-note">Si la clase es para un niño o una niña, este formulario lo rellena su padre,
-                    madre o tutor legal.</p>
+                <p class="form-note">La primera clase no tiene coste. Si es para un niño o una niña, este formulario
+                    lo rellena su padre, madre o tutor legal.</p>
                 <div class="form-group">
                     <label for="trialNombre">NOMBRE Y APELLIDOS <span>*</span></label>
                     <input type="text" id="trialNombre" placeholder="NOMBRE" required autocomplete="name">
@@ -4641,6 +4669,60 @@ entenderás ya qué significan las Ítacas.`;
                 if (e.key !== 'Escape') return;
                 document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
             });
+
+            // Trampa de foco: con teclado, Tab no debe salir de un modal abierto hacia
+            // botones de la página que quedan tapados detrás (p. ej. el menú hamburguesa).
+            // Al abrir se guarda qué tenía el foco, para devolvérselo al cerrar.
+            (function () {
+                let lastFocused = null;
+                function focusables(modal) {
+                    return Array.from(modal.querySelectorAll(
+                        'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]'
+                    )).filter(el => el.tabIndex >= 0 && el.offsetParent !== null);
+                }
+                function enfocarPrimero(modal) {
+                    const items = focusables(modal);
+                    if (items.length) items[0].focus();
+                }
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    new MutationObserver(() => {
+                        if (modal.classList.contains('active')) {
+                            lastFocused = document.activeElement;
+                            // El overlay tiene "transition: visibility 0.3s": justo al
+                            // añadir la clase, sigue computando como invisible hasta que
+                            // termina la transición (comprobado, no da igual un frame de
+                            // margen). Se espera a que acabe de verdad (`transitionend`),
+                            // con un plazo de emergencia por si el evento no llega.
+                            let ya = false;
+                            const alTerminar = () => {
+                                if (ya) return;
+                                ya = true;
+                                enfocarPrimero(modal);
+                            };
+                            modal.addEventListener('transitionend', alTerminar, { once: true });
+                            setTimeout(alTerminar, 350);
+                        } else if (lastFocused) {
+                            lastFocused.focus();
+                            lastFocused = null;
+                        }
+                    }).observe(modal, { attributes: true, attributeFilter: ['class'] });
+                });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key !== 'Tab') return;
+                    const modal = document.querySelector('.modal-overlay.active');
+                    if (!modal) return;
+                    const items = focusables(modal);
+                    if (!items.length) return;
+                    const first = items[0], last = items[items.length - 1];
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                });
+            })();
         });
     </script>
 </body>

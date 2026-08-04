@@ -158,13 +158,15 @@ El agente reacciona **inmediatamente**:
 Al iniciar cada sesión, este es el estado:
 
 ```
-ITACA JIU JITSU — Estado de Salud
+ITACA JIU JITSU — Estado de Salud (actualizado 2026-08-04, auditoría prepublicación)
 ═════════════════════════════════════════════════════════════
-✅ Código funciona:  index.html (3.4KB LOC, sin errores)
-⚠️  Deuda técnica:   4 items (ver DECISIONS.md: DT-1 a DT-4)
-📊 Pruebas:         No hay suite automática (manual en navegador)
-🔴 Bloqueadores:    Portada.jpg falta, Web3Forms key pendiente
-📦 Deploy:          Vercel preview OK, main no existe todavía
+✅ Código funciona:  index.html + movil.html + js/ + legal/, sin errores
+✅ Horario:          una sola fuente (js/itaca-horario.js), ya no duplicado
+✅ Formularios:      Web3Forms activo (clave puesta), casilla de consentimiento en los dos
+⚠️  Deuda técnica:   ver DECISIONS.md — DT-1 y DT-2 resueltas, quedan DT-3 y DT-4
+📊 Pruebas:         No hay suite automática (manual en navegador + Playwright puntual)
+🔴 Bloqueadores:    NIF y razón social pendientes en la política de privacidad (DT-4)
+📦 Deploy:          Vercel preview OK en cada push a claude/new-session-oa3wjo, PR #1 abierto. main no existe todavía
 ```
 
 ### 4. Memoria de Sesión vs Persistente
@@ -208,19 +210,19 @@ La web de un gimnasio de Brazilian Jiu Jitsu en Logroño (La Rioja). Una sola p�
 
 ## 2. Stack
 
-- **Framework:** ninguno. HTML, CSS y JavaScript a pelo, todo dentro de `index.html` (~2.800 líneas: estilos en un `<style>`, lógica en un `<script>` al final).
-- **UI:** CSS propio con variables en `:root`. Tipografías **Bebas Neue** (títulos) y **Montserrat** (texto), más **Special Elite** y **Crimson Pro** solo para el poema. Se cargan desde Google Fonts.
+- **Framework:** ninguno. HTML, CSS y JavaScript a pelo. Ya **no** es un único archivo: `index.html` (escritorio, ~4.700 líneas) y `movil.html` (móvil, app completa con sus propios paneles y formularios) comparten dos módulos JS y las páginas legales — ver §3.
+- **UI:** CSS propio con variables en `:root`. Tipografía **Archivo** (títulos y textos de UI, pesos 500-900) y **Montserrat** (cuerpo de texto en escritorio), más **Special Elite** y **Crimson Pro** solo para el poema. Se cargan desde Google Fonts. Paleta sin color: blanco, negro y grises (decisión de Cipri, julio 2026 — no reproponer beige/verde).
 - **Auth + BD:** **no hay.** Ni base de datos, ni cuentas, ni servidor propio. Es una web estática.
 - **Servicios externos:** Google Fonts (tipografías) · Google Maps (mapa incrustado en un `iframe`) · **Web3Forms** (envío de los dos formularios).
-  - ⚠️ La constante `WEB3FORMS_ACCESS_KEY`, al principio del `<script>`, **está vacía**. Mientras lo esté, los formularios se caen al comportamiento antiguo (abrir el programa de correo). En cuanto Cipri pegue su clave, se envían de verdad. No es una contraseña: es un identificador público que solo sirve para entregar el mensaje en itacajiujitsu@gmail.com.
-- **Deploy:** **pendiente de decidir.** Todavía no está publicada en ningún sitio.
-- **Pruebas:** no hay pruebas automáticas todavía. La comprobación se hace abriendo la web (§7).
+  - ✅ La clave de Web3Forms **ya está puesta**: vive en `js/itaca-formularios.js`, `CONFIG.claveWeb3Forms` (no en `index.html`). Los formularios envían de verdad.
+- **Deploy:** Vercel, con vista previa automática en cada push a `claude/new-session-oa3wjo` (PR #1). `main` todavía no existe — ver §9.
+- **Pruebas:** no hay suite automática. La comprobación se hace abriendo la web (§7); en esta sesión también se usó Playwright puntualmente para verificar capturas y accesibilidad, sin dejar una suite permanente.
 - **Control automático:** no hay GitHub Actions. Los automatismos locales sí están puestos (§8).
 
-**Comandos:** no hay `npm`, ni `build`, ni `lint`. Para verla:
+**Comandos:** no hay `npm`, ni `build`, ni `lint` (no hay `package.json`: se probó añadir una dependencia de Vercel en algún momento y se retiró por no usarse — no la vuelvas a añadir sin un motivo concreto). Para verla:
 
 ```bash
-python3 -m http.server 8899   # y abrir http://127.0.0.1:8899/index.html
+python3 -m http.server 8899   # y abrir http://127.0.0.1:8899/index.html (o /movil.html)
 ```
 
 ---
@@ -228,28 +230,34 @@ python3 -m http.server 8899   # y abrir http://127.0.0.1:8899/index.html
 ## 3. Contenido y archivos (estado real)
 
 > Mantén esto al día. Una memoria que describe un sistema que ya no existe
-> hace que la IA tome decisiones sobre una realidad falsa. Ya ha pasado.
+> hace que la IA tome decisiones sobre una realidad falsa. Ya ha pasado una vez
+> en este mismo archivo: decía que la clave de Web3Forms estaba vacía cuando
+> llevaba semanas puesta. Actualiza esta tabla en el mismo cambio que toque los archivos.
 
 No hay base de datos. Lo que hace las veces de "modelo de datos" son los archivos y los bloques de contenido dentro del HTML.
 
 | Qué | Dónde vive | Notas / trampas |
 |---|---|---|
-| Toda la web | `index.html` | Estilos y JavaScript incluidos. Un solo archivo. |
-| Fotos del gimnasio | `images/Itaca/Gym1.webp` … `Gym10.webp` | Las lee el array `photos` del JS (línea ~2582). Si añades una foto, hay que añadirla **también** ahí o no sale. |
-| Fotos de instructores | `images/Profesores/Cipri.png`, `Boris.png`, `Marta_Pozo.png` | Puestas a mano en el HTML. |
-| Vídeo de portada | `videos/Itaca_Hero_Video.mp4` | Lleva `muted` (obligatorio para que arranque solo) y `poster="images/Itaca/Portada.jpg"`. |
-| Imagen de respaldo de portada | `images/Itaca/Portada.jpg` | Lo que se ve mientras carga el vídeo. **Todavía no existe.** |
-| Vídeos verticales | `videos/Boris_instagram.mp4`, `Cipri_instagram.mp4`, `Marta_instagram.mp4`, `Boris2_instagram.mp4` | Solo se reproducen al pasar el ratón por encima. |
-| **Horarios** | **duplicados en dos sitios** | La tabla visible (HTML, ~línea 1820) **y** el objeto `classesForAdult` / `classesForNino46` / `classesForNino710` del JS (~línea 2324). ⚠️ Si cambias un horario en un sitio y no en el otro, el formulario de clase de prueba ofrece clases que ya no existen. |
-| Textos legales | dentro de `index.html`, modales `#termsModal` y `#privacyModal` | |
+| Web de escritorio | `index.html` | Estilos y JavaScript incluidos. |
+| Web de móvil | `movil.html` | App completa aparte, no una versión reducida: sus propios paneles, sus propios formularios. Se sirve automáticamente por debajo de 760px (redirección en el `<head>` de `index.html`, ver §6). |
+| Horario de clases | `js/itaca-horario.js` | **Única fuente.** Lo leen `index.html` y `movil.html` para pintar la tabla/pestañas y para filtrar las clases del formulario de clase de prueba. Cambia aquí y cambia en los dos sitios a la vez. |
+| Envío de formularios | `js/itaca-formularios.js` | Compartido por las dos webs. Aquí vive `CONFIG.claveWeb3Forms`, el teléfono, el email y (si se activa) la URL de la hoja de cálculo de seguimiento — ver `docs/hoja-de-calculo.md`. |
+| Textos legales | `legal/privacidad.html`, `legal/terminos.html` | Páginas aparte, no modales — así el texto existe una sola vez para las dos webs. Enlazadas desde la casilla de consentimiento de ambos formularios. |
+| Fotos del gimnasio | `images/Itaca/Gym1.webp` … `Gym7.webp` (7, no 10) | Las lee el array `photos` del JS de `index.html` y el array `FOTOS` de `movil.html`. Si añades una foto, hay que añadirla en los dos sitios. |
+| Fotos de instructores | `images/Profesores/Cipri.webp`, `Boris.webp`, `Marta_Pozo.webp` (WebP, no PNG) | Puestas a mano en el HTML de las dos webs. |
+| Portada de escritorio | imagen fija `images/Itaca/Gym1.webp` | Ya no es un vídeo: el que había (`Itaca_Hero_Video.mp4`) era una animación de logo casi en negro, inservible como fondo, y se borró del repositorio. Si algún día se graba un vídeo apaisado del gimnasio, puede volver a ser vídeo. |
+| Portada de móvil | vídeo `videos/Itaca_Hero_Mobile.mp4`, con `poster="images/Itaca/Portada-movil.jpg"` | Grabado en vertical (9:16), solo se crea/carga por debajo de 760px. |
+| Vídeos verticales (reels) | `videos/Boris_instagram.mp4`, `Cipri_instagram.mp4`, `Marta_instagram.mp4`, `Itaca_gi_instagram.mp4` | `preload="none"`: no se descargan hasta que el visitante interactúa. En escritorio se reproducen al pasar el ratón; en móvil, al tocar. |
 
-⚠️ **Los archivos de `images/` y `videos/` no están en el repositorio todavía.** Están en el ordenador de Cipri. Ver `docs/PENDIENTE-archivos.md`.
+⚠️ **`docs/PENDIENTE-archivos.md`, `docs/material-fotografo.md` y `DECISIONS.md` pueden tener nombres de archivo antiguos** (mencionan `Gym8-10`, `Boris2_instagram.mp4`, fotos en `.png`). Esta tabla es la que manda; si hay contradicción, créela a ella y corrige el resto.
 
-**Secciones de la página, en orden:** portada (`#home`) · filosofía y poema (`#about`) · carrusel de fotos (`#academy`) · vídeos verticales (`#reels`) · instructores (`#instructors`) · horarios y leyenda (`#schedule`) · tu primer día (`#firstday`) · niños (`#kids`) · ubicación (`#location`) · llamada final (`#join`) · pie (`#contact`).
+**Secciones de `index.html`, en orden:** portada (`#home`) · filosofía y poema (`#about`) · carrusel de fotos (`#academy`) · vídeos verticales (`#reels`) · instructores (`#instructors`) · horarios y leyenda (`#schedule`) · tu primer día (`#firstday`) · niños (`#kids`) · ubicación (`#location`) · llamada final (`#join`) · pie (`#contact`). Todo el contenido entre la cabecera y el pie va dentro de un `<main>`.
+
+**Paneles de `movil.html`, en orden:** horarios · tu primer día · el gimnasio (fotos) · en movimiento (vídeos) · instructores · niños · filosofía · dónde estamos · clase de prueba · contacto. Se abren como paneles a pantalla completa (`position: fixed`), no como scroll normal — si capturas la página con una herramienta que fuerza `full page`, el contenido de un panel abierto puede no salir completo en la captura sin ser un fallo real: comprueba con la página en su tamaño normal.
 
 ⚠️ **Los textos de `#firstday`, `#kids` y la leyenda del horario los redactó la IA a partir de lo que es habitual en un gimnasio de BJJ, no de datos que diera Cipri.** Están pendientes de que él los confirme o los corrija: qué clases admiten a alguien sin experiencia, si hay kimonos de préstamo, si los padres pueden ver la clase. Hasta entonces, tratarlos como borrador.
 
-**Modales:** contacto (`#contactModal`) · clase de prueba (`#trialModal`) · datos de contacto (`#infoContactModal`) · términos (`#termsModal`) · privacidad (`#privacyModal`).
+**Modales de `index.html`:** contacto (`#contactModal`) · clase de prueba (`#trialModal`) · datos de contacto (`#infoContactModal`). Tienen trampa de foco (Tab no se escapa hacia la página de detrás) y se cierran con `Escape`, la X o clicando fuera.
 
 ---
 
@@ -292,7 +300,7 @@ Los dos tienen **casilla de consentimiento obligatoria** con enlace a la políti
 
 **Cómo se comporta la cabecera:** transparente sobre la portada; al bajar de 50 píxeles se vuelve blanca, encoge, el logo se va a la izquierda y aparece el menú.
 
-⚠️ **El menú de enlaces va centrado en posición absoluta, así que no empuja al logo ni al botón: si no cabe, se les monta encima.** Por eso encoge en dos escalones (1550 px y 1330 px) y por debajo de **1180 px** desaparece y manda el menú de las tres rayas. Si añades un enlace más, hay que volver a comprobar todos los anchos. La maquetación del resto (instructores, vídeos) sigue cambiando en 1024 px y 768 px, que es independiente.
+⚠️ **El menú de enlaces va centrado en posición absoluta sobre TODO el ancho de la cabecera, sin tener en cuenta el hueco fijo que ocupa el botón "Hazte Miembro" a la derecha.** Si no hay sitio, el último enlace ("NIÑOS") se mete debajo del botón — pasó de verdad en esta auditoría, en una franja de anchos donde a simple vista parecía haber espacio de sobra (medido con Playwright, no a ojo). Por eso el menú de las tres rayas se mantiene hasta **1600 px** y solo a partir de ahí aparecen los enlaces — con margen de sobra comprobado, no en el punto exacto donde deja de solaparse. **Si añades un enlace, cambias el texto de alguno o cambias la tipografía de la cabecera, vuelve a medir con Playwright en todo el rango 1180-2000 px** (bounding box del último enlace contra el botón), no solo mirando dos o tres capturas — así es como se coló este fallo la primera vez. La maquetación del resto (instructores, vídeos) sigue cambiando en 1024 px y 768 px, que es independiente.
 
 **Los dos caminos que importan:**
 1. "HAZTE MIEMBRO" (portada, cabecera, menú móvil y llamada final) → abre el modal de **contacto**.

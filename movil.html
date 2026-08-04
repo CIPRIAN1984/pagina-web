@@ -11,6 +11,15 @@
     <!-- Versión móvil de la misma web: se declara para que los buscadores
          sepan que index.html y esta son la misma página. -->
     <link rel="canonical" href="index.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Itaca Jiu Jitsu | Brazilian Jiu Jitsu en Logroño">
+    <meta property="og:description" content="Técnica bien explicada, entrenamiento exigente y gente que te ayuda a mejorar. Aquí se empieza de cero.">
+    <meta property="og:image" content="images/og-image.jpg">
+    <meta property="og:locale" content="es_ES">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&display=swap" rel="stylesheet">
@@ -41,7 +50,10 @@
         :root {
             --paper: #ffffff;
             --ink: #0a0a0a;
-            --grey: #8b8b8b;
+            /* #8b8b8b daba 3.41:1 sobre blanco — por debajo del 4.5:1 que exige
+               WCAG AA para texto de este tamaño. #707070 pasa (≈4.95:1) y sigue
+               leyéndose más ligero que --grey-dark. */
+            --grey: #707070;
             --grey-dark: #5f5f5f;
             --rule: #e5e5e5;
 
@@ -831,6 +843,7 @@
         <span class="top__side">Logroño</span>
     </header>
 
+    <main>
     <section class="hero">
         <div class="hero__media" id="heroMedia">
             <img src="images/Itaca/Portada-movil.jpg" alt="Entrenamiento en Itaca Jiu Jitsu" id="heroPoster">
@@ -892,6 +905,7 @@
             <span class="row__desc">Polígono Cantabria, calle Barriguelo 4 · Logroño</span>
         </button>
     </nav>
+    </main>
 
     <footer class="foot">
         <span class="eyebrow">Contacto</span>
@@ -1120,9 +1134,9 @@
         <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span
                 class="panel__title">Clase de prueba</span></div>
         <div class="panel__body">
-            <span class="eyebrow">Primera clase</span>
+            <span class="eyebrow">Primera clase · Gratis</span>
             <h2 class="display display--sm" style="margin-top:.5rem">Ven a<br>probar</h2>
-            <p class="prose panel__lede">Dinos cuándo te viene bien y te confirmamos la plaza.</p>
+            <p class="prose panel__lede">Dinos cuándo te viene bien y te confirmamos la plaza. La primera clase no tiene coste.</p>
 
             <form id="formPrueba" novalidate>
                 <div class="campo">
