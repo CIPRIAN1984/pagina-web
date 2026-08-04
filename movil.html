@@ -5,14 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#ffffff">
-    <meta name="robots" content="noindex">
-    <title>ITACA JIU JITSU · maqueta móvil</title>
+    <title>ITACA JIU JITSU | Brazilian Jiu Jitsu en Logroño</title>
+    <meta name="description"
+        content="Escuela de Brazilian Jiu Jitsu en Logroño. Horarios, clases para niños y adultos, y clase de prueba gratuita.">
+    <!-- Versión móvil de la misma web: se declara para que los buscadores
+         sepan que index.html y esta son la misma página. -->
+    <link rel="canonical" href="index.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <!-- Horario y envío de formularios: compartidos con index.html para que
+         no existan dos copias que puedan contradecirse. -->
+    <script src="js/itaca-horario.js"></script>
+    <script src="js/itaca-formularios.js"></script>
     <style>
         /* ─────────────────────────────────────────────────────────────
-           MAQUETA MÓVIL — no es la web publicada.
+           VERSIÓN MÓVIL. Quien entra desde un móvil llega aquí; desde un
+           ordenador, a index.html. Comparten horario, formularios y textos
+           legales, que viven en archivos aparte para no duplicarse.
 
            Dirección tomada de la referencia que pidió Cipri
            (artofjiujitsu.com): fondo BLANCO con mucho aire, titulares
@@ -41,7 +51,7 @@
             --gutter: 1.35rem;
             --safe-b: env(safe-area-inset-bottom, 0px);
             --safe-t: env(safe-area-inset-top, 0px);
-            --banner-h: 2.1rem;
+            --banner-h: 0rem;
             --ease: cubic-bezier(.16, 1, .3, 1);
         }
 
@@ -273,6 +283,31 @@
             color: var(--grey-dark);
         }
 
+        .foot__link {
+            align-self: start;
+            padding: 0;
+            font-size: .82rem;
+            font-weight: 500;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: var(--grey-dark);
+            text-decoration: underline;
+            text-underline-offset: .2em;
+        }
+
+        .foot__legal {
+            margin-top: 1.2rem;
+            font-family: var(--mono);
+            font-size: .64rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--grey);
+        }
+
+        .foot__legal a {
+            color: var(--grey);
+        }
+
         .foot .eyebrow {
             margin-bottom: .5rem;
         }
@@ -295,6 +330,12 @@
 
         .dock>* {
             pointer-events: auto;
+        }
+
+        /* Con un panel abierto el botón flotante sobra y además tapa el final
+           del formulario. Cada panel ya lleva su propia acción. */
+        body.panel-abierto .dock {
+            display: none;
         }
 
         .pill {
@@ -596,23 +637,179 @@
             padding-left: 1.15rem;
         }
 
-        .banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 90;
-            /* Margen del sistema a pelo, no --safe-t: esa incluye la altura de
-               este aviso y se retroalimentaría. */
-            padding: calc(.4rem + env(safe-area-inset-top, 0px)) var(--gutter) .4rem;
-            background: var(--ink);
-            color: #fff;
+        /* ── formularios ────────────────────────────────────────── */
+        .campo {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+            margin-bottom: 1.35rem;
+        }
+
+        .campo>label {
             font-family: var(--mono);
-            font-size: .6rem;
-            line-height: 1.4;
-            letter-spacing: .16em;
+            font-size: .64rem;
+            font-weight: 500;
+            letter-spacing: .18em;
             text-transform: uppercase;
-            text-align: center;
+            color: var(--grey);
+        }
+
+        .campo>label span {
+            color: var(--ink);
+        }
+
+        .campo input[type="text"],
+        .campo input[type="email"],
+        .campo input[type="tel"],
+        .campo input[type="date"],
+        .campo select,
+        .campo textarea {
+            width: 100%;
+            /* 16px como mínimo: por debajo, el iPhone hace zoom al enfocar. */
+            font-size: 1rem;
+            font-family: var(--sans);
+            color: var(--ink);
+            background: var(--paper);
+            border: 0;
+            border-bottom: 1px solid var(--ink);
+            border-radius: 0;
+            padding: .55rem 0;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .campo textarea {
+            resize: vertical;
+            min-height: 5rem;
+            border: 1px solid var(--rule);
+            padding: .7rem;
+        }
+
+        .campo select {
+            background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+                linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+            background-position: calc(100% - 11px) 1.15rem, calc(100% - 6px) 1.15rem;
+            background-size: 5px 5px, 5px 5px;
+            background-repeat: no-repeat;
+            padding-right: 1.6rem;
+        }
+
+        .opciones {
+            display: flex;
+            gap: .4rem;
+            flex-wrap: wrap;
+        }
+
+        .opcion {
+            flex: 1 1 0;
+            min-width: 4.6rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .4rem;
+            min-height: 2.9rem;
+            padding: .4rem .5rem;
+            border: 1px solid var(--rule);
+            border-radius: 999px;
+            font-size: clamp(.68rem, 3vw, .78rem);
+            font-weight: 500;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .opcion:has(input:checked) {
+            border-color: var(--ink);
+            background: var(--ink);
+            color: var(--paper);
+            font-weight: 600;
+        }
+
+        /* Respaldo donde :has() no exista: el punto del radio se sigue viendo. */
+        .opcion input {
+            accent-color: currentColor;
+            margin: 0;
+        }
+
+        .consent {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: .7rem;
+            align-items: start;
+            margin: 1.6rem 0;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--rule);
+        }
+
+        .consent input {
+            width: 1.15rem;
+            height: 1.15rem;
+            margin-top: .15rem;
+            accent-color: var(--ink);
+        }
+
+        .consent label {
+            font-size: .8rem;
+            line-height: 1.6;
+            color: var(--grey-dark);
+        }
+
+        .consent a {
+            color: var(--ink);
+            text-decoration: underline;
+            text-underline-offset: .15em;
+        }
+
+        /* Trampa para robots: fuera de la pantalla, no oculta del todo, porque
+           algunos programas de spam saltan lo que lleva display:none. */
+        .trampa {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .aviso {
+            display: none;
+            margin: 1.2rem 0;
+            padding: .95rem 1.05rem;
+            font-size: .86rem;
+            line-height: 1.6;
+            border-left: 2px solid var(--ink);
+            background: #f6f6f6;
+        }
+
+        .aviso.visible {
+            display: block;
+        }
+
+        .aviso.error {
+            border-left-color: #b3261e;
+            background: #fdf0ef;
+        }
+
+        .aviso a {
+            color: var(--ink);
+            text-decoration: underline;
+        }
+
+        .aviso__wa {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 2.9rem;
+            margin-top: .9rem;
+            border-radius: 999px;
+            background: var(--ink);
+            color: var(--paper);
+            font-size: .78rem;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            text-decoration: none;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -628,8 +825,6 @@
 </head>
 
 <body>
-
-    <div class="banner">Maqueta · no es la web publicada</div>
 
     <header class="top">
         <span class="top__mark">Itaca Jiu Jitsu</span>
@@ -702,6 +897,12 @@
         <span class="eyebrow">Contacto</span>
         <a href="tel:+34664784121">664 78 41 21</a>
         <a href="mailto:itacajiujitsu@gmail.com">itacajiujitsu@gmail.com</a>
+        <button class="foot__link" data-panel="contacto" type="button">Escribir por el formulario</button>
+        <span class="foot__legal">
+            <a href="legal/privacidad.html">Privacidad</a> ·
+            <a href="legal/terminos.html">Términos</a> ·
+            <a href="index.html?full=1">Ver versión completa</a>
+        </span>
     </footer>
 
     <div class="dock">
@@ -915,18 +1116,121 @@
         </div>
     </section>
 
-    <section class="panel" id="p-prueba" aria-hidden="true">
+        <section class="panel" id="p-prueba" aria-hidden="true">
         <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span
                 class="panel__title">Clase de prueba</span></div>
         <div class="panel__body">
             <span class="eyebrow">Primera clase</span>
             <h2 class="display display--sm" style="margin-top:.5rem">Ven a<br>probar</h2>
-            <p class="prose panel__lede">En la maqueta el formulario no está montado: esto sirve para ver cómo se
-                navega. En la web real es el formulario de siempre.</p>
-            <a class="pill" style="margin-bottom:.7rem"
-                href="https://wa.me/34664784121?text=Hola%2C%20quiero%20una%20clase%20de%20prueba." target="_blank"
-                rel="noopener">Pedirla por WhatsApp</a>
-            <a class="pill pill--ghost" style="min-width:0;padding:0 1.9rem" href="tel:+34664784121">Llamar</a>
+            <p class="prose panel__lede">Dinos cuándo te viene bien y te confirmamos la plaza.</p>
+
+            <form id="formPrueba" novalidate>
+                <div class="campo">
+                    <label for="pNombre">Nombre y apellidos <span>*</span></label>
+                    <input type="text" id="pNombre" required autocomplete="name">
+                </div>
+                <div class="campo">
+                    <label for="pEmail">Email <span>*</span></label>
+                    <input type="email" id="pEmail" required autocomplete="email">
+                </div>
+                <div class="campo">
+                    <label for="pTelefono">Teléfono <span>*</span></label>
+                    <input type="tel" id="pTelefono" autocomplete="tel">
+                </div>
+
+                <div class="campo">
+                    <label>¿Para quién es? <span>*</span></label>
+                    <div class="opciones">
+                        <label class="opcion"><input type="radio" name="pCategoria" value="adulto" checked> Adulto</label>
+                        <label class="opcion"><input type="radio" name="pCategoria" value="nino46"> 4-6 años</label>
+                        <label class="opcion"><input type="radio" name="pCategoria" value="nino710"> 7-10 años</label>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label for="pFecha">Día que quieres venir <span>*</span></label>
+                    <input type="date" id="pFecha" required>
+                </div>
+
+                <div class="campo">
+                    <label for="pClase">Clase <span>*</span></label>
+                    <select id="pClase" required>
+                        <option value="">Elige primero el día</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>¿Cómo te confirmamos la plaza? <span>*</span></label>
+                    <div class="opciones">
+                        <label class="opcion"><input type="radio" name="pCanal" value="WhatsApp" data-needs-phone="1" checked> WhatsApp</label>
+                        <label class="opcion"><input type="radio" name="pCanal" value="Llamada" data-needs-phone="1"> Llamada</label>
+                        <label class="opcion"><input type="radio" name="pCanal" value="Email"> Email</label>
+                    </div>
+                </div>
+
+                <input type="checkbox" name="botcheck" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+                <div class="consent">
+                    <input type="checkbox" id="pConsent" required>
+                    <label for="pConsent">He leído y acepto la <a href="legal/privacidad.html" target="_blank"
+                            rel="noopener">política de privacidad</a>. Si la solicitud es para un menor, confirmo que
+                        soy su padre, madre o tutor legal y autorizo el tratamiento de sus datos para gestionar la
+                        clase de prueba.</label>
+                </div>
+
+                <div class="aviso" id="avisoPrueba" role="status" aria-live="polite"></div>
+                <button class="pill" style="width:100%" type="submit" id="btnPrueba">Solicitar clase</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="panel" id="p-contacto" aria-hidden="true">
+        <div class="panel__bar"><button class="panel__back" aria-label="Volver"></button><span
+                class="panel__title">Contacto</span></div>
+        <div class="panel__body">
+            <span class="eyebrow">Escríbenos</span>
+            <h2 class="display display--sm" style="margin-top:.5rem">Contacto</h2>
+            <p class="prose panel__lede">Cuéntanos qué necesitas saber y te contestamos por donde prefieras.</p>
+
+            <form id="formContacto" novalidate>
+                <div class="campo">
+                    <label for="cNombre">Nombre y apellidos <span>*</span></label>
+                    <input type="text" id="cNombre" required autocomplete="name">
+                </div>
+                <div class="campo">
+                    <label for="cEmail">Email <span>*</span></label>
+                    <input type="email" id="cEmail" required autocomplete="email">
+                </div>
+                <div class="campo">
+                    <label for="cTelefono">Teléfono <span>*</span></label>
+                    <input type="tel" id="cTelefono" autocomplete="tel">
+                </div>
+                <div class="campo">
+                    <label for="cMensaje">Mensaje <span>*</span></label>
+                    <textarea id="cMensaje" rows="4" required></textarea>
+                </div>
+
+                <div class="campo">
+                    <label>¿Cómo prefieres que te contestemos? <span>*</span></label>
+                    <div class="opciones">
+                        <label class="opcion"><input type="radio" name="cCanal" value="WhatsApp" data-needs-phone="1" checked> WhatsApp</label>
+                        <label class="opcion"><input type="radio" name="cCanal" value="Llamada" data-needs-phone="1"> Llamada</label>
+                        <label class="opcion"><input type="radio" name="cCanal" value="Email"> Email</label>
+                    </div>
+                </div>
+
+                <input type="checkbox" name="botcheck" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+                <div class="consent">
+                    <input type="checkbox" id="cConsent" required>
+                    <label for="cConsent">He leído y acepto la <a href="legal/privacidad.html" target="_blank"
+                            rel="noopener">política de privacidad</a>. Usaremos tus datos únicamente para
+                        responderte.</label>
+                </div>
+
+                <div class="aviso" id="avisoContacto" role="status" aria-live="polite"></div>
+                <button class="pill" style="width:100%" type="submit" id="btnContacto">Enviar mensaje</button>
+            </form>
         </div>
     </section>
 
@@ -966,6 +1270,7 @@
                 el.setAttribute('aria-hidden', 'false');
                 el.querySelector('.panel__body').scrollTop = 0;
                 document.body.style.overflow = 'hidden';
+                document.body.classList.add('panel-abierto');
                 abierto = el;
                 if (nombre === 'donde') {
                     var m = document.getElementById('mapa');
@@ -981,6 +1286,7 @@
                 abierto.setAttribute('aria-hidden', 'true');
                 abierto = null;
                 document.body.style.overflow = '';
+                document.body.classList.remove('panel-abierto');
             }
 
             document.querySelectorAll('[data-panel]').forEach(function (b) {
@@ -996,18 +1302,16 @@
                 if (e.key === 'Escape' && abierto) history.back();
             });
 
-            /* Horario */
-            var HORARIO = {"Lunes": [["07:00 - 08:00", "Fundamentos"], ["17:00 - 18:00", "Fundamentos (Gi)"]], "Martes": [["10:00 - 11:30", "Grappling No Gi"], ["16:45 - 17:45", "Kids 7/10 Años"], ["18:00 - 20:00", "Avanzados No Gi"], ["20:00 - 21:00", "Iniciación No Gi"]], "Miércoles": [["07:00 - 08:00", "Fundamentos No Gi"], ["17:00 - 18:00", "No Gi Grappling"]], "Jueves": [["10:00 - 11:30", "BJJ Gi"], ["16:45 - 17:45", "Kids 4/6 Años"], ["18:00 - 20:00", "Avanzados Gi"], ["20:00 - 21:00", "Iniciación Gi"]], "Viernes": [["07:00 - 08:00", "Específico Sparring"], ["16:45 - 17:45", "BJJ Kids Gi 7/10 Años"], ["18:30 - 20:00", "Avanzado Gi"]], "Sábado": [["10:00 - 11:00", "BJJ Gi Libre"], ["11:00 - 12:30", "Open Mat"]]};
-            var dias = Object.keys(HORARIO);
+            /* Horario — los datos vienen de js/itaca-horario.js */
             var elDias = document.getElementById('days');
             var elSlots = document.getElementById('slots');
 
             function pintarDia(i) {
-                var d = dias[i];
-                elSlots.innerHTML = HORARIO[d].length
-                    ? HORARIO[d].map(function (s) {
-                        return '<div class="slot"><span class="slot__time">' + s[0] +
-                            '</span><span class="slot__name">' + s[1] + '</span></div>';
+                var clases = ItacaHorario.clasesDe(ItacaHorario.DIAS[i]);
+                elSlots.innerHTML = clases.length
+                    ? clases.map(function (c) {
+                        return '<div class="slot"><span class="slot__time">' + c.hora +
+                            '</span><span class="slot__name">' + c.nombre + '</span></div>';
                     }).join('')
                     : '<p class="empty">Ese día no hay clases</p>';
                 Array.prototype.forEach.call(elDias.children, function (b, j) {
@@ -1015,7 +1319,7 @@
                 });
             }
 
-            dias.forEach(function (d, i) {
+            ItacaHorario.DIAS.forEach(function (d, i) {
                 var b = document.createElement('button');
                 b.className = 'day'; b.type = 'button';
                 b.setAttribute('role', 'tab');
@@ -1024,8 +1328,148 @@
                 elDias.appendChild(b);
             });
 
-            var hoy = (new Date().getDay() + 6) % 7;
-            pintarDia(hoy < dias.length ? hoy : 0);
+            pintarDia(ItacaHorario.indiceHoy());
+
+            /* ── Formularios ──────────────────────────────────────────────
+               El envío, la clave y la copia en la hoja están en
+               js/itaca-formularios.js, compartido con la web de ordenador. */
+
+            function avisar(caja) {
+                return function (tipo, html) {
+                    if (!tipo) { caja.className = 'aviso'; caja.innerHTML = ''; return; }
+                    caja.className = 'aviso visible' + (tipo === 'error' ? ' error' : '');
+                    caja.innerHTML = html;
+                };
+            }
+
+            function botonWhatsApp(texto, canal) {
+                return '<a class="aviso__wa" href="' + Itaca.enlaceWhatsApp(texto) +
+                    '" target="_blank" rel="noopener">' +
+                    (canal === 'WhatsApp' ? 'Adelanta la conversación' : '¿Mejor por WhatsApp?') + '</a>';
+            }
+
+            var val = function (id) { return (document.getElementById(id).value || '').trim(); };
+
+            /* Si piden WhatsApp o llamada, el teléfono deja de ser opcional. */
+            Itaca.vincularCanalConTelefono('pCanal', document.getElementById('pTelefono'),
+                document.querySelector('label[for="pTelefono"]'));
+            Itaca.vincularCanalConTelefono('cCanal', document.getElementById('cTelefono'),
+                document.querySelector('label[for="cTelefono"]'));
+
+            /* ── Clase de prueba ── */
+            var pFecha = document.getElementById('pFecha');
+            var pClase = document.getElementById('pClase');
+
+            /* No se puede reservar para ayer. */
+            pFecha.min = new Date().toISOString().slice(0, 10);
+
+            function categoriaElegida() {
+                var m = document.querySelector('input[name="pCategoria"]:checked');
+                return m ? m.value : 'adulto';
+            }
+
+            function refrescarClases() {
+                var opciones = pFecha.value
+                    ? ItacaHorario.clasesParaReserva(pFecha.value, categoriaElegida())
+                    : [];
+                if (!pFecha.value) {
+                    pClase.innerHTML = '<option value="">Elige primero el día</option>';
+                } else if (!opciones.length) {
+                    pClase.innerHTML = '<option value="">Ese día no hay clases para esa edad</option>';
+                } else {
+                    pClase.innerHTML = opciones.map(function (o) {
+                        return '<option value="' + o + '">' + o + '</option>';
+                    }).join('');
+                }
+            }
+
+            pFecha.addEventListener('change', refrescarClases);
+            document.querySelectorAll('input[name="pCategoria"]').forEach(function (r) {
+                r.addEventListener('change', refrescarClases);
+            });
+            refrescarClases();
+
+            var formPrueba = document.getElementById('formPrueba');
+            var pintaPrueba = avisar(document.getElementById('avisoPrueba'));
+
+            formPrueba.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (!pClase.value) {
+                    pintaPrueba('error', 'Elige un día en el que haya clase para esa edad.');
+                    return;
+                }
+                var nombre = val('pNombre'), telefono = val('pTelefono');
+                var canal = Itaca.canalElegido('pCanal');
+                var cat = { adulto: 'Adulto', nino46: 'Niño (4 a 6 años)', nino710: 'Niño (7 a 10 años)' }[categoriaElegida()];
+                var responder = Itaca.enlaceRespuesta(telefono,
+                    'Hola ' + nombre + ', soy de Itaca Jiu Jitsu. Te confirmo tu clase de prueba del ' +
+                    pFecha.value + ' (' + pClase.value + '). ¡Nos vemos!');
+
+                var datos = {
+                    Nombre: nombre,
+                    Email: val('pEmail'),
+                    'Teléfono': telefono || '(no indicado)',
+                    'Contestar por': canal,
+                    'Categoría': cat,
+                    Fecha: pFecha.value,
+                    Clase: pClase.value,
+                    Consentimiento: 'Aceptada la política de privacidad. En caso de menor, consentimiento del tutor legal.'
+                };
+                if (responder) datos['Responder por WhatsApp'] = responder;
+
+                Itaca.enviar({
+                    form: formPrueba,
+                    boton: document.getElementById('btnPrueba'),
+                    pintar: pintaPrueba,
+                    tipo: 'Clase de prueba',
+                    asunto: '[' + canal + '] Reserva de clase de prueba: ' + nombre,
+                    textoBoton: 'Solicitar clase',
+                    datos: datos,
+                    whatsapp: 'Hola, soy ' + nombre + '. He pedido una clase de prueba por la web.',
+                    cuerpoCorreo: 'Hola Itaca Jiu Jitsu,\n\nMe gustaría asistir a una clase de prueba.\n\n' +
+                        'Nombre: ' + nombre + '\nFecha: ' + pFecha.value + '\nClase: ' + pClase.value,
+                    exito: '<strong>Solicitud enviada.</strong> Te confirmamos la plaza ' +
+                        Itaca.textoCanal(canal) + ' antes de la clase.' +
+                        botonWhatsApp('Hola, soy ' + nombre + '. He pedido una clase de prueba por la web.', canal)
+                }).then(function (bien) { if (bien) refrescarClases(); });
+            });
+
+            /* ── Contacto ── */
+            var formContacto = document.getElementById('formContacto');
+            var pintaContacto = avisar(document.getElementById('avisoContacto'));
+
+            formContacto.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var nombre = val('cNombre'), telefono = val('cTelefono'), mensaje = val('cMensaje');
+                var canal = Itaca.canalElegido('cCanal');
+                var responder = Itaca.enlaceRespuesta(telefono,
+                    'Hola ' + nombre + ', soy de Itaca Jiu Jitsu. Te escribo por tu consulta desde la web.');
+
+                var datos = {
+                    Nombre: nombre,
+                    Email: val('cEmail'),
+                    'Teléfono': telefono || '(no indicado)',
+                    'Contestar por': canal,
+                    Mensaje: mensaje,
+                    Consentimiento: 'Aceptada la política de privacidad'
+                };
+                if (responder) datos['Responder por WhatsApp'] = responder;
+
+                Itaca.enviar({
+                    form: formContacto,
+                    boton: document.getElementById('btnContacto'),
+                    pintar: pintaContacto,
+                    tipo: 'Contacto',
+                    asunto: '[' + canal + '] Consulta desde la web: ' + nombre,
+                    textoBoton: 'Enviar mensaje',
+                    datos: datos,
+                    whatsapp: 'Hola, soy ' + nombre + '. ' + mensaje,
+                    cuerpoCorreo: 'Hola Itaca Jiu Jitsu,\n\n' + mensaje + '\n\n' + nombre,
+                    exito: '<strong>Mensaje enviado.</strong> Te contestamos ' + Itaca.textoCanal(canal) +
+                        ', normalmente en menos de 24 horas.' +
+                        botonWhatsApp('Hola, soy ' + nombre + '. ' + mensaje, canal)
+                });
+            });
 
             /* Fotos */
             var FOTOS = ['Gym1', 'Gym2', 'Gym3', 'Gym4', 'Gym5', 'Gym6', 'Gym7'];

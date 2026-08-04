@@ -4,7 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script>
+        // Reparto entre las dos versiones. Va en la cabecera, antes de que se
+        // parsee nada del cuerpo: puesto más abajo, la redirección cortaba el
+        // parseo a media página y el navegador se quedaba colgado.
+        //
+        // `?full=1` es la vía de escape: quien pide la versión completa desde el
+        // móvil se queda en ella durante toda la visita. Se recuerda en la
+        // pestaña, no en una cookie, así que no hace falta aviso de cookies.
+        (function () {
+            try {
+                if (location.search.indexOf('full=1') > -1 ||
+                    sessionStorage.getItem('itaca-completa') === '1') {
+                    sessionStorage.setItem('itaca-completa', '1');
+                    return;
+                }
+                if (window.matchMedia('(max-width: 760px)').matches) {
+                    location.replace('movil.html' + location.hash);
+                }
+            } catch (e) {
+                /* Si algo falla, se queda en esta versión: nunca se bloquea el acceso. */
+            }
+        })();
+    </script>
     <title>ITACA JIU JITSU | Excelencia en Artes Marciales</title>
+    <!-- Pareja móvil de esta página, para que los buscadores no las traten
+         como contenido duplicado. -->
+    <link rel="alternate" media="only screen and (max-width: 760px)" href="movil.html">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2795,6 +2822,7 @@
 </head>
 
 <body>
+
 
     <!-- Header -->
     <header id="header">
