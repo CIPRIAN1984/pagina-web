@@ -83,11 +83,37 @@ window.ItacaHorario = (function () {
             .map(function (c) { return c.hora.split(' - ')[0] + ' - ' + c.nombre; });
     }
 
+    var DIAS_EN = {
+        'Lunes': 'Monday', 'Martes': 'Tuesday', 'Miércoles': 'Wednesday',
+        'Jueves': 'Thursday', 'Viernes': 'Friday', 'Sábado': 'Saturday'
+    };
+
+    /* Horario en el formato OpeningHoursSpecification de schema.org, para el
+       marcado de datos estructurados (SEO). Se genera desde aquí, no a mano
+       en cada HTML, para que sea imposible que se desincronice del horario
+       real. */
+    function horarioSchemaOrg() {
+        var specs = [];
+        DIAS.forEach(function (dia) {
+            clasesDe(dia).forEach(function (c) {
+                var partes = c.hora.split(' - ');
+                specs.push({
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: DIAS_EN[dia],
+                    opens: partes[0],
+                    closes: partes[1]
+                });
+            });
+        });
+        return specs;
+    }
+
     return {
         DIAS: DIAS,
         clasesDe: clasesDe,
         diaDeFecha: diaDeFecha,
         clasesParaReserva: clasesParaReserva,
+        horarioSchemaOrg: horarioSchemaOrg,
         /* Índice del día de hoy dentro de DIAS; el domingo cae en lunes. */
         indiceHoy: function () {
             var i = (new Date().getDay() + 6) % 7;

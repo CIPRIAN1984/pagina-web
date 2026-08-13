@@ -3653,6 +3653,35 @@
          archivo que comparten esta página y movil.html. Ver ese archivo. -->
     <script src="js/itaca-horario.js"></script>
     <script src="js/itaca-formularios.js"></script>
+    <!-- Datos estructurados (schema.org) para que Google pueda mostrar
+         dirección, teléfono y horario directamente en el buscador. El
+         horario sale de ItacaHorario para no duplicarlo a mano aquí. -->
+    <script>
+        (function () {
+            var datos = {
+                '@context': 'https://schema.org',
+                '@type': 'ExerciseGym',
+                name: 'Itaca Jiu Jitsu',
+                image: 'https://www.itacajiujitsu.com/images/og-image.jpg',
+                url: 'https://www.itacajiujitsu.com/',
+                telephone: '+34664784121',
+                email: 'itacajiujitsu@gmail.com',
+                address: {
+                    '@type': 'PostalAddress',
+                    streetAddress: 'Polígono Cantabria, C. Barriguelo, 4',
+                    addressLocality: 'Logroño',
+                    postalCode: '26009',
+                    addressRegion: 'La Rioja',
+                    addressCountry: 'ES'
+                },
+                openingHoursSpecification: window.ItacaHorario.horarioSchemaOrg()
+            };
+            var script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.textContent = JSON.stringify(datos);
+            document.head.appendChild(script);
+        })();
+    </script>
 
     <!-- JavaScript -->
     <script>
