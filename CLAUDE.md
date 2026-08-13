@@ -386,4 +386,5 @@ Si no, la rama arrastra commits duplicados y provoca conflictos. Ver la skill `f
 - `.claude/skills/calidad/` — QA y filosofía de pruebas
 - `.claude/skills/flujo-de-trabajo/` — ramas, PR y publicación
 - `.claude/skills/patrones/` — cómo está montado el `index.html` y cómo tocarlo
+- `.claude/skills/seguimiento/` — cosas importantes que hay que revisar de vez en cuando (hoy: Search Console) para que no se olviden entre sesiones
 - `.claude/commands/` — `/estado`, `/migracion`, `/a-produccion`
