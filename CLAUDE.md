@@ -306,7 +306,7 @@ Los dos tienen **casilla de consentimiento obligatoria** con enlace a la políti
 1. "HAZTE MIEMBRO" (portada, cabecera, menú móvil y llamada final) → abre el modal de **contacto**.
 2. "CLASE DE PRUEBA" (portada y llamada final) → abre el modal de **clase de prueba**, que filtra las clases disponibles según categoría y día de la semana.
 
-**Configuración externa ya hecha** (no rehacer): el mapa de Google ya apunta a la dirección correcta (Polígono Cantabria, C. Barriguelo 4, 26009 Logroño).
+**Configuración externa ya hecha** (no rehacer): el mapa de Google ya apunta a la dirección correcta (Polígono Cantabria, C. Barigüelo 4, 26009 Logroño; confirmado por Cipri el 13 de agosto de 2026 — la calle se escribe con diéresis, no "Barriguelo").
 
 **Contacto real del gimnasio:** itacajiujitsu@gmail.com · 664 78 41 21
 
@@ -386,4 +386,5 @@ Si no, la rama arrastra commits duplicados y provoca conflictos. Ver la skill `f
 - `.claude/skills/calidad/` — QA y filosofía de pruebas
 - `.claude/skills/flujo-de-trabajo/` — ramas, PR y publicación
 - `.claude/skills/patrones/` — cómo está montado el `index.html` y cómo tocarlo
+- `.claude/skills/seguimiento/` — cosas importantes que hay que revisar de vez en cuando (hoy: Search Console) para que no se olviden entre sesiones
 - `.claude/commands/` — `/estado`, `/migracion`, `/a-produccion`

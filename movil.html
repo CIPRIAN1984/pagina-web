@@ -28,6 +28,36 @@
          no existan dos copias que puedan contradecirse. -->
     <script src="js/itaca-horario.js"></script>
     <script src="js/itaca-formularios.js"></script>
+    <!-- Datos estructurados (schema.org) para que Google pueda mostrar
+         dirección, teléfono y horario directamente en el buscador. El
+         horario sale de ItacaHorario para no duplicarlo a mano aquí. -->
+    <script>
+        (function () {
+            var datos = {
+                '@context': 'https://schema.org',
+                '@type': 'ExerciseGym',
+                name: 'Itaca Jiu Jitsu',
+                image: 'https://www.itacajiujitsu.com/images/og-image.jpg',
+                url: 'https://www.itacajiujitsu.com/',
+                telephone: '+34664784121',
+                email: 'itacajiujitsu@gmail.com',
+                address: {
+                    '@type': 'PostalAddress',
+                    streetAddress: 'Polígono Cantabria, C. Barigüelo, 4',
+                    addressLocality: 'Logroño',
+                    postalCode: '26009',
+                    addressRegion: 'La Rioja',
+                    addressCountry: 'ES'
+                },
+                sameAs: ['https://www.instagram.com/itacabjj/'],
+                openingHoursSpecification: window.ItacaHorario.horarioSchemaOrg()
+            };
+            var script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.textContent = JSON.stringify(datos);
+            document.head.appendChild(script);
+        })();
+    </script>
     <style>
         /* ─────────────────────────────────────────────────────────────
            VERSIÓN MÓVIL. Quien entra desde un móvil llega aquí; desde un
@@ -335,8 +365,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: .5rem;
-            padding: .75rem var(--gutter) calc(.9rem + var(--safe-b));
+            gap: .35rem;
+            padding: .75rem .75rem calc(.9rem + var(--safe-b));
             background: linear-gradient(to top, #fff 62%, rgba(255, 255, 255, 0));
             pointer-events: none;
         }
@@ -356,7 +386,7 @@
             align-items: center;
             justify-content: center;
             min-height: 3.1rem;
-            padding: 0 1.9rem;
+            padding: 0 1.1rem;
             border-radius: 999px;
             background: var(--ink);
             color: var(--paper);
@@ -369,8 +399,8 @@
         }
 
         .pill--ghost {
-            flex: 0 0 3.1rem;
-            min-width: 3.1rem;
+            flex: 0 0 2.9rem;
+            min-width: 2.9rem;
             padding: 0;
             background: var(--paper);
             color: var(--ink);
@@ -379,8 +409,8 @@
         }
 
         .pill--ghost svg {
-            width: 18px;
-            height: 18px;
+            width: 17px;
+            height: 17px;
         }
 
         /* ── paneles ────────────────────────────────────────────── */
@@ -903,7 +933,7 @@
             <span class="row__n">08</span>
             <span class="row__name">Dónde estamos</span>
             <span class="row__go"></span>
-            <span class="row__desc">Polígono Cantabria, calle Barriguelo 4 · Logroño</span>
+            <span class="row__desc">Polígono Cantabria, calle Barigüelo 4 · Logroño</span>
         </button>
     </nav>
     </main>
@@ -912,6 +942,7 @@
         <span class="eyebrow">Contacto</span>
         <a href="tel:+34664784121">664 78 41 21</a>
         <a href="mailto:itacajiujitsu@gmail.com">itacajiujitsu@gmail.com</a>
+        <a href="https://www.instagram.com/itacabjj/" target="_blank" rel="noopener">@itacabjj</a>
         <button class="foot__link" data-panel="contacto" type="button">Escribir por el formulario</button>
         <span class="foot__legal">
             <a href="legal/privacidad.html">Privacidad</a> ·
@@ -934,6 +965,15 @@
             <svg viewBox="0 0 24 24" fill="currentColor">
                 <path
                     d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.34 4.95L2 22l5.23-1.37a9.9 9.9 0 0 0 4.8 1.23c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2zm0 1.68c2.21 0 4.29.86 5.85 2.43a8.23 8.23 0 0 1 2.43 5.85c0 4.57-3.72 8.28-8.29 8.28a8.27 8.27 0 0 1-4.22-1.16l-.3-.18-3.1.81.83-3.03-.2-.31a8.24 8.24 0 0 1-1.27-4.41c0-4.57 3.72-8.28 8.27-8.28zm-2.4 4.4c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.13 3.64.58.25 1.03.4 1.38.51.58.19 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.54.12-.16.24-.62.79-.76.95-.14.16-.28.18-.52.06-.24-.12-1.03-.38-1.96-1.21-.72-.65-1.21-1.45-1.35-1.69-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.47-.39-.4-.54-.41h-.46z" />
+            </svg>
+        </a>
+        <a class="pill pill--ghost" href="https://www.instagram.com/itacabjj/" target="_blank" rel="noopener"
+            aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
             </svg>
         </a>
     </div>
@@ -1121,12 +1161,12 @@
         <div class="panel__body">
             <span class="eyebrow">08 — Cómo llegar</span>
             <h2 class="display display--sm" style="margin-top:.5rem">Ubicación</h2>
-            <p class="caps panel__lede">Polígono Cantabria<br>C. Barriguelo 4<br>26009 Logroño</p>
+            <p class="caps panel__lede">Polígono Cantabria<br>C. Barigüelo 4<br>26009 Logroño</p>
             <iframe class="map" id="mapa"
-                data-src="https://maps.google.com/maps?q=ITACA%20JIU%20JITSU%2C%20Pol%C3%ADgono%20Cantabria%2C%20C.%20Barriguelo%2C%204%2C%2026009%20Logro%C3%B1o&amp;z=14&amp;output=embed"
+                data-src="https://maps.google.com/maps?q=ITACA%20JIU%20JITSU%2C%20Pol%C3%ADgono%20Cantabria%2C%20C.%20Barig%C3%BCelo%2C%204%2C%2026009%20Logro%C3%B1o&amp;z=14&amp;output=embed"
                 loading="lazy" title="Mapa"></iframe>
             <a class="pill" style="margin-top:1.6rem"
-                href="https://maps.google.com/?q=Pol%C3%ADgono+Cantabria,+C.+Barriguelo+4,+26009+Logro%C3%B1o"
+                href="https://maps.google.com/?q=Pol%C3%ADgono+Cantabria,+C.+Barig%C3%BCelo+4,+26009+Logro%C3%B1o"
                 target="_blank" rel="noopener">Abrir en Maps</a>
         </div>
     </section>

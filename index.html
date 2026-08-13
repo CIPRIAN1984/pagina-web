@@ -3329,7 +3329,7 @@
         <div class="map-wrapper reveal delay-1"
             style="width: 90%; max-width: 1400px; margin: 2rem auto 0; border-radius: 16px; height: 500px;">
             <iframe
-                src="https://maps.google.com/maps?q=ITACA%20JIU%20JITSU%2C%20Pol%C3%ADgono%20Cantabria%2C%20C.%20Barriguelo%2C%204%2C%2026009%20Logro%C3%B1o%2C%20La%20Rioja&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                src="https://maps.google.com/maps?q=ITACA%20JIU%20JITSU%2C%20Pol%C3%ADgono%20Cantabria%2C%20C.%20Barig%C3%BCelo%2C%204%2C%2026009%20Logro%C3%B1o%2C%20La%20Rioja&t=&z=13&ie=UTF8&iwloc=&output=embed"
                 allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
 
@@ -3337,11 +3337,12 @@
             <div class="location-details">
                 <div>
                     <h3>Dirección</h3>
-                    <p>Polígono Cantabria, C. Barriguelo, 4<br>26009 Logroño, La Rioja</p>
+                    <p>Polígono Cantabria, C. Barigüelo, 4<br>26009 Logroño, La Rioja</p>
                 </div>
                 <div>
                     <h3>Contacto</h3>
-                    <p>itacajiujitsu@gmail.com<br>664 78 41 21</p>
+                    <p>itacajiujitsu@gmail.com<br>664 78 41 21<br><a href="https://www.instagram.com/itacabjj/"
+                            target="_blank" rel="noopener">@itacabjj</a></p>
                 </div>
             </div>
         </div>
@@ -3371,6 +3372,7 @@
             <div class="footer-simple">
                 <div class="footer-links">
                     <a href="#" class="info-contact-trigger">CONTACTO</a>
+                    <a href="https://www.instagram.com/itacabjj/" target="_blank" rel="noopener">INSTAGRAM</a>
                     <a href="legal/terminos.html" target="_blank" rel="noopener">TÉRMINOS</a>
                     <a href="legal/privacidad.html" target="_blank" rel="noopener">PRIVACIDAD</a>
                 </div>
@@ -3556,8 +3558,13 @@
                 <p style="margin-bottom: 1.5rem;">664 78 41 21</p>
                 <h3
                     style="margin-bottom: 0.5rem; font-family: var(--font-heading); font-size: 1.8rem; color: var(--text-dark);">
+                    Instagram</h3>
+                <p style="margin-bottom: 1.5rem;"><a href="https://www.instagram.com/itacabjj/" target="_blank"
+                        rel="noopener">@itacabjj</a></p>
+                <h3
+                    style="margin-bottom: 0.5rem; font-family: var(--font-heading); font-size: 1.8rem; color: var(--text-dark);">
                     Dirección</h3>
-                <p>Polígono Cantabria, C. Barriguelo, 4<br>26009 Logroño, La Rioja</p>
+                <p>Polígono Cantabria, C. Barigüelo, 4<br>26009 Logroño, La Rioja</p>
             </div>
         </div>
     </div>
@@ -3653,6 +3660,36 @@
          archivo que comparten esta página y movil.html. Ver ese archivo. -->
     <script src="js/itaca-horario.js"></script>
     <script src="js/itaca-formularios.js"></script>
+    <!-- Datos estructurados (schema.org) para que Google pueda mostrar
+         dirección, teléfono y horario directamente en el buscador. El
+         horario sale de ItacaHorario para no duplicarlo a mano aquí. -->
+    <script>
+        (function () {
+            var datos = {
+                '@context': 'https://schema.org',
+                '@type': 'ExerciseGym',
+                name: 'Itaca Jiu Jitsu',
+                image: 'https://www.itacajiujitsu.com/images/og-image.jpg',
+                url: 'https://www.itacajiujitsu.com/',
+                telephone: '+34664784121',
+                email: 'itacajiujitsu@gmail.com',
+                address: {
+                    '@type': 'PostalAddress',
+                    streetAddress: 'Polígono Cantabria, C. Barigüelo, 4',
+                    addressLocality: 'Logroño',
+                    postalCode: '26009',
+                    addressRegion: 'La Rioja',
+                    addressCountry: 'ES'
+                },
+                sameAs: ['https://www.instagram.com/itacabjj/'],
+                openingHoursSpecification: window.ItacaHorario.horarioSchemaOrg()
+            };
+            var script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.textContent = JSON.stringify(datos);
+            document.head.appendChild(script);
+        })();
+    </script>
 
     <!-- JavaScript -->
     <script>
