@@ -1233,6 +1233,12 @@
                         clase de prueba.</label>
                 </div>
 
+                <div class="consent">
+                    <input type="checkbox" id="pMarketing">
+                    <label for="pMarketing">Quiero recibir por email información y ofertas de Itaca Jiu Jitsu.
+                        Es opcional y puedo darme de baja cuando quiera.</label>
+                </div>
+
                 <div class="aviso" id="avisoPrueba" role="status" aria-live="polite"></div>
                 <button class="pill" style="width:100%" type="submit" id="btnPrueba">Solicitar clase</button>
             </form>
@@ -1281,6 +1287,12 @@
                     <label for="cConsent">He leído y acepto la <a href="legal/privacidad.html" target="_blank"
                             rel="noopener">política de privacidad</a>. Usaremos tus datos únicamente para
                         responderte.</label>
+                </div>
+
+                <div class="consent">
+                    <input type="checkbox" id="cMarketing">
+                    <label for="cMarketing">Quiero recibir por email información y ofertas de Itaca Jiu Jitsu.
+                        Es opcional y puedo darme de baja cuando quiera.</label>
                 </div>
 
                 <div class="aviso" id="avisoContacto" role="status" aria-live="polite"></div>
@@ -1468,7 +1480,8 @@
                     'Categoría': cat,
                     Fecha: pFecha.value,
                     Clase: pClase.value,
-                    Consentimiento: 'Aceptada la política de privacidad. En caso de menor, consentimiento del tutor legal.'
+                    Consentimiento: 'Aceptada la política de privacidad. En caso de menor, consentimiento del tutor legal.',
+                    'Acepta ofertas': document.getElementById('pMarketing').checked ? 'Sí' : 'No'
                 };
                 if (responder) datos['Responder por WhatsApp'] = responder;
 
@@ -1506,7 +1519,8 @@
                     'Teléfono': telefono || '(no indicado)',
                     'Contestar por': canal,
                     Mensaje: mensaje,
-                    Consentimiento: 'Aceptada la política de privacidad'
+                    Consentimiento: 'Aceptada la política de privacidad',
+                    'Acepta ofertas': document.getElementById('cMarketing').checked ? 'Sí' : 'No'
                 };
                 if (responder) datos['Responder por WhatsApp'] = responder;
 
