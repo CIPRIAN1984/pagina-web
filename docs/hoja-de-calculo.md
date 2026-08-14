@@ -41,9 +41,9 @@ function doPost(e) {
     hoja.appendRow([
       'Fecha', 'Tipo', 'Nombre', 'Email', 'Teléfono', 'Contestar por',
       'Categoría', 'Día', 'Clase', 'Mensaje',
-      'Contactado', 'Vino', 'Se apuntó', 'Notas'
+      'Contactado', 'Vino', 'Se apuntó', 'Notas', 'Acepta ofertas'
     ]);
-    hoja.getRange(1, 1, 1, 14).setFontWeight('bold');
+    hoja.getRange(1, 1, 1, 15).setFontWeight('bold');
     hoja.setFrozenRows(1);
   }
 
@@ -65,7 +65,8 @@ function doPost(e) {
     d.Fecha || '',
     d.Clase || '',
     d.Mensaje || '',
-    '', '', '', ''
+    '', '', '', '',
+    d['Acepta ofertas'] || 'No'
   ]);
 
   return ContentService.createTextOutput('ok');
@@ -73,6 +74,15 @@ function doPost(e) {
 ```
 
 4. Pulsa el icono del **disquete** (Guardar proyecto).
+
+> **Si ya tenías el script funcionando de antes** (esto se añadió el 14 de
+> agosto de 2026, después del primer despliegue): pega este código encima del
+> que ya tenías, guarda, y sigue el **Paso 3** de nuevo pero eligiendo
+> **"Editar" → Versión: Nueva versión** en vez de crear una implementación
+> distinta — así la URL no cambia y no hace falta tocar el código de la web.
+> Como el encabezado de la fila 1 ya se escribió una vez, no se vuelve a
+> generar solo: añade a mano **"Acepta ofertas"** en la celda **O1** de la
+> hoja.
 
 ---
 
@@ -103,7 +113,13 @@ La hoja tendrá una fila por solicitud. Mira siempre la columna **Contestar por*
 es la vía que ha pedido esa persona (WhatsApp, llamada o email). Contestar por
 donde te han pedido es la diferencia entre que te lean o no.
 
-Las cuatro últimas columnas son tuyas:
+La columna **Acepta ofertas** dice `Sí` solo si la persona marcó expresamente
+la casilla de "quiero recibir información y ofertas" — es una casilla aparte
+de la obligatoria, así que la mayoría dirá `No` y es totalmente normal.
+**Solo a quien ponga `Sí` se le puede escribir con fines comerciales o de
+marketing**; al resto, solo para responder a lo que pidió.
+
+Las cuatro últimas columnas (antes de "Acepta ofertas") son tuyas:
 
 | Columna | Para qué |
 |---|---|

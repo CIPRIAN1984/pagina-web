@@ -3439,6 +3439,11 @@
                     <label for="contactConsent">He leído y acepto la <a href="legal/privacidad.html" target="_blank" rel="noopener">política de
                             privacidad</a>. Usaremos tus datos únicamente para responderte.</label>
                 </div>
+                <div class="form-group consent-group">
+                    <input type="checkbox" id="contactMarketing" name="Marketing">
+                    <label for="contactMarketing">Quiero recibir por email información y ofertas de Itaca Jiu
+                        Jitsu. Es opcional y puedo darme de baja cuando quiera.</label>
+                </div>
                 <div class="form-status" id="contactStatus" role="status" aria-live="polite"></div>
                 <button type="submit" class="submit-btn" id="submitFormBtn">ENVIAR MENSAJE</button>
             </form>
@@ -3533,6 +3538,11 @@
                     <label for="trialConsent">He leído y acepto la <a href="legal/privacidad.html" target="_blank" rel="noopener">política de
                             privacidad</a>. Si la solicitud es para un menor, confirmo que soy su padre, madre o tutor
                         legal y autorizo el tratamiento de sus datos para gestionar la clase de prueba.</label>
+                </div>
+                <div class="form-group consent-group">
+                    <input type="checkbox" id="trialMarketing">
+                    <label for="trialMarketing">Quiero recibir por email información y ofertas de Itaca Jiu
+                        Jitsu. Es opcional y puedo darme de baja cuando quiera.</label>
                 </div>
 
                 <div class="form-status" id="trialStatus" role="status" aria-live="polite"></div>
@@ -3971,6 +3981,7 @@ entenderás ya qué significan las Ítacas.`;
                 const telefono = document.getElementById('contactTelefono').value.trim();
                 const mensaje = document.getElementById('contactMensaje').value.trim();
                 const canal = canalElegido('ContactoPreferido');
+                const marketing = document.getElementById('contactMarketing').checked;
                 const responder = enlaceRespuesta(telefono,
                     'Hola ' + nombre + ', soy de Itaca Jiu Jitsu. Te escribo por tu consulta desde la web.');
 
@@ -3988,7 +3999,8 @@ entenderás ya qué significan las Ítacas.`;
                         'Contestar por': canal,
                         ...(responder ? { 'Responder por WhatsApp': responder } : {}),
                         Mensaje: mensaje,
-                        Consentimiento: 'Aceptada la política de privacidad'
+                        Consentimiento: 'Aceptada la política de privacidad',
+                        'Acepta ofertas': marketing ? 'Sí' : 'No'
                     },
                     canal: canal,
                     cuerpoCorreo: `Hola Itaca Jiu Jitsu,\n\nNombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}\n\n${mensaje}\n\nUn saludo.`,
@@ -4019,6 +4031,7 @@ entenderás ya qué significan las Ítacas.`;
                 const fecha = trialDate.value;
                 const clase = trialClassSelect.value;
                 const canal = canalElegido('ContactoPreferidoPrueba');
+                const marketing = document.getElementById('trialMarketing').checked;
                 const responder = enlaceRespuesta(telefono,
                     'Hola ' + nombre + ', soy de Itaca Jiu Jitsu. Te confirmo tu clase de prueba del ' +
                     fecha + ' (' + clase + '). ¡Nos vemos!');
@@ -4038,7 +4051,8 @@ entenderás ya qué significan las Ítacas.`;
                         'Categoría': cat,
                         Fecha: fecha,
                         Clase: clase,
-                        Consentimiento: 'Aceptada la política de privacidad. En caso de menor, consentimiento del tutor legal.'
+                        Consentimiento: 'Aceptada la política de privacidad. En caso de menor, consentimiento del tutor legal.',
+                        'Acepta ofertas': marketing ? 'Sí' : 'No'
                     },
                     canal: canal,
                     cuerpoCorreo: `Hola Itaca Jiu Jitsu,\n\nMe gustaría asistir a una clase de prueba. Estos son mis datos:\n\nNombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}\nCategoría: ${cat}\nFecha: ${fecha}\nClase: ${clase}\n\nUn saludo.`,
