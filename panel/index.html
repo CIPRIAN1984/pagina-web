@@ -296,12 +296,16 @@
             var ultimosLeads = [];
 
             function enlaceWhatsApp(telefono, nombre) {
-                var num = (telefono || '').replace(/[^\d]/g, '');
+                /* La hoja de Google puede guardar el teléfono como número, no
+                   como texto, según cómo lo haya escrito quien rellenó el
+                   formulario — por eso se fuerza a texto antes de nada. */
+                var num = String(telefono || '').replace(/[^\d]/g, '');
                 if (!num) return null;
                 if (num.length === 9) num = '34' + num;
                 else if (num.indexOf('0034') === 0) num = num.slice(2);
                 if (num.length < 11) return null;
-                var texto = 'Hola' + (nombre ? ' ' + nombre.split(' ')[0] : '') +
+                var primerNombre = String(nombre || '').split(' ')[0];
+                var texto = 'Hola' + (primerNombre ? ' ' + primerNombre : '') +
                     ', soy de Itaca Jiu Jitsu. Te escribo por tu solicitud desde la web.';
                 return 'https://wa.me/' + num + '?text=' + encodeURIComponent(texto);
             }
@@ -326,11 +330,13 @@
                 vacioEl.style.display = 'none';
 
                 visibles.forEach(function (lead) {
+                  try {
                     var card = document.createElement('div');
                     card.className = 'card' + (lead.accion ? ' resuelto' : '');
 
+                    var tipoTexto = String(lead.tipo || '');
                     var etiquetas = '';
-                    if (lead.tipo && lead.tipo.indexOf('prueba') !== -1) {
+                    if (tipoTexto.indexOf('prueba') !== -1) {
                         etiquetas += '<span class="etiqueta tipo-prueba">Clase de prueba</span>';
                     } else {
                         etiquetas += '<span class="etiqueta">Contacto</span>';
@@ -361,6 +367,12 @@
                         '</div>';
 
                     listaEl.appendChild(card);
+                  } catch (err) {
+                    /* Una fila con datos inesperados no debe tirar abajo el
+                       resto del panel — se salta esa tarjeta y sigue con las
+                       demás, en vez de dejar la pantalla en blanco sin aviso. */
+                    console.error('No se pudo pintar un lead:', lead, err);
+                  }
                 });
             }
 
