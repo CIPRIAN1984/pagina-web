@@ -107,6 +107,142 @@ function doPost(e) {
 
 ---
 
+## Paso 4 — El panel de leads (sin abrir la hoja)
+
+Cipri pidió (14 de agosto de 2026) una forma de trabajar sin tener que abrir la
+hoja de cálculo: un panel con tarjetas, un botón directo de WhatsApp y un botón
+para marcar qué toca hacer con cada solicitud. Vive en `panel/index.html`, no
+sale en ningún menú de la web ni en buscadores.
+
+Para que funcione hace falta ampliar el script una vez más. **Pega esto encima
+de lo que ya tenías** (incluye todo lo de antes, más el panel):
+
+```javascript
+var CLAVE_PANEL = 'CAMBIA-ESTO-POR-TU-CLAVE';
+
+function doPost(e) {
+  var hoja = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  var d = {};
+  try {
+    d = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return ContentService.createTextOutput('mal');
+  }
+
+  // Actualizar el estado de un lead desde el panel (protegido por clave).
+  if (d.accion === 'actualizar') {
+    if (d.clave !== CLAVE_PANEL) {
+      return json({ ok: false, error: 'clave incorrecta' });
+    }
+    var col = columnaAccion(hoja);
+    hoja.getRange(d.fila, col).setValue(d.valor || '');
+    return json({ ok: true });
+  }
+
+  // La primera vez escribe la fila de títulos.
+  if (hoja.getLastRow() === 0) {
+    hoja.appendRow([
+      'Fecha', 'Tipo', 'Nombre', 'Email', 'Teléfono', 'Contestar por',
+      'Categoría', 'Día', 'Clase', 'Mensaje',
+      'Contactado', 'Vino', 'Se apuntó', 'Notas', 'Acepta ofertas'
+    ]);
+    hoja.getRange(1, 1, 1, 15).setFontWeight('bold');
+    hoja.setFrozenRows(1);
+  }
+
+  hoja.appendRow([
+    new Date(),
+    d.tipo || '',
+    d.Nombre || '',
+    d.Email || '',
+    d['Teléfono'] || '',
+    d['Contestar por'] || '',
+    d['Categoría'] || '',
+    d.Fecha || '',
+    d.Clase || '',
+    d.Mensaje || '',
+    '', '', '', '',
+    d['Acepta ofertas'] || 'No'
+  ]);
+
+  return ContentService.createTextOutput('ok');
+}
+
+// El panel pide los leads con esto (GET, protegido por clave).
+function doGet(e) {
+  if (!e.parameter.clave || e.parameter.clave !== CLAVE_PANEL) {
+    return json({ ok: false, error: 'clave incorrecta' });
+  }
+  var hoja = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  var datos = hoja.getDataRange().getValues();
+  var cabecera = datos[0];
+  var iNombre = cabecera.indexOf('Nombre');
+  var iEmail = cabecera.indexOf('Email');
+  var iTelefono = cabecera.indexOf('Teléfono');
+  var iContestar = cabecera.indexOf('Contestar por');
+  var iTipo = cabecera.indexOf('Tipo');
+  var iMensaje = cabecera.indexOf('Mensaje');
+  var iCategoria = cabecera.indexOf('Categoría');
+  var iDia = cabecera.indexOf('Día');
+  var iClase = cabecera.indexOf('Clase');
+  var iOfertas = cabecera.indexOf('Acepta ofertas');
+  var iFecha = cabecera.indexOf('Fecha');
+  var iAccion = columnaAccion(hoja) - 1;
+
+  var leads = [];
+  for (var f = 1; f < datos.length; f++) {
+    var fila = datos[f];
+    if (!fila[iNombre] && !fila[iEmail]) continue; // fila en blanco, se salta
+    var fecha = fila[iFecha];
+    leads.push({
+      fila: f + 1,
+      fecha: fecha instanceof Date ? Utilities.formatDate(fecha, Session.getScriptTimeZone(), 'dd/MM HH:mm') : String(fecha || ''),
+      tipo: fila[iTipo] || '',
+      nombre: fila[iNombre] || '',
+      email: fila[iEmail] || '',
+      telefono: fila[iTelefono] || '',
+      contestarPor: fila[iContestar] || '',
+      categoria: fila[iCategoria] || '',
+      dia: fila[iDia] || '',
+      clase: fila[iClase] || '',
+      mensaje: fila[iMensaje] || '',
+      aceptaOfertas: fila[iOfertas] || '',
+      accion: fila[iAccion] || ''
+    });
+  }
+  leads.reverse(); // los más recientes primero
+  return json({ ok: true, leads: leads });
+}
+
+// Busca la columna "Acción panel"; si no existe todavía, la crea al final.
+// Así el panel no se rompe aunque otra herramienta cambie el orden de columnas.
+function columnaAccion(hoja) {
+  var cabecera = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0];
+  var i = cabecera.indexOf('Acción panel');
+  if (i !== -1) return i + 1;
+  var col = hoja.getLastColumn() + 1;
+  hoja.getRange(1, col).setValue('Acción panel').setFontWeight('bold');
+  return col;
+}
+
+function json(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+```
+
+**Antes de guardar**, cambia la primera línea: donde pone
+`'CAMBIA-ESTO-POR-TU-CLAVE'`, pon una palabra o frase que solo tú conozcas (es
+la contraseña del panel — nadie más la sabe, ni siquiera queda escrita en el
+código de la web). Guarda con el disquete, y publica una **versión nueva**
+igual que las veces anteriores (**Implementar → Gestionar implementaciones →
+lápiz → Versión: Nueva versión → Implementar**). La URL no cambia.
+
+Con eso, entra en `www.itacajiujitsu.com/panel/`, la primera vez te pedirá esa
+clave (se queda guardada en el navegador, no hay que escribirla cada vez), y
+ya tienes las tarjetas.
+
+---
+
 ## Cómo lo usas después
 
 La hoja tendrá una fila por solicitud. Mira siempre la columna **Contestar por**:
@@ -142,6 +278,13 @@ solicitudes y las marcas desde el teléfono.
   de una web estática lo puede leer cualquiera. En la práctica, lo peor que puede
   pasar es que alguien cuele filas de broma en la hoja: se borran y ya está. **No
   da acceso a tu Drive ni a tu correo**, solo permite añadir filas a esa hoja.
+- **La clave del panel es distinta y no es pública.** `CLAVE_PANEL` vive solo
+  dentro de tu script (en tu cuenta de Google), nunca en el código de la web
+  — es lo único que protege que un desconocido pueda leer los nombres,
+  teléfonos y mensajes de quien ha escrito. No se la digas a nadie ni la
+  pegues en ningún sitio público. Si alguna vez crees que se ha filtrado,
+  cámbiala en el script y publica una versión nueva: la antigua deja de
+  funcionar al momento.
 - **El correo es la fuente fiable.** Si alguna vez no cuadra, manda lo que llegó
   al correo.
 - **Datos de menores.** El formulario de clase de prueba recoge la categoría de
