@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Panel — Itaca Jiu Jitsu</title>
+    <!-- Panel privado de uso interno, para ver de un vistazo quién ha escrito
+         por la web y marcar qué toca hacer, sin abrir la hoja de cálculo.
+         No sale enlazado desde ningún sitio de la web pública ni en
+         buscadores (robots noindex + robots.txt). Los datos los sirve el
+         mismo script de Google Apps Script que guarda los leads, protegido
+         por una clave que solo conoce Cipri — ver docs/hoja-de-calculo.md. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0a0a0a;
+            --paper: #ffffff;
+            --grey: #6b6b6b;
+            --grey-light: #f2f2f2;
+            --rule: #e2e2e2;
+            --green: #1b8a4c;
+            --red: #b5301f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Archivo', system-ui, sans-serif;
+            background: var(--grey-light);
+            color: var(--ink);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        /* ── Puerta de acceso ─────────────────────────────────────── */
+        #puerta {
+            max-width: 22rem;
+            margin: 4rem auto;
+            padding: 2rem;
+            background: var(--paper);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+        }
+
+        #puerta h1 {
+            font-size: 1.3rem;
+            margin-bottom: .5rem;
+        }
+
+        #puerta p {
+            color: var(--grey);
+            font-size: .9rem;
+            margin-bottom: 1.25rem;
+        }
+
+        #puerta input {
+            width: 100%;
+            padding: .75rem;
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: .75rem;
+        }
+
+        #puerta button {
+            width: 100%;
+            padding: .75rem;
+            background: var(--ink);
+            color: var(--paper);
+            border: 0;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        #puertaError {
+            color: var(--red);
+            font-size: .85rem;
+            margin-top: .6rem;
+            display: none;
+        }
+
+        /* ── Panel ────────────────────────────────────────────────── */
+        #panel {
+            display: none;
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 1.25rem 1rem 4rem;
+        }
+
+        header.top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            gap: .75rem;
+        }
+
+        header.top h1 {
+            font-size: 1.15rem;
+            letter-spacing: -.01em;
+        }
+
+        .top-acciones {
+            display: flex;
+            gap: .5rem;
+        }
+
+        .btn-mini {
+            border: 1px solid var(--rule);
+            background: var(--paper);
+            border-radius: 999px;
+            padding: .4rem .8rem;
+            font-size: .78rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--grey);
+        }
+
+        .btn-mini.activo {
+            background: var(--ink);
+            color: var(--paper);
+            border-color: var(--ink);
+        }
+
+        #estado {
+            text-align: center;
+            color: var(--grey);
+            padding: 3rem 1rem;
+            font-size: .9rem;
+        }
+
+        .card {
+            background: var(--paper);
+            border-radius: 12px;
+            padding: 1rem 1.1rem;
+            margin-bottom: .75rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+            transition: opacity .2s;
+        }
+
+        .card.resuelto {
+            opacity: .55;
+        }
+
+        .card__fila1 {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: .5rem;
+            margin-bottom: .3rem;
+        }
+
+        .card__nombre {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .card__fecha {
+            font-size: .75rem;
+            color: var(--grey);
+            white-space: nowrap;
+        }
+
+        .card__meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin-bottom: .5rem;
+        }
+
+        .etiqueta {
+            display: inline-block;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+            padding: .15rem .5rem;
+            border-radius: 999px;
+            background: var(--grey-light);
+            color: var(--grey);
+        }
+
+        .etiqueta.tipo-prueba {
+            background: #e9f3ee;
+            color: var(--green);
+        }
+
+        .etiqueta.ofertas {
+            background: #fdf1e0;
+            color: #9a5b00;
+        }
+
+        .card__mensaje {
+            font-size: .92rem;
+            color: #333;
+            margin-bottom: .7rem;
+            white-space: pre-wrap;
+        }
+
+        .card__acciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .45rem;
+        }
+
+        .btn {
+            border: 1px solid var(--rule);
+            background: var(--paper);
+            border-radius: 999px;
+            padding: .5rem .85rem;
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--ink);
+        }
+
+        .btn.whatsapp {
+            background: #e9f8ee;
+            border-color: #bfe8cc;
+            color: var(--green);
+        }
+
+        .btn.estado-btn.elegido {
+            background: var(--ink);
+            color: var(--paper);
+            border-color: var(--ink);
+        }
+
+        #vacio {
+            text-align: center;
+            color: var(--grey);
+            padding: 3rem 1rem;
+            font-size: .92rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="puerta">
+        <h1>Panel de solicitudes</h1>
+        <p>Introduce la clave del panel (la que pusiste en el script).</p>
+        <input type="password" id="claveInput" placeholder="Clave" autocomplete="off">
+        <button id="entrarBtn">Entrar</button>
+        <p id="puertaError">Clave incorrecta. Inténtalo de nuevo.</p>
+    </div>
+
+    <div id="panel">
+        <header class="top">
+            <h1>Solicitudes</h1>
+            <div class="top-acciones">
+                <button class="btn-mini" id="verTodoBtn">Ver gestionados</button>
+                <button class="btn-mini" id="actualizarBtn">↻ Actualizar</button>
+            </div>
+        </header>
+        <div id="estado"></div>
+        <div id="lista"></div>
+        <div id="vacio" style="display:none">No hay nada pendiente. Al día 🎉</div>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            // Mismo script de Apps Script que guarda los formularios de la web.
+            var URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbwi1x9HqLkd-uJt-bsHwqeZnEHqL8rG9be80jAbDK-X5cNvM4VUPEfC6wQsC9ZtNmOA/exec';
+            var CLAVE_GUARDADA = 'itaca_panel_clave';
+
+            var puerta = document.getElementById('puerta');
+            var panel = document.getElementById('panel');
+            var claveInput = document.getElementById('claveInput');
+            var entrarBtn = document.getElementById('entrarBtn');
+            var puertaError = document.getElementById('puertaError');
+            var estadoEl = document.getElementById('estado');
+            var listaEl = document.getElementById('lista');
+            var vacioEl = document.getElementById('vacio');
+            var verTodoBtn = document.getElementById('verTodoBtn');
+            var actualizarBtn = document.getElementById('actualizarBtn');
+
+            var mostrarGestionados = false;
+            var ultimosLeads = [];
+
+            function enlaceWhatsApp(telefono, nombre) {
+                var num = (telefono || '').replace(/[^\d]/g, '');
+                if (!num) return null;
+                if (num.length === 9) num = '34' + num;
+                else if (num.indexOf('0034') === 0) num = num.slice(2);
+                if (num.length < 11) return null;
+                var texto = 'Hola' + (nombre ? ' ' + nombre.split(' ')[0] : '') +
+                    ', soy de Itaca Jiu Jitsu. Te escribo por tu solicitud desde la web.';
+                return 'https://wa.me/' + num + '?text=' + encodeURIComponent(texto);
+            }
+
+            function escapar(s) {
+                var div = document.createElement('div');
+                div.textContent = s || '';
+                return div.innerHTML;
+            }
+
+            function pintarLeads(leads) {
+                ultimosLeads = leads;
+                listaEl.innerHTML = '';
+                var visibles = leads.filter(function (l) {
+                    return mostrarGestionados || !l.accion;
+                });
+
+                if (!visibles.length) {
+                    vacioEl.style.display = 'block';
+                    return;
+                }
+                vacioEl.style.display = 'none';
+
+                visibles.forEach(function (lead) {
+                    var card = document.createElement('div');
+                    card.className = 'card' + (lead.accion ? ' resuelto' : '');
+
+                    var etiquetas = '';
+                    if (lead.tipo && lead.tipo.indexOf('prueba') !== -1) {
+                        etiquetas += '<span class="etiqueta tipo-prueba">Clase de prueba</span>';
+                    } else {
+                        etiquetas += '<span class="etiqueta">Contacto</span>';
+                    }
+                    if (lead.categoria) etiquetas += '<span class="etiqueta">' + escapar(lead.categoria) + '</span>';
+                    if (lead.dia) etiquetas += '<span class="etiqueta">' + escapar(lead.dia) + '</span>';
+                    if (lead.aceptaOfertas === 'Sí') etiquetas += '<span class="etiqueta ofertas">Quiere ofertas</span>';
+
+                    var wa = enlaceWhatsApp(lead.telefono, lead.nombre);
+
+                    var opciones = ['Mandar info', 'Apuntar a la prueba', 'Otro'];
+                    var botonesEstado = opciones.map(function (op) {
+                        var elegido = lead.accion === op ? ' elegido' : '';
+                        return '<button class="btn estado-btn' + elegido + '" data-fila="' + lead.fila +
+                            '" data-valor="' + escapar(op) + '">' + op + '</button>';
+                    }).join('');
+
+                    card.innerHTML =
+                        '<div class="card__fila1">' +
+                        '<span class="card__nombre">' + (escapar(lead.nombre) || '(sin nombre)') + '</span>' +
+                        '<span class="card__fecha">' + escapar(lead.fecha) + '</span>' +
+                        '</div>' +
+                        '<div class="card__meta">' + etiquetas + '</div>' +
+                        '<div class="card__mensaje">' + (escapar(lead.mensaje) || '<em>Sin mensaje</em>') + '</div>' +
+                        '<div class="card__acciones">' +
+                        (wa ? '<a class="btn whatsapp" href="' + wa + '" target="_blank" rel="noopener">WhatsApp</a>' : '') +
+                        botonesEstado +
+                        '</div>';
+
+                    listaEl.appendChild(card);
+                });
+            }
+
+            function actualizarEstado(fila, valor, boton) {
+                boton.closest('.card__acciones').querySelectorAll('.estado-btn').forEach(function (b) {
+                    b.classList.remove('elegido');
+                });
+                boton.classList.add('elegido');
+                boton.closest('.card').classList.add('resuelto');
+
+                var clave = localStorage.getItem(CLAVE_GUARDADA);
+                fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ accion: 'actualizar', clave: clave, fila: fila, valor: valor })
+                }).catch(function () { /* el estado ya se ve marcado; si falla, se corrige al Actualizar */ });
+            }
+
+            listaEl.addEventListener('click', function (e) {
+                var b = e.target.closest('.estado-btn');
+                if (!b) return;
+                actualizarEstado(Number(b.dataset.fila), b.dataset.valor, b);
+            });
+
+            verTodoBtn.addEventListener('click', function () {
+                mostrarGestionados = !mostrarGestionados;
+                verTodoBtn.classList.toggle('activo', mostrarGestionados);
+                verTodoBtn.textContent = mostrarGestionados ? 'Ocultar gestionados' : 'Ver gestionados';
+                pintarLeads(ultimosLeads);
+            });
+
+            function cargar() {
+                estadoEl.textContent = 'Cargando...';
+                estadoEl.style.display = 'block';
+                listaEl.innerHTML = '';
+                vacioEl.style.display = 'none';
+
+                var clave = localStorage.getItem(CLAVE_GUARDADA);
+                fetch(URL_SCRIPT + '?clave=' + encodeURIComponent(clave))
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (!res.ok) {
+                            if (res.error === 'clave incorrecta') {
+                                localStorage.removeItem(CLAVE_GUARDADA);
+                                mostrarPuerta(true);
+                                return;
+                            }
+                            estadoEl.textContent = 'No se ha podido cargar: ' + (res.error || 'error desconocido');
+                            return;
+                        }
+                        estadoEl.style.display = 'none';
+                        pintarLeads(res.leads || []);
+                    })
+                    .catch(function () {
+                        estadoEl.textContent = 'No se ha podido conectar. Comprueba tu conexión y pulsa Actualizar.';
+                    });
+            }
+
+            actualizarBtn.addEventListener('click', cargar);
+
+            function mostrarPuerta(conError) {
+                puerta.style.display = 'block';
+                panel.style.display = 'none';
+                puertaError.style.display = conError ? 'block' : 'none';
+                claveInput.value = '';
+                claveInput.focus();
+            }
+
+            function mostrarPanel() {
+                puerta.style.display = 'none';
+                panel.style.display = 'block';
+                cargar();
+            }
+
+            entrarBtn.addEventListener('click', function () {
+                var clave = claveInput.value.trim();
+                if (!clave) return;
+                localStorage.setItem(CLAVE_GUARDADA, clave);
+                mostrarPanel();
+            });
+            claveInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') entrarBtn.click();
+            });
+
+            if (localStorage.getItem(CLAVE_GUARDADA)) {
+                mostrarPanel();
+            } else {
+                mostrarPuerta(false);
+            }
+        })();
+    </script>
+</body>
+
+</html>
