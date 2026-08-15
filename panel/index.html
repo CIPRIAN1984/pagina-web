@@ -11,20 +11,32 @@
          No sale enlazado desde ningún sitio de la web pública ni en
          buscadores (robots noindex + robots.txt). Los datos los sirve el
          mismo script de Google Apps Script que guarda los leads, protegido
-         por una clave que solo conoce Cipri — ver docs/hoja-de-calculo.md. -->
+         por una clave que solo conoce Cipri — ver docs/hoja-de-calculo.md.
+
+         Pestañas por fecha (14 de agosto de 2026, a petición de Cipri: no
+         quiere ver todo de golpe). La fecha que da el script es "dd/MM
+         HH:mm", sin año, así que se asume el año actual al interpretarla; si
+         al hacerlo saliera una fecha futura, se resta un año (fila de hace
+         más de 12 meses). Con la cadencia real de esta web (unas pocas
+         solicitudes por semana) es más que suficiente sin tener que tocar
+         otra vez el script para añadir un timestamp completo. -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --ink: #0a0a0a;
-            --paper: #ffffff;
-            --grey: #6b6b6b;
-            --grey-light: #f2f2f2;
-            --rule: #e2e2e2;
-            --green: #1b8a4c;
-            --red: #b5301f;
+            --bg: #0b0b0d;
+            --bg-elev: #16161a;
+            --bg-elev-2: #1e1e23;
+            --border: #2a2a30;
+            --text: #f2f2f3;
+            --text-dim: #98989f;
+            --accent: #34d399;
+            --accent-soft: rgba(52, 211, 153, .14);
+            --amber: #f0a83e;
+            --amber-soft: rgba(240, 168, 62, .14);
+            --red: #f16565;
         }
 
         * {
@@ -35,8 +47,8 @@
 
         body {
             font-family: 'Archivo', system-ui, sans-serif;
-            background: var(--grey-light);
-            color: var(--ink);
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.5;
             min-height: 100vh;
         }
@@ -51,9 +63,9 @@
             max-width: 22rem;
             margin: 4rem auto;
             padding: 2rem;
-            background: var(--paper);
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
         }
 
         #puerta h1 {
@@ -62,7 +74,7 @@
         }
 
         #puerta p {
-            color: var(--grey);
+            color: var(--text-dim);
             font-size: .9rem;
             margin-bottom: 1.25rem;
         }
@@ -70,8 +82,10 @@
         #puerta input {
             width: 100%;
             padding: .75rem;
-            border: 1px solid var(--rule);
+            background: var(--bg-elev-2);
+            border: 1px solid var(--border);
             border-radius: 8px;
+            color: var(--text);
             font-size: 1rem;
             margin-bottom: .75rem;
         }
@@ -79,8 +93,8 @@
         #puerta button {
             width: 100%;
             padding: .75rem;
-            background: var(--ink);
-            color: var(--paper);
+            background: var(--accent);
+            color: #06241a;
             border: 0;
             border-radius: 8px;
             font-weight: 700;
@@ -97,9 +111,9 @@
         /* ── Panel ────────────────────────────────────────────────── */
         #panel {
             display: none;
-            max-width: 640px;
+            max-width: 720px;
             margin: 0 auto;
-            padding: 1.25rem 1rem 4rem;
+            padding: 1.5rem 1rem 4rem;
         }
 
         header.top {
@@ -108,10 +122,11 @@
             justify-content: space-between;
             margin-bottom: 1.25rem;
             gap: .75rem;
+            flex-wrap: wrap;
         }
 
         header.top h1 {
-            font-size: 1.15rem;
+            font-size: 1.25rem;
             letter-spacing: -.01em;
         }
 
@@ -121,40 +136,110 @@
         }
 
         .btn-mini {
-            border: 1px solid var(--rule);
-            background: var(--paper);
+            border: 1px solid var(--border);
+            background: var(--bg-elev);
+            color: var(--text-dim);
             border-radius: 999px;
             padding: .4rem .8rem;
             font-size: .78rem;
             font-weight: 600;
             cursor: pointer;
-            color: var(--grey);
         }
 
         .btn-mini.activo {
-            background: var(--ink);
-            color: var(--paper);
-            border-color: var(--ink);
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
+        }
+
+        /* ── Resumen (fila de números) ───────────────────────────── */
+        .resumen {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: .6rem;
+            margin-bottom: 1.1rem;
+        }
+
+        .resumen__item {
+            min-width: 0;
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: .7rem .8rem;
+        }
+
+        .resumen__num {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .resumen__label {
+            font-size: .7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            margin-top: .1rem;
+            overflow-wrap: break-word;
+        }
+
+        /* ── Pestañas de fecha ────────────────────────────────────── */
+        .pestanas {
+            display: flex;
+            gap: .4rem;
+            overflow-x: auto;
+            padding-bottom: .3rem;
+            margin-bottom: 1rem;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .pestanas::-webkit-scrollbar {
+            display: none;
+        }
+
+        .pestana {
+            flex: 0 0 auto;
+            border: 1px solid var(--border);
+            background: var(--bg-elev);
+            color: var(--text-dim);
+            border-radius: 999px;
+            padding: .5rem 1rem;
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .pestana .cuenta {
+            color: inherit;
+            opacity: .65;
+            margin-left: .3rem;
+        }
+
+        .pestana.activa {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         #estado {
             text-align: center;
-            color: var(--grey);
+            color: var(--text-dim);
             padding: 3rem 1rem;
             font-size: .9rem;
         }
 
         .card {
-            background: var(--paper);
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
             border-radius: 12px;
             padding: 1rem 1.1rem;
-            margin-bottom: .75rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+            margin-bottom: .7rem;
             transition: opacity .2s;
         }
 
         .card.resuelto {
-            opacity: .55;
+            opacity: .5;
         }
 
         .card__fila1 {
@@ -172,7 +257,7 @@
 
         .card__fecha {
             font-size: .75rem;
-            color: var(--grey);
+            color: var(--text-dim);
             white-space: nowrap;
         }
 
@@ -191,23 +276,24 @@
             text-transform: uppercase;
             padding: .15rem .5rem;
             border-radius: 999px;
-            background: var(--grey-light);
-            color: var(--grey);
+            background: var(--bg-elev-2);
+            color: var(--text-dim);
         }
 
         .etiqueta.tipo-prueba {
-            background: #e9f3ee;
-            color: var(--green);
+            background: var(--accent-soft);
+            color: var(--accent);
         }
 
         .etiqueta.ofertas {
-            background: #fdf1e0;
-            color: #9a5b00;
+            background: var(--amber-soft);
+            color: var(--amber);
         }
 
         .card__mensaje {
             font-size: .92rem;
-            color: #333;
+            color: var(--text);
+            opacity: .85;
             margin-bottom: .7rem;
             white-space: pre-wrap;
         }
@@ -219,31 +305,31 @@
         }
 
         .btn {
-            border: 1px solid var(--rule);
-            background: var(--paper);
+            border: 1px solid var(--border);
+            background: var(--bg-elev-2);
             border-radius: 999px;
             padding: .5rem .85rem;
             font-size: .82rem;
             font-weight: 600;
             cursor: pointer;
-            color: var(--ink);
+            color: var(--text);
         }
 
         .btn.whatsapp {
-            background: #e9f8ee;
-            border-color: #bfe8cc;
-            color: var(--green);
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         .btn.estado-btn.elegido {
-            background: var(--ink);
-            color: var(--paper);
-            border-color: var(--ink);
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
         }
 
         #vacio {
             text-align: center;
-            color: var(--grey);
+            color: var(--text-dim);
             padding: 3rem 1rem;
             font-size: .92rem;
         }
@@ -264,13 +350,35 @@
         <header class="top">
             <h1>Solicitudes</h1>
             <div class="top-acciones">
-                <button class="btn-mini" id="verTodoBtn">Ver gestionados</button>
+                <button class="btn-mini" id="verTodoBtn">Ver gestionadas</button>
                 <button class="btn-mini" id="actualizarBtn">↻ Actualizar</button>
             </div>
         </header>
+
+        <div class="resumen" id="resumen">
+            <div class="resumen__item">
+                <div class="resumen__num" id="numTotal">–</div>
+                <div class="resumen__label">Total</div>
+            </div>
+            <div class="resumen__item">
+                <div class="resumen__num" id="numPendientes">–</div>
+                <div class="resumen__label">Pendientes</div>
+            </div>
+            <div class="resumen__item">
+                <div class="resumen__num" id="numGestionadas">–</div>
+                <div class="resumen__label">Gestionadas</div>
+            </div>
+            <div class="resumen__item">
+                <div class="resumen__num" id="numHoy">–</div>
+                <div class="resumen__label">Nuevas hoy</div>
+            </div>
+        </div>
+
+        <div class="pestanas" id="pestanas"></div>
+
         <div id="estado"></div>
         <div id="lista"></div>
-        <div id="vacio" style="display:none">No hay nada pendiente. Al día 🎉</div>
+        <div id="vacio" style="display:none">No hay nada en esta pestaña. Al día 🎉</div>
     </div>
 
     <script>
@@ -280,6 +388,14 @@
             // Mismo script de Apps Script que guarda los formularios de la web.
             var URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbwi1x9HqLkd-uJt-bsHwqeZnEHqL8rG9be80jAbDK-X5cNvM4VUPEfC6wQsC9ZtNmOA/exec';
             var CLAVE_GUARDADA = 'itaca_panel_clave';
+
+            var PESTANAS = [
+                { id: 'recientes', etiqueta: 'Recientes' },
+                { id: 'semana', etiqueta: 'Esta semana' },
+                { id: 'mes', etiqueta: 'Este mes' },
+                { id: 'antiguas', etiqueta: 'Antiguas' },
+                { id: 'todas', etiqueta: 'Todas' }
+            ];
 
             var puerta = document.getElementById('puerta');
             var panel = document.getElementById('panel');
@@ -291,9 +407,42 @@
             var vacioEl = document.getElementById('vacio');
             var verTodoBtn = document.getElementById('verTodoBtn');
             var actualizarBtn = document.getElementById('actualizarBtn');
+            var pestanasEl = document.getElementById('pestanas');
 
             var mostrarGestionados = false;
+            var pestanaActiva = 'recientes';
             var ultimosLeads = [];
+
+            /* La fecha llega como "dd/MM HH:mm" (sin año). Se asume el año
+               actual; si el resultado queda en el futuro, es que la
+               solicitud es del año anterior. */
+            function parsearFecha(fechaStr) {
+                var m = /^(\d{2})\/(\d{2}) (\d{2}):(\d{2})$/.exec(fechaStr || '');
+                if (!m) return null;
+                var ahora = new Date();
+                var d = new Date(ahora.getFullYear(), Number(m[2]) - 1, Number(m[1]), Number(m[3]), Number(m[4]));
+                if (d.getTime() > ahora.getTime() + 24 * 60 * 60 * 1000) {
+                    d.setFullYear(d.getFullYear() - 1);
+                }
+                return d;
+            }
+
+            function bucketDe(lead) {
+                var d = parsearFecha(lead.fecha);
+                if (!d) return 'antiguas';
+                var horas = (Date.now() - d.getTime()) / 36e5;
+                if (horas <= 48) return 'recientes';
+                if (horas <= 24 * 7) return 'semana';
+                if (horas <= 24 * 30) return 'mes';
+                return 'antiguas';
+            }
+
+            function esDeHoy(lead) {
+                var d = parsearFecha(lead.fecha);
+                if (!d) return false;
+                var hoy = new Date();
+                return d.getFullYear() === hoy.getFullYear() && d.getMonth() === hoy.getMonth() && d.getDate() === hoy.getDate();
+            }
 
             function enlaceWhatsApp(telefono, nombre) {
                 /* La hoja de Google puede guardar el teléfono como número, no
@@ -316,10 +465,33 @@
                 return div.innerHTML;
             }
 
+            function pintarResumen(leads) {
+                document.getElementById('numTotal').textContent = leads.length;
+                document.getElementById('numPendientes').textContent = leads.filter(function (l) { return !l.accion; }).length;
+                document.getElementById('numGestionadas').textContent = leads.filter(function (l) { return l.accion; }).length;
+                document.getElementById('numHoy').textContent = leads.filter(esDeHoy).length;
+            }
+
+            function pintarPestanas(leads) {
+                pestanasEl.innerHTML = '';
+                PESTANAS.forEach(function (p) {
+                    var cuenta = p.id === 'todas' ? leads.length : leads.filter(function (l) { return bucketDe(l) === p.id; }).length;
+                    var btn = document.createElement('button');
+                    btn.className = 'pestana' + (p.id === pestanaActiva ? ' activa' : '');
+                    btn.dataset.pestana = p.id;
+                    btn.innerHTML = escapar(p.etiqueta) + '<span class="cuenta">' + cuenta + '</span>';
+                    pestanasEl.appendChild(btn);
+                });
+            }
+
             function pintarLeads(leads) {
                 ultimosLeads = leads;
+                pintarResumen(leads);
+                pintarPestanas(leads);
+
                 listaEl.innerHTML = '';
                 var visibles = leads.filter(function (l) {
+                    if (pestanaActiva !== 'todas' && bucketDe(l) !== pestanaActiva) return false;
                     return mostrarGestionados || !l.accion;
                 });
 
@@ -383,6 +555,12 @@
                 boton.classList.add('elegido');
                 boton.closest('.card').classList.add('resuelto');
 
+                ultimosLeads.forEach(function (l) {
+                    if (l.fila === fila) l.accion = valor;
+                });
+                pintarResumen(ultimosLeads);
+                pintarPestanas(ultimosLeads);
+
                 var clave = localStorage.getItem(CLAVE_GUARDADA);
                 fetch(URL_SCRIPT, {
                     method: 'POST',
@@ -397,10 +575,17 @@
                 actualizarEstado(Number(b.dataset.fila), b.dataset.valor, b);
             });
 
+            pestanasEl.addEventListener('click', function (e) {
+                var b = e.target.closest('.pestana');
+                if (!b) return;
+                pestanaActiva = b.dataset.pestana;
+                pintarLeads(ultimosLeads);
+            });
+
             verTodoBtn.addEventListener('click', function () {
                 mostrarGestionados = !mostrarGestionados;
                 verTodoBtn.classList.toggle('activo', mostrarGestionados);
-                verTodoBtn.textContent = mostrarGestionados ? 'Ocultar gestionados' : 'Ver gestionados';
+                verTodoBtn.textContent = mostrarGestionados ? 'Ocultar gestionadas' : 'Ver gestionadas';
                 pintarLeads(ultimosLeads);
             });
 
