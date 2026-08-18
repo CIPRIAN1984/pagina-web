@@ -13,13 +13,14 @@
          mismo script de Google Apps Script que guarda los leads, protegido
          por una clave que solo conoce Cipri — ver docs/hoja-de-calculo.md.
 
-         Pestañas por fecha (14 de agosto de 2026, a petición de Cipri: no
-         quiere ver todo de golpe). La fecha que da el script es "dd/MM
-         HH:mm", sin año, así que se asume el año actual al interpretarla; si
-         al hacerlo saliera una fecha futura, se resta un año (fila de hace
-         más de 12 meses). Con la cadencia real de esta web (unas pocas
-         solicitudes por semana) es más que suficiente sin tener que tocar
-         otra vez el script para añadir un timestamp completo. -->
+         Pestañas por ESTADO, no por fecha (18 de agosto de 2026, tras
+         probarlo Cipri: las pestañas de fecha lo dejaban en "Antiguas" sin
+         entender por qué, y marcar una acción no se podía deshacer). Ahora
+         el eje principal es qué falta por hacer: Pendientes / Gestionadas /
+         Estadísticas / Todas. Cualquier botón de acción se puede volver a
+         tocar para deshacerlo (vuelve a "sin gestionar"). La fecha llega
+         como "dd/MM HH:mm" (sin año) y solo se usa para "nuevas hoy" y para
+         los números de Estadísticas (este mes / este año / desde siempre). -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&display=swap"
@@ -146,12 +147,6 @@
             cursor: pointer;
         }
 
-        .btn-mini.activo {
-            background: var(--text);
-            color: var(--bg);
-            border-color: var(--text);
-        }
-
         /* ── Resumen (fila de números) ───────────────────────────── */
         .resumen {
             display: grid;
@@ -182,7 +177,7 @@
             overflow-wrap: break-word;
         }
 
-        /* ── Pestañas de fecha ────────────────────────────────────── */
+        /* ── Pestañas principales ─────────────────────────────────── */
         .pestanas {
             display: flex;
             gap: .4rem;
@@ -239,7 +234,7 @@
         }
 
         .card.resuelto {
-            opacity: .5;
+            opacity: .7;
         }
 
         .card__fila1 {
@@ -290,6 +285,11 @@
             color: var(--amber);
         }
 
+        .etiqueta.estado-hecho {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
         .card__mensaje {
             font-size: .92rem;
             color: var(--text);
@@ -333,6 +333,85 @@
             padding: 3rem 1rem;
             font-size: .92rem;
         }
+
+        /* ── Estadísticas ─────────────────────────────────────────── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: .6rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .stats-seccion {
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-seccion h2 {
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--text-dim);
+            font-weight: 700;
+            margin-bottom: .8rem;
+        }
+
+        .stats-fila {
+            margin-bottom: .7rem;
+        }
+
+        .stats-fila__linea {
+            display: flex;
+            justify-content: space-between;
+            gap: .5rem;
+            font-size: .88rem;
+            margin-bottom: .3rem;
+        }
+
+        .stats-fila__num {
+            color: var(--text-dim);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .stats-barra {
+            height: 6px;
+            background: var(--bg-elev-2);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .stats-barra__relleno {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 999px;
+        }
+
+        /* ── Aviso flotante (toast) ───────────────────────────────── */
+        #toast {
+            position: fixed;
+            left: 50%;
+            bottom: 1.5rem;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--bg-elev-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: .65rem 1.1rem;
+            border-radius: 999px;
+            font-size: .85rem;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s, transform .25s;
+            z-index: 50;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, .4);
+            max-width: 90vw;
+            text-align: center;
+        }
+
+        #toast.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
 
@@ -350,7 +429,6 @@
         <header class="top">
             <h1>Solicitudes</h1>
             <div class="top-acciones">
-                <button class="btn-mini" id="verTodoBtn">Ver gestionadas</button>
                 <button class="btn-mini" id="actualizarBtn">↻ Actualizar</button>
             </div>
         </header>
@@ -378,8 +456,11 @@
 
         <div id="estado"></div>
         <div id="lista"></div>
+        <div id="estadisticas" style="display:none"></div>
         <div id="vacio" style="display:none">No hay nada en esta pestaña. Al día 🎉</div>
     </div>
+
+    <div id="toast"></div>
 
     <script>
         (function () {
@@ -390,12 +471,13 @@
             var CLAVE_GUARDADA = 'itaca_panel_clave';
 
             var PESTANAS = [
-                { id: 'recientes', etiqueta: 'Recientes' },
-                { id: 'semana', etiqueta: 'Esta semana' },
-                { id: 'mes', etiqueta: 'Este mes' },
-                { id: 'antiguas', etiqueta: 'Antiguas' },
+                { id: 'pendientes', etiqueta: 'Pendientes' },
+                { id: 'gestionadas', etiqueta: 'Gestionadas' },
+                { id: 'estadisticas', etiqueta: 'Estadísticas' },
                 { id: 'todas', etiqueta: 'Todas' }
             ];
+
+            var OPCIONES_ESTADO = ['Mandar info', 'Apuntar a la prueba', 'Otro'];
 
             var puerta = document.getElementById('puerta');
             var panel = document.getElementById('panel');
@@ -404,14 +486,15 @@
             var puertaError = document.getElementById('puertaError');
             var estadoEl = document.getElementById('estado');
             var listaEl = document.getElementById('lista');
+            var estadisticasEl = document.getElementById('estadisticas');
             var vacioEl = document.getElementById('vacio');
-            var verTodoBtn = document.getElementById('verTodoBtn');
             var actualizarBtn = document.getElementById('actualizarBtn');
             var pestanasEl = document.getElementById('pestanas');
+            var toastEl = document.getElementById('toast');
 
-            var mostrarGestionados = false;
-            var pestanaActiva = 'recientes';
+            var pestanaActiva = 'pendientes';
             var ultimosLeads = [];
+            var toastTimer = null;
 
             /* La fecha llega como "dd/MM HH:mm" (sin año). Se asume el año
                actual; si el resultado queda en el futuro, es que la
@@ -427,21 +510,25 @@
                 return d;
             }
 
-            function bucketDe(lead) {
-                var d = parsearFecha(lead.fecha);
-                if (!d) return 'antiguas';
-                var horas = (Date.now() - d.getTime()) / 36e5;
-                if (horas <= 48) return 'recientes';
-                if (horas <= 24 * 7) return 'semana';
-                if (horas <= 24 * 30) return 'mes';
-                return 'antiguas';
-            }
-
             function esDeHoy(lead) {
                 var d = parsearFecha(lead.fecha);
                 if (!d) return false;
                 var hoy = new Date();
                 return d.getFullYear() === hoy.getFullYear() && d.getMonth() === hoy.getMonth() && d.getDate() === hoy.getDate();
+            }
+
+            function esDeEsteMes(lead) {
+                var d = parsearFecha(lead.fecha);
+                if (!d) return false;
+                var hoy = new Date();
+                return d.getFullYear() === hoy.getFullYear() && d.getMonth() === hoy.getMonth();
+            }
+
+            function esDeEsteAnio(lead) {
+                var d = parsearFecha(lead.fecha);
+                if (!d) return false;
+                var hoy = new Date();
+                return d.getFullYear() === hoy.getFullYear();
             }
 
             function enlaceWhatsApp(telefono, nombre) {
@@ -465,6 +552,15 @@
                 return div.innerHTML;
             }
 
+            function mostrarToast(msg) {
+                toastEl.textContent = msg;
+                toastEl.classList.add('visible');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(function () {
+                    toastEl.classList.remove('visible');
+                }, 2200);
+            }
+
             function pintarResumen(leads) {
                 document.getElementById('numTotal').textContent = leads.length;
                 document.getElementById('numPendientes').textContent = leads.filter(function (l) { return !l.accion; }).length;
@@ -474,14 +570,70 @@
 
             function pintarPestanas(leads) {
                 pestanasEl.innerHTML = '';
+                var cuentas = {
+                    pendientes: leads.filter(function (l) { return !l.accion; }).length,
+                    gestionadas: leads.filter(function (l) { return l.accion; }).length,
+                    todas: leads.length
+                };
                 PESTANAS.forEach(function (p) {
-                    var cuenta = p.id === 'todas' ? leads.length : leads.filter(function (l) { return bucketDe(l) === p.id; }).length;
                     var btn = document.createElement('button');
                     btn.className = 'pestana' + (p.id === pestanaActiva ? ' activa' : '');
                     btn.dataset.pestana = p.id;
-                    btn.innerHTML = escapar(p.etiqueta) + '<span class="cuenta">' + cuenta + '</span>';
+                    var cuentaHtml = p.id in cuentas ? '<span class="cuenta">' + cuentas[p.id] + '</span>' : '';
+                    btn.innerHTML = escapar(p.etiqueta) + cuentaHtml;
                     pestanasEl.appendChild(btn);
                 });
+            }
+
+            function statCard(num, label) {
+                return '<div class="resumen__item"><div class="resumen__num">' + num +
+                    '</div><div class="resumen__label">' + escapar(label) + '</div></div>';
+            }
+
+            function statFila(label, num, total) {
+                var pct = total ? Math.round((num / total) * 100) : 0;
+                return '<div class="stats-fila">' +
+                    '<div class="stats-fila__linea"><span>' + escapar(label) + '</span>' +
+                    '<span class="stats-fila__num">' + num + ' · ' + pct + '%</span></div>' +
+                    '<div class="stats-barra"><div class="stats-barra__relleno" style="width:' + pct + '%"></div></div>' +
+                    '</div>';
+            }
+
+            function pintarEstadisticas(leads) {
+                var total = leads.length;
+                var esteMes = leads.filter(esDeEsteMes).length;
+                var esteAnio = leads.filter(esDeEsteAnio).length;
+
+                var pruebas = leads.filter(function (l) { return String(l.tipo || '').indexOf('prueba') !== -1; }).length;
+                var contactos = total - pruebas;
+
+                var sinGestionar = leads.filter(function (l) { return !l.accion; }).length;
+
+                var ofertas = leads.filter(function (l) { return l.aceptaOfertas === 'Sí'; }).length;
+
+                var html = '<div class="stats-grid">' +
+                    statCard(esteMes, 'Este mes') +
+                    statCard(esteAnio, 'Este año') +
+                    statCard(total, 'Desde siempre') +
+                    '</div>';
+
+                html += '<div class="stats-seccion"><h2>Por tipo de solicitud</h2>' +
+                    statFila('Contacto', contactos, total) +
+                    statFila('Clase de prueba', pruebas, total) +
+                    '</div>';
+
+                html += '<div class="stats-seccion"><h2>Por acción</h2>' +
+                    statFila('Sin gestionar', sinGestionar, total) +
+                    OPCIONES_ESTADO.map(function (op) {
+                        return statFila(op, leads.filter(function (l) { return l.accion === op; }).length, total);
+                    }).join('') +
+                    '</div>';
+
+                html += '<div class="stats-seccion"><h2>Marketing</h2>' +
+                    statFila('Quieren recibir ofertas', ofertas, total) +
+                    '</div>';
+
+                estadisticasEl.innerHTML = total ? html : '';
             }
 
             function pintarLeads(leads) {
@@ -489,10 +641,21 @@
                 pintarResumen(leads);
                 pintarPestanas(leads);
 
+                if (pestanaActiva === 'estadisticas') {
+                    listaEl.style.display = 'none';
+                    vacioEl.style.display = 'none';
+                    estadisticasEl.style.display = 'block';
+                    pintarEstadisticas(leads);
+                    return;
+                }
+                estadisticasEl.style.display = 'none';
+                listaEl.style.display = 'block';
+
                 listaEl.innerHTML = '';
                 var visibles = leads.filter(function (l) {
-                    if (pestanaActiva !== 'todas' && bucketDe(l) !== pestanaActiva) return false;
-                    return mostrarGestionados || !l.accion;
+                    if (pestanaActiva === 'pendientes') return !l.accion;
+                    if (pestanaActiva === 'gestionadas') return !!l.accion;
+                    return true; // 'todas'
                 });
 
                 if (!visibles.length) {
@@ -516,11 +679,12 @@
                     if (lead.categoria) etiquetas += '<span class="etiqueta">' + escapar(lead.categoria) + '</span>';
                     if (lead.dia) etiquetas += '<span class="etiqueta">' + escapar(lead.dia) + '</span>';
                     if (lead.aceptaOfertas === 'Sí') etiquetas += '<span class="etiqueta ofertas">Quiere ofertas</span>';
+                    etiquetas += '<span class="etiqueta' + (lead.accion ? ' estado-hecho' : '') + '">' +
+                        (lead.accion ? escapar(lead.accion) : 'Sin gestionar') + '</span>';
 
                     var wa = enlaceWhatsApp(lead.telefono, lead.nombre);
 
-                    var opciones = ['Mandar info', 'Apuntar a la prueba', 'Otro'];
-                    var botonesEstado = opciones.map(function (op) {
+                    var botonesEstado = OPCIONES_ESTADO.map(function (op) {
                         var elegido = lead.accion === op ? ' elegido' : '';
                         return '<button class="btn estado-btn' + elegido + '" data-fila="' + lead.fila +
                             '" data-valor="' + escapar(op) + '">' + op + '</button>';
@@ -548,31 +712,32 @@
                 });
             }
 
-            function actualizarEstado(fila, valor, boton) {
-                boton.closest('.card__acciones').querySelectorAll('.estado-btn').forEach(function (b) {
-                    b.classList.remove('elegido');
-                });
-                boton.classList.add('elegido');
-                boton.closest('.card').classList.add('resuelto');
+            /* Tocar la misma opción que ya está marcada la deshace (vuelve a
+               "sin gestionar") — antes era un camino de un solo sentido y
+               Cipri se quedaba sin saber cómo volver atrás. */
+            function cambiarEstado(fila, valorTocado) {
+                var lead = ultimosLeads.filter(function (l) { return l.fila === fila; })[0];
+                if (!lead) return;
+                var nuevoValor = lead.accion === valorTocado ? '' : valorTocado;
+                lead.accion = nuevoValor;
 
-                ultimosLeads.forEach(function (l) {
-                    if (l.fila === fila) l.accion = valor;
-                });
-                pintarResumen(ultimosLeads);
-                pintarPestanas(ultimosLeads);
+                pintarLeads(ultimosLeads);
+                mostrarToast(nuevoValor ? ('Marcado: ' + nuevoValor) : 'Vuelto a pendiente');
 
                 var clave = localStorage.getItem(CLAVE_GUARDADA);
                 fetch(URL_SCRIPT, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ accion: 'actualizar', clave: clave, fila: fila, valor: valor })
-                }).catch(function () { /* el estado ya se ve marcado; si falla, se corrige al Actualizar */ });
+                    body: JSON.stringify({ accion: 'actualizar', clave: clave, fila: fila, valor: nuevoValor })
+                }).catch(function () {
+                    mostrarToast('No se pudo guardar. Prueba a Actualizar.');
+                });
             }
 
             listaEl.addEventListener('click', function (e) {
                 var b = e.target.closest('.estado-btn');
                 if (!b) return;
-                actualizarEstado(Number(b.dataset.fila), b.dataset.valor, b);
+                cambiarEstado(Number(b.dataset.fila), b.dataset.valor);
             });
 
             pestanasEl.addEventListener('click', function (e) {
@@ -582,17 +747,11 @@
                 pintarLeads(ultimosLeads);
             });
 
-            verTodoBtn.addEventListener('click', function () {
-                mostrarGestionados = !mostrarGestionados;
-                verTodoBtn.classList.toggle('activo', mostrarGestionados);
-                verTodoBtn.textContent = mostrarGestionados ? 'Ocultar gestionadas' : 'Ver gestionadas';
-                pintarLeads(ultimosLeads);
-            });
-
             function cargar() {
                 estadoEl.textContent = 'Cargando...';
                 estadoEl.style.display = 'block';
                 listaEl.innerHTML = '';
+                estadisticasEl.innerHTML = '';
                 vacioEl.style.display = 'none';
 
                 var clave = localStorage.getItem(CLAVE_GUARDADA);
