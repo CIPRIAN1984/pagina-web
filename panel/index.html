@@ -13,14 +13,19 @@
          mismo script de Google Apps Script que guarda los leads, protegido
          por una clave que solo conoce Cipri — ver docs/hoja-de-calculo.md.
 
-         Pestañas por ESTADO, no por fecha (18 de agosto de 2026, tras
-         probarlo Cipri: las pestañas de fecha lo dejaban en "Antiguas" sin
-         entender por qué, y marcar una acción no se podía deshacer). Ahora
-         el eje principal es qué falta por hacer: Pendientes / Gestionadas /
-         Estadísticas / Todas. Cualquier botón de acción se puede volver a
-         tocar para deshacerlo (vuelve a "sin gestionar"). La fecha llega
-         como "dd/MM HH:mm" (sin año) y solo se usa para "nuevas hoy" y para
-         los números de Estadísticas (este mes / este año / desde siempre). -->
+         Rediseño del 18 de agosto de 2026: Cipri lo probó dos veces y pidió
+         nivel "profesional", no una lista de tarjetas apiladas que en su
+         portátil se quedaba en una columna estrecha en medio de la pantalla.
+         Cambios de fondo (no solo estéticos):
+         - Pestañas por ESTADO (Pendientes/Gestionadas/Estadísticas/Todas),
+           no por fecha — antes mezclaba "cuándo llegó" con "qué falta por
+           hacer" y confundía.
+         - Cualquier acción se puede deshacer tocándola otra vez.
+         - Estadísticas: este mes/año/desde siempre, por tipo, por acción,
+           por marketing — calculado en el navegador, sin tocar Apps Script.
+         - La cuadrícula de tarjetas y de números aprovecha el ancho en
+           escritorio (se reparte en 2-3 columnas) en vez de quedarse en una
+           columna de móvil estirada. -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&display=swap"
@@ -30,7 +35,7 @@
             --bg: #0b0b0d;
             --bg-elev: #16161a;
             --bg-elev-2: #1e1e23;
-            --border: #2a2a30;
+            --border: rgba(255, 255, 255, .08);
             --text: #f2f2f3;
             --text-dim: #98989f;
             --accent: #34d399;
@@ -38,6 +43,7 @@
             --amber: #f0a83e;
             --amber-soft: rgba(240, 168, 62, .14);
             --red: #f16565;
+            --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 16px rgba(0, 0, 0, .22);
         }
 
         * {
@@ -59,6 +65,21 @@
             font: inherit;
         }
 
+        svg {
+            display: block;
+        }
+
+        .icono {
+            width: 1em;
+            height: 1em;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex: 0 0 auto;
+        }
+
         /* ── Puerta de acceso ─────────────────────────────────────── */
         #puerta {
             max-width: 22rem;
@@ -66,7 +87,8 @@
             padding: 2rem;
             background: var(--bg-elev);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
         }
 
         #puerta h1 {
@@ -112,68 +134,112 @@
         /* ── Panel ────────────────────────────────────────────────── */
         #panel {
             display: none;
-            max-width: 720px;
+            max-width: 1080px;
             margin: 0 auto;
-            padding: 1.5rem 1rem 4rem;
+            padding: 2rem 1.25rem 4rem;
         }
 
         header.top {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
             gap: .75rem;
             flex-wrap: wrap;
         }
 
         header.top h1 {
-            font-size: 1.25rem;
+            font-size: 1.4rem;
             letter-spacing: -.01em;
+            font-weight: 800;
         }
 
-        .top-acciones {
-            display: flex;
-            gap: .5rem;
+        #ultimaActualizacion {
+            font-size: .8rem;
+            color: var(--text-dim);
+            margin-top: .2rem;
         }
 
         .btn-mini {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
             border: 1px solid var(--border);
             background: var(--bg-elev);
             color: var(--text-dim);
             border-radius: 999px;
-            padding: .4rem .8rem;
-            font-size: .78rem;
+            padding: .5rem .9rem;
+            font-size: .8rem;
             font-weight: 600;
             cursor: pointer;
+            transition: background .15s, color .15s, border-color .15s;
         }
 
-        /* ── Resumen (fila de números) ───────────────────────────── */
-        .resumen {
+        .btn-mini:hover {
+            background: var(--bg-elev-2);
+            color: var(--text);
+            border-color: rgba(255, 255, 255, .16);
+        }
+
+        /* ── Tiles de estadística (resumen y estadísticas) ───────── */
+        .resumen,
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: .6rem;
-            margin-bottom: 1.1rem;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: .7rem;
+            margin-bottom: 1.4rem;
         }
 
-        .resumen__item {
+        .tile {
             min-width: 0;
             background: var(--bg-elev);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: .7rem .8rem;
+            border-radius: 12px;
+            padding: .9rem 1rem;
+            box-shadow: var(--shadow);
         }
 
-        .resumen__num {
-            font-size: 1.3rem;
+        .tile__cabecera {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: .5rem;
+        }
+
+        .tile__icono {
+            width: 1.9rem;
+            height: 1.9rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-elev-2);
+            color: var(--text-dim);
+            font-size: .95rem;
+        }
+
+        .tile__icono.ambar {
+            background: var(--amber-soft);
+            color: var(--amber);
+        }
+
+        .tile__icono.verde {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .tile__num {
+            font-size: 1.6rem;
             font-weight: 700;
+            font-variant-numeric: proportional-nums;
         }
 
-        .resumen__label {
-            font-size: .7rem;
+        .tile__label {
+            font-size: .74rem;
             color: var(--text-dim);
             text-transform: uppercase;
             letter-spacing: .03em;
-            margin-top: .1rem;
+            margin-top: .15rem;
             overflow-wrap: break-word;
         }
 
@@ -183,7 +249,7 @@
             gap: .4rem;
             overflow-x: auto;
             padding-bottom: .3rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
@@ -198,11 +264,16 @@
             background: var(--bg-elev);
             color: var(--text-dim);
             border-radius: 999px;
-            padding: .5rem 1rem;
-            font-size: .82rem;
+            padding: .55rem 1.05rem;
+            font-size: .84rem;
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
+            transition: background .15s, color .15s, border-color .15s;
+        }
+
+        .pestana:hover {
+            color: var(--text);
         }
 
         .pestana .cuenta {
@@ -224,43 +295,96 @@
             font-size: .9rem;
         }
 
+        /* ── Lista de solicitudes ─────────────────────────────────── */
+        #lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: .8rem;
+            align-items: start;
+            transition: opacity .2s;
+        }
+
         .card {
             background: var(--bg-elev);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1rem 1.1rem;
-            margin-bottom: .7rem;
+            border-radius: 14px;
+            padding: 1.1rem;
+            box-shadow: var(--shadow);
             transition: opacity .2s;
         }
 
         .card.resuelto {
-            opacity: .7;
+            opacity: .72;
         }
 
-        .card__fila1 {
+        .card__cabecera {
             display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: .5rem;
-            margin-bottom: .3rem;
+            align-items: flex-start;
+            gap: .7rem;
+            margin-bottom: .7rem;
+        }
+
+        .avatar {
+            width: 2.4rem;
+            height: 2.4rem;
+            border-radius: 50%;
+            background: var(--accent-soft);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: .82rem;
+            flex: 0 0 auto;
+        }
+
+        .card__id {
+            flex: 1;
+            min-width: 0;
         }
 
         .card__nombre {
             font-weight: 700;
-            font-size: 1.05rem;
+            font-size: 1.02rem;
         }
 
         .card__fecha {
             font-size: .75rem;
             color: var(--text-dim);
+            margin-top: .1rem;
+        }
+
+        .badge-estado {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .02em;
+            text-transform: uppercase;
+            padding: .3rem .55rem;
+            border-radius: 999px;
+            background: var(--amber-soft);
+            color: var(--amber);
             white-space: nowrap;
+            flex: 0 0 auto;
+        }
+
+        .badge-estado .icono {
+            width: .8rem;
+            height: .8rem;
+        }
+
+        .badge-estado.hecho {
+            background: var(--accent-soft);
+            color: var(--accent);
         }
 
         .card__meta {
             display: flex;
             flex-wrap: wrap;
             gap: .4rem;
-            margin-bottom: .5rem;
+            margin-bottom: .6rem;
         }
 
         .etiqueta {
@@ -285,17 +409,16 @@
             color: var(--amber);
         }
 
-        .etiqueta.estado-hecho {
-            background: var(--accent-soft);
-            color: var(--accent);
-        }
-
         .card__mensaje {
             font-size: .92rem;
             color: var(--text);
             opacity: .85;
-            margin-bottom: .7rem;
+            margin-bottom: .8rem;
             white-space: pre-wrap;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .card__acciones {
@@ -305,6 +428,9 @@
         }
 
         .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
             border: 1px solid var(--border);
             background: var(--bg-elev-2);
             border-radius: 999px;
@@ -313,6 +439,11 @@
             font-weight: 600;
             cursor: pointer;
             color: var(--text);
+            transition: background .15s, border-color .15s;
+        }
+
+        .btn:hover {
+            border-color: rgba(255, 255, 255, .2);
         }
 
         .btn.whatsapp {
@@ -335,15 +466,8 @@
         }
 
         /* ── Estadísticas ─────────────────────────────────────────── */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: .6rem;
-            margin-bottom: 1.4rem;
-        }
-
         .stats-seccion {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.6rem;
         }
 
         .stats-seccion h2 {
@@ -352,11 +476,23 @@
             letter-spacing: .04em;
             color: var(--text-dim);
             font-weight: 700;
-            margin-bottom: .8rem;
+            margin-bottom: .9rem;
+        }
+
+        .stats-cols {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0 2.5rem;
+        }
+
+        @media (min-width: 700px) {
+            .stats-cols {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         .stats-fila {
-            margin-bottom: .7rem;
+            margin-bottom: .8rem;
         }
 
         .stats-fila__linea {
@@ -364,7 +500,7 @@
             justify-content: space-between;
             gap: .5rem;
             font-size: .88rem;
-            margin-bottom: .3rem;
+            margin-bottom: .35rem;
         }
 
         .stats-fila__num {
@@ -375,7 +511,7 @@
 
         .stats-barra {
             height: 6px;
-            background: var(--bg-elev-2);
+            background: var(--accent-soft);
             border-radius: 999px;
             overflow: hidden;
         }
@@ -403,7 +539,7 @@
             pointer-events: none;
             transition: opacity .25s, transform .25s;
             z-index: 50;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, .4);
+            box-shadow: var(--shadow);
             max-width: 90vw;
             text-align: center;
         }
@@ -427,30 +563,17 @@
 
     <div id="panel">
         <header class="top">
-            <h1>Solicitudes</h1>
-            <div class="top-acciones">
-                <button class="btn-mini" id="actualizarBtn">↻ Actualizar</button>
+            <div>
+                <h1>Solicitudes</h1>
+                <div id="ultimaActualizacion"></div>
             </div>
+            <button class="btn-mini" id="actualizarBtn">
+                <svg class="icono" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>
+                Actualizar
+            </button>
         </header>
 
-        <div class="resumen" id="resumen">
-            <div class="resumen__item">
-                <div class="resumen__num" id="numTotal">–</div>
-                <div class="resumen__label">Total</div>
-            </div>
-            <div class="resumen__item">
-                <div class="resumen__num" id="numPendientes">–</div>
-                <div class="resumen__label">Pendientes</div>
-            </div>
-            <div class="resumen__item">
-                <div class="resumen__num" id="numGestionadas">–</div>
-                <div class="resumen__label">Gestionadas</div>
-            </div>
-            <div class="resumen__item">
-                <div class="resumen__num" id="numHoy">–</div>
-                <div class="resumen__label">Nuevas hoy</div>
-            </div>
-        </div>
+        <div class="resumen" id="resumen"></div>
 
         <div class="pestanas" id="pestanas"></div>
 
@@ -479,6 +602,19 @@
 
             var OPCIONES_ESTADO = ['Mandar info', 'Apuntar a la prueba', 'Otro'];
 
+            // Iconos, trazo único, sin dependencias externas.
+            var ICONOS = {
+                lista: '<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.5" cy="6" r=".9" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r=".9" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r=".9" fill="currentColor" stroke="none"/>',
+                reloj: '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/>',
+                check: '<path d="M21 11.5V12a9 9 0 1 1-5.5-8.3"/><polyline points="21 4.5 12 14 9 11"/>',
+                chispa: '<path d="M12 2.5l1.7 6.3 6.3 1.7-6.3 1.7L12 18.5l-1.7-6.3-6.3-1.7 6.3-1.7z"/>',
+                chat: '<path d="M4 4.5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-4.5 3.5V17.5H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" fill="currentColor" stroke="none"/>'
+            };
+
+            function icono(nombre, extraClase) {
+                return '<svg class="icono' + (extraClase ? ' ' + extraClase : '') + '" viewBox="0 0 24 24">' + ICONOS[nombre] + '</svg>';
+            }
+
             var puerta = document.getElementById('puerta');
             var panel = document.getElementById('panel');
             var claveInput = document.getElementById('claveInput');
@@ -490,11 +626,14 @@
             var vacioEl = document.getElementById('vacio');
             var actualizarBtn = document.getElementById('actualizarBtn');
             var pestanasEl = document.getElementById('pestanas');
+            var resumenEl = document.getElementById('resumen');
             var toastEl = document.getElementById('toast');
+            var ultimaActualizacionEl = document.getElementById('ultimaActualizacion');
 
             var pestanaActiva = 'pendientes';
             var ultimosLeads = [];
             var toastTimer = null;
+            var ultimaCarga = null;
 
             /* La fecha llega como "dd/MM HH:mm" (sin año). Se asume el año
                actual; si el resultado queda en el futuro, es que la
@@ -546,6 +685,13 @@
                 return 'https://wa.me/' + num + '?text=' + encodeURIComponent(texto);
             }
 
+            function iniciales(nombre) {
+                var partes = String(nombre || '').trim().split(/\s+/).filter(Boolean);
+                if (!partes.length) return '?';
+                if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+                return (partes[0][0] + partes[1][0]).toUpperCase();
+            }
+
             function escapar(s) {
                 var div = document.createElement('div');
                 div.textContent = s || '';
@@ -561,11 +707,23 @@
                 }, 2200);
             }
 
+            function tile(iconoNombre, claseIcono, num, label) {
+                return '<div class="tile">' +
+                    '<div class="tile__cabecera"><span class="tile__icono ' + claseIcono + '">' + icono(iconoNombre) + '</span></div>' +
+                    '<div class="tile__num">' + num + '</div>' +
+                    '<div class="tile__label">' + escapar(label) + '</div>' +
+                    '</div>';
+            }
+
             function pintarResumen(leads) {
-                document.getElementById('numTotal').textContent = leads.length;
-                document.getElementById('numPendientes').textContent = leads.filter(function (l) { return !l.accion; }).length;
-                document.getElementById('numGestionadas').textContent = leads.filter(function (l) { return l.accion; }).length;
-                document.getElementById('numHoy').textContent = leads.filter(esDeHoy).length;
+                var pendientes = leads.filter(function (l) { return !l.accion; }).length;
+                var gestionadas = leads.filter(function (l) { return l.accion; }).length;
+                var hoy = leads.filter(esDeHoy).length;
+                resumenEl.innerHTML =
+                    tile('lista', '', leads.length, 'Total') +
+                    tile('reloj', 'ambar', pendientes, 'Pendientes') +
+                    tile('check', 'verde', gestionadas, 'Gestionadas') +
+                    tile('chispa', 'verde', hoy, 'Nuevas hoy');
             }
 
             function pintarPestanas(leads) {
@@ -585,11 +743,6 @@
                 });
             }
 
-            function statCard(num, label) {
-                return '<div class="resumen__item"><div class="resumen__num">' + num +
-                    '</div><div class="resumen__label">' + escapar(label) + '</div></div>';
-            }
-
             function statFila(label, num, total) {
                 var pct = total ? Math.round((num / total) * 100) : 0;
                 return '<div class="stats-fila">' +
@@ -601,6 +754,10 @@
 
             function pintarEstadisticas(leads) {
                 var total = leads.length;
+                if (!total) {
+                    estadisticasEl.innerHTML = '';
+                    return;
+                }
                 var esteMes = leads.filter(esDeEsteMes).length;
                 var esteAnio = leads.filter(esDeEsteAnio).length;
 
@@ -608,32 +765,38 @@
                 var contactos = total - pruebas;
 
                 var sinGestionar = leads.filter(function (l) { return !l.accion; }).length;
-
                 var ofertas = leads.filter(function (l) { return l.aceptaOfertas === 'Sí'; }).length;
 
                 var html = '<div class="stats-grid">' +
-                    statCard(esteMes, 'Este mes') +
-                    statCard(esteAnio, 'Este año') +
-                    statCard(total, 'Desde siempre') +
+                    tile('lista', '', esteMes, 'Este mes') +
+                    tile('lista', '', esteAnio, 'Este año') +
+                    tile('lista', '', total, 'Desde siempre') +
                     '</div>';
 
-                html += '<div class="stats-seccion"><h2>Por tipo de solicitud</h2>' +
+                html += '<div class="stats-cols">';
+
+                html += '<div>' +
+                    '<div class="stats-seccion"><h2>Por tipo de solicitud</h2>' +
                     statFila('Contacto', contactos, total) +
                     statFila('Clase de prueba', pruebas, total) +
+                    '</div>' +
+                    '<div class="stats-seccion"><h2>Marketing</h2>' +
+                    statFila('Quieren recibir ofertas', ofertas, total) +
+                    '</div>' +
                     '</div>';
 
-                html += '<div class="stats-seccion"><h2>Por acción</h2>' +
+                html += '<div>' +
+                    '<div class="stats-seccion"><h2>Por acción</h2>' +
                     statFila('Sin gestionar', sinGestionar, total) +
                     OPCIONES_ESTADO.map(function (op) {
                         return statFila(op, leads.filter(function (l) { return l.accion === op; }).length, total);
                     }).join('') +
+                    '</div>' +
                     '</div>';
 
-                html += '<div class="stats-seccion"><h2>Marketing</h2>' +
-                    statFila('Quieren recibir ofertas', ofertas, total) +
-                    '</div>';
+                html += '</div>';
 
-                estadisticasEl.innerHTML = total ? html : '';
+                estadisticasEl.innerHTML = html;
             }
 
             function pintarLeads(leads) {
@@ -649,7 +812,7 @@
                     return;
                 }
                 estadisticasEl.style.display = 'none';
-                listaEl.style.display = 'block';
+                listaEl.style.display = 'grid';
 
                 listaEl.innerHTML = '';
                 var visibles = leads.filter(function (l) {
@@ -679,10 +842,12 @@
                     if (lead.categoria) etiquetas += '<span class="etiqueta">' + escapar(lead.categoria) + '</span>';
                     if (lead.dia) etiquetas += '<span class="etiqueta">' + escapar(lead.dia) + '</span>';
                     if (lead.aceptaOfertas === 'Sí') etiquetas += '<span class="etiqueta ofertas">Quiere ofertas</span>';
-                    etiquetas += '<span class="etiqueta' + (lead.accion ? ' estado-hecho' : '') + '">' +
-                        (lead.accion ? escapar(lead.accion) : 'Sin gestionar') + '</span>';
 
                     var wa = enlaceWhatsApp(lead.telefono, lead.nombre);
+
+                    var badgeEstado = '<span class="badge-estado' + (lead.accion ? ' hecho' : '') + '">' +
+                        icono(lead.accion ? 'check' : 'reloj') +
+                        (lead.accion ? escapar(lead.accion) : 'Sin gestionar') + '</span>';
 
                     var botonesEstado = OPCIONES_ESTADO.map(function (op) {
                         var elegido = lead.accion === op ? ' elegido' : '';
@@ -691,14 +856,18 @@
                     }).join('');
 
                     card.innerHTML =
-                        '<div class="card__fila1">' +
-                        '<span class="card__nombre">' + (escapar(lead.nombre) || '(sin nombre)') + '</span>' +
-                        '<span class="card__fecha">' + escapar(lead.fecha) + '</span>' +
+                        '<div class="card__cabecera">' +
+                        '<div class="avatar">' + escapar(iniciales(lead.nombre)) + '</div>' +
+                        '<div class="card__id">' +
+                        '<div class="card__nombre">' + (escapar(lead.nombre) || '(sin nombre)') + '</div>' +
+                        '<div class="card__fecha">' + escapar(lead.fecha) + '</div>' +
+                        '</div>' +
+                        badgeEstado +
                         '</div>' +
                         '<div class="card__meta">' + etiquetas + '</div>' +
                         '<div class="card__mensaje">' + (escapar(lead.mensaje) || '<em>Sin mensaje</em>') + '</div>' +
                         '<div class="card__acciones">' +
-                        (wa ? '<a class="btn whatsapp" href="' + wa + '" target="_blank" rel="noopener">WhatsApp</a>' : '') +
+                        (wa ? '<a class="btn whatsapp" href="' + wa + '" target="_blank" rel="noopener">' + icono('chat') + 'WhatsApp</a>' : '') +
                         botonesEstado +
                         '</div>';
 
@@ -747,17 +916,37 @@
                 pintarLeads(ultimosLeads);
             });
 
+            function textoRelativo(fecha) {
+                var seg = Math.round((Date.now() - fecha.getTime()) / 1000);
+                if (seg < 45) return 'Actualizado hace un momento';
+                if (seg < 3600) return 'Actualizado hace ' + Math.floor(seg / 60) + ' min';
+                return 'Actualizado hace ' + Math.floor(seg / 3600) + ' h';
+            }
+
+            setInterval(function () {
+                if (ultimaCarga) ultimaActualizacionEl.textContent = textoRelativo(ultimaCarga);
+            }, 30000);
+
             function cargar() {
-                estadoEl.textContent = 'Cargando...';
-                estadoEl.style.display = 'block';
-                listaEl.innerHTML = '';
-                estadisticasEl.innerHTML = '';
+                var hayDatosPrevios = ultimosLeads.length > 0;
+                if (hayDatosPrevios) {
+                    // No borramos lo que ya se ve — solo lo atenuamos mientras
+                    // llega lo nuevo, para no dar el "parpadeo" de pantalla en
+                    // blanco cada vez que se actualiza.
+                    listaEl.style.opacity = '.5';
+                    estadisticasEl.style.opacity = '.5';
+                } else {
+                    estadoEl.textContent = 'Cargando...';
+                    estadoEl.style.display = 'block';
+                }
                 vacioEl.style.display = 'none';
 
                 var clave = localStorage.getItem(CLAVE_GUARDADA);
                 fetch(URL_SCRIPT + '?clave=' + encodeURIComponent(clave))
                     .then(function (r) { return r.json(); })
                     .then(function (res) {
+                        listaEl.style.opacity = '';
+                        estadisticasEl.style.opacity = '';
                         if (!res.ok) {
                             if (res.error === 'clave incorrecta') {
                                 localStorage.removeItem(CLAVE_GUARDADA);
@@ -765,13 +954,23 @@
                                 return;
                             }
                             estadoEl.textContent = 'No se ha podido cargar: ' + (res.error || 'error desconocido');
+                            estadoEl.style.display = 'block';
                             return;
                         }
                         estadoEl.style.display = 'none';
                         pintarLeads(res.leads || []);
+                        ultimaCarga = new Date();
+                        ultimaActualizacionEl.textContent = textoRelativo(ultimaCarga);
                     })
                     .catch(function () {
-                        estadoEl.textContent = 'No se ha podido conectar. Comprueba tu conexión y pulsa Actualizar.';
+                        listaEl.style.opacity = '';
+                        estadisticasEl.style.opacity = '';
+                        if (hayDatosPrevios) {
+                            mostrarToast('No se pudo actualizar. Sigues viendo los datos de antes.');
+                        } else {
+                            estadoEl.textContent = 'No se ha podido conectar. Comprueba tu conexión y pulsa Actualizar.';
+                            estadoEl.style.display = 'block';
+                        }
                     });
             }
 
