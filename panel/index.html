@@ -25,7 +25,28 @@
            por marketing — calculado en el navegador, sin tocar Apps Script.
          - La cuadrícula de tarjetas y de números aprovecha el ancho en
            escritorio (se reparte en 2-3 columnas) en vez de quedarse en una
-           columna de móvil estirada. -->
+           columna de móvil estirada.
+
+         19 de agosto: tres mejoras a petición de Cipri.
+         - Notas por solicitud (columna "Notas" que ya existía en la hoja,
+           antes sin usar) — se guardan solas al salir del cuadro de texto.
+           Requiere el script de Apps Script actualizado (ver
+           docs/hoja-de-calculo.md): añade el parámetro "campo" al guardar.
+         - Aviso de solicitud "fría": una pendiente de más de 3 días sin
+           gestionar se resalta y la pestaña Pendientes las ordena primero
+           (las más urgentes arriba), en vez de solo por fecha de llegada.
+         - Instalable como app (manifest.json + iconos) para abrirla desde
+           el móvil sin pasar por el navegador. Sin service worker a
+           propósito: ya hubo una confusión real por caché del navegador,
+           y un service worker mal hecho la habría empeorado. -->
+
+    <link rel="manifest" href="/panel/manifest.json">
+    <link rel="apple-touch-icon" href="/panel/icon-192.png">
+    <meta name="theme-color" content="#0b0b0d">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Panel Itaca">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&display=swap"
@@ -317,6 +338,25 @@
             opacity: .72;
         }
 
+        .card.frio {
+            box-shadow: var(--shadow), inset 3px 0 0 0 var(--red);
+        }
+
+        .aviso-frio {
+            display: inline-flex;
+            align-items: center;
+            gap: .25rem;
+            color: var(--red);
+            font-size: .72rem;
+            font-weight: 700;
+            margin-top: .3rem;
+        }
+
+        .aviso-frio .icono {
+            width: .75rem;
+            height: .75rem;
+        }
+
         .card__cabecera {
             display: flex;
             align-items: flex-start;
@@ -419,6 +459,30 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+        }
+
+        .card__nota {
+            display: block;
+            width: 100%;
+            min-height: 3rem;
+            resize: vertical;
+            background: var(--bg-elev-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: .55rem .7rem;
+            color: var(--text);
+            font-size: .84rem;
+            font-family: inherit;
+            margin-bottom: .8rem;
+        }
+
+        .card__nota::placeholder {
+            color: var(--text-dim);
+        }
+
+        .card__nota:focus {
+            outline: none;
+            border-color: var(--accent);
         }
 
         .card__acciones {
@@ -601,6 +665,7 @@
             ];
 
             var OPCIONES_ESTADO = ['Mandar info', 'Apuntar a la prueba', 'Otro'];
+            var DIAS_PARA_ENFRIARSE = 3;
 
             // Iconos, trazo único, sin dependencias externas.
             var ICONOS = {
@@ -668,6 +733,12 @@
                 if (!d) return false;
                 var hoy = new Date();
                 return d.getFullYear() === hoy.getFullYear();
+            }
+
+            function diasSinGestionar(lead) {
+                var d = parsearFecha(lead.fecha);
+                if (!d) return 0;
+                return Math.floor((Date.now() - d.getTime()) / 86400000);
             }
 
             function enlaceWhatsApp(telefono, nombre) {
@@ -821,6 +892,16 @@
                     return true; // 'todas'
                 });
 
+                /* En Pendientes, la más urgente (la que lleva más tiempo sin
+                   respuesta) va primero — si no, con el orden habitual
+                   (más reciente arriba) una solicitud antigua se hunde al
+                   final y es fácil que se quede sin contestar sin querer. */
+                if (pestanaActiva === 'pendientes') {
+                    visibles = visibles.slice().sort(function (a, b) {
+                        return diasSinGestionar(b) - diasSinGestionar(a);
+                    });
+                }
+
                 if (!visibles.length) {
                     vacioEl.style.display = 'block';
                     return;
@@ -829,8 +910,11 @@
 
                 visibles.forEach(function (lead) {
                   try {
+                    var dias = diasSinGestionar(lead);
+                    var esFrio = !lead.accion && dias >= DIAS_PARA_ENFRIARSE;
+
                     var card = document.createElement('div');
-                    card.className = 'card' + (lead.accion ? ' resuelto' : '');
+                    card.className = 'card' + (lead.accion ? ' resuelto' : '') + (esFrio ? ' frio' : '');
 
                     var tipoTexto = String(lead.tipo || '');
                     var etiquetas = '';
@@ -861,11 +945,13 @@
                         '<div class="card__id">' +
                         '<div class="card__nombre">' + (escapar(lead.nombre) || '(sin nombre)') + '</div>' +
                         '<div class="card__fecha">' + escapar(lead.fecha) + '</div>' +
+                        (esFrio ? '<div class="aviso-frio">' + icono('reloj') + dias + ' días sin responder</div>' : '') +
                         '</div>' +
                         badgeEstado +
                         '</div>' +
                         '<div class="card__meta">' + etiquetas + '</div>' +
                         '<div class="card__mensaje">' + (escapar(lead.mensaje) || '<em>Sin mensaje</em>') + '</div>' +
+                        '<textarea class="card__nota" data-fila="' + lead.fila + '" placeholder="Notas para ti (privadas)…">' + escapar(lead.nota) + '</textarea>' +
                         '<div class="card__acciones">' +
                         (wa ? '<a class="btn whatsapp" href="' + wa + '" target="_blank" rel="noopener">' + icono('chat') + 'WhatsApp</a>' : '') +
                         botonesEstado +
@@ -903,11 +989,38 @@
                 });
             }
 
+            /* La nota se guarda sola al salir del cuadro de texto (blur),
+               sin botón — como no cambia de tarjeta ni de pestaña, no hace
+               falta el aviso de "deshacer" que sí tienen los estados. */
+            function guardarNota(fila, valor) {
+                var lead = ultimosLeads.filter(function (l) { return l.fila === fila; })[0];
+                if (!lead || lead.nota === valor) return;
+                lead.nota = valor;
+
+                var clave = localStorage.getItem(CLAVE_GUARDADA);
+                fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ accion: 'actualizar', clave: clave, fila: fila, valor: valor, campo: 'nota' })
+                }).then(function () {
+                    mostrarToast('Nota guardada');
+                }).catch(function () {
+                    mostrarToast('No se pudo guardar la nota. Prueba a Actualizar.');
+                });
+            }
+
             listaEl.addEventListener('click', function (e) {
                 var b = e.target.closest('.estado-btn');
                 if (!b) return;
                 cambiarEstado(Number(b.dataset.fila), b.dataset.valor);
             });
+
+            // 'blur' no burbujea — hace falta capturarlo en la fase de captura.
+            listaEl.addEventListener('blur', function (e) {
+                var t = e.target;
+                if (!t.classList || !t.classList.contains('card__nota')) return;
+                guardarNota(Number(t.dataset.fila), t.value);
+            }, true);
 
             pestanasEl.addEventListener('click', function (e) {
                 var b = e.target.closest('.pestana');

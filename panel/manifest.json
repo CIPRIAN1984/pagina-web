@@ -1,0 +1,13 @@
+{
+  "name": "Panel de solicitudes — Itaca Jiu Jitsu",
+  "short_name": "Panel Itaca",
+  "start_url": "/panel/",
+  "scope": "/panel/",
+  "display": "standalone",
+  "background_color": "#0b0b0d",
+  "theme_color": "#0b0b0d",
+  "icons": [
+    { "src": "/panel/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/panel/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

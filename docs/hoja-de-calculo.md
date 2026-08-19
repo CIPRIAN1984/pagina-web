@@ -129,12 +129,13 @@ function doPost(e) {
     return ContentService.createTextOutput('mal');
   }
 
-  // Actualizar el estado de un lead desde el panel (protegido por clave).
+  // Actualizar el estado (o la nota) de un lead desde el panel, protegido
+  // por clave. "campo" dice qué columna toca: 'estado' (por defecto) o 'nota'.
   if (d.accion === 'actualizar') {
     if (d.clave !== CLAVE_PANEL) {
       return json({ ok: false, error: 'clave incorrecta' });
     }
-    var col = columnaAccion(hoja);
+    var col = d.campo === 'nota' ? columnaNotas(hoja) : columnaAccion(hoja);
     hoja.getRange(d.fila, col).setValue(d.valor || '');
     return json({ ok: true });
   }
@@ -187,6 +188,7 @@ function doGet(e) {
   var iClase = cabecera.indexOf('Clase');
   var iOfertas = cabecera.indexOf('Acepta ofertas');
   var iFecha = cabecera.indexOf('Fecha');
+  var iNotas = cabecera.indexOf('Notas');
   var iAccion = columnaAccion(hoja) - 1;
 
   var leads = [];
@@ -207,7 +209,8 @@ function doGet(e) {
       clase: fila[iClase] || '',
       mensaje: fila[iMensaje] || '',
       aceptaOfertas: fila[iOfertas] || '',
-      accion: fila[iAccion] || ''
+      accion: fila[iAccion] || '',
+      nota: iNotas !== -1 ? String(fila[iNotas] || '') : ''
     });
   }
   leads.reverse(); // los más recientes primero
@@ -223,6 +226,15 @@ function columnaAccion(hoja) {
   var col = hoja.getLastColumn() + 1;
   hoja.getRange(1, col).setValue('Acción panel').setFontWeight('bold');
   return col;
+}
+
+// La columna "Notas" ya existe desde el primer día (para escribir a mano en
+// la hoja); el panel ahora también lee y escribe ahí, así no hay dos sitios
+// distintos para las notas de una misma solicitud.
+function columnaNotas(hoja) {
+  var cabecera = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0];
+  var i = cabecera.indexOf('Notas');
+  return i !== -1 ? i + 1 : columnaAccion(hoja); // no debería pasar nunca
 }
 
 function json(obj) {
@@ -262,7 +274,7 @@ Las cuatro últimas columnas (antes de "Acepta ofertas") son tuyas:
 | **Contactado** | Pon la fecha en que le escribiste o llamaste |
 | **Vino** | `sí` / `no` |
 | **Se apuntó** | `sí` / `no` |
-| **Notas** | Lo que te haga falta recordar |
+| **Notas** | Lo que te haga falta recordar — desde el 19 de agosto de 2026 se escribe sola desde el cuadro de notas de cada tarjeta del panel, sin que tengas que abrir la hoja |
 
 Con eso, al final del mes sabes cuántos pidieron prueba, cuántos vinieron y
 cuántos se quedaron. Ese número es el que dice si la web funciona.
