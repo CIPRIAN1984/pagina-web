@@ -38,7 +38,20 @@
          - Instalable como app (manifest.json + iconos) para abrirla desde
            el móvil sin pasar por el navegador. Sin service worker a
            propósito: ya hubo una confusión real por caché del navegador,
-           y un service worker mal hecho la habría empeorado. -->
+           y un service worker mal hecho la habría empeorado.
+
+         19 de agosto (tarde): tras usarlo con datos reales, tres cosas más.
+         - Archivar: para lo que ya no quiere seguir gestionando, sin
+           borrarlo de la hoja (reversible, pestaña "Archivadas" aparte).
+           El borrado permanente NO se implementó — es una decisión suya,
+           no técnica, y no se pidió.
+         - Tarjetas compactas: antes cada una mostraba mensaje, notas y
+           4 botones siempre, y con varias solicitudes no cabían en
+           pantalla. Ahora solo la cabecera (nombre/fecha/estado) se ve
+           por defecto; se despliega al tocarla.
+         - Filtros (buscador, mes, tipo) por encima de la lista, en todas
+           las pestañas de solicitudes — para cuando ya hay volumen
+           acumulado y hace falta encontrar una en concreto. -->
 
     <link rel="manifest" href="/panel/manifest.json">
     <link rel="apple-touch-icon" href="/panel/icon-192.png">
@@ -316,6 +329,37 @@
             font-size: .9rem;
         }
 
+        /* ── Filtros ──────────────────────────────────────────────── */
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            margin-bottom: 1rem;
+        }
+
+        .filtros input,
+        .filtros select {
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: .55rem .7rem;
+            color: var(--text);
+            font-size: .85rem;
+        }
+
+        .filtros input {
+            flex: 1 1 220px;
+            min-width: 160px;
+        }
+
+        .filtros input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .filtros select {
+            flex: 0 1 auto;
+        }
+
         /* ── Lista de solicitudes ─────────────────────────────────── */
         #lista {
             display: grid;
@@ -329,7 +373,7 @@
             background: var(--bg-elev);
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 1.1rem;
+            padding: .85rem 1.1rem;
             box-shadow: var(--shadow);
             transition: opacity .2s;
         }
@@ -361,7 +405,29 @@
             display: flex;
             align-items: flex-start;
             gap: .7rem;
-            margin-bottom: .7rem;
+            cursor: pointer;
+        }
+
+        .card__chevron {
+            color: var(--text-dim);
+            flex: 0 0 auto;
+            margin-top: .3rem;
+            transition: transform .15s;
+        }
+
+        .card.abierta .card__chevron {
+            transform: rotate(180deg);
+        }
+
+        .card__detalle {
+            display: none;
+            margin-top: .8rem;
+            padding-top: .8rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .card.abierta .card__detalle {
+            display: block;
         }
 
         .avatar {
@@ -516,10 +582,15 @@
             color: var(--accent);
         }
 
-        .btn.estado-btn.elegido {
+        .btn.elegido {
             background: var(--text);
             color: var(--bg);
             border-color: var(--text);
+        }
+
+        .btn.archivar-btn {
+            color: var(--text-dim);
+            margin-left: auto;
         }
 
         #vacio {
@@ -641,6 +712,16 @@
 
         <div class="pestanas" id="pestanas"></div>
 
+        <div class="filtros" id="filtros">
+            <input type="search" id="buscador" placeholder="Buscar por nombre o teléfono…">
+            <select id="filtroMes"><option value="">Todos los meses</option></select>
+            <select id="filtroTipo">
+                <option value="">Todos los tipos</option>
+                <option value="contacto">Contacto</option>
+                <option value="prueba">Clase de prueba</option>
+            </select>
+        </div>
+
         <div id="estado"></div>
         <div id="lista"></div>
         <div id="estadisticas" style="display:none"></div>
@@ -660,12 +741,15 @@
             var PESTANAS = [
                 { id: 'pendientes', etiqueta: 'Pendientes' },
                 { id: 'gestionadas', etiqueta: 'Gestionadas' },
+                { id: 'archivadas', etiqueta: 'Archivadas' },
                 { id: 'estadisticas', etiqueta: 'Estadísticas' },
                 { id: 'todas', etiqueta: 'Todas' }
             ];
 
             var OPCIONES_ESTADO = ['Mandar info', 'Apuntar a la prueba', 'Otro'];
             var DIAS_PARA_ENFRIARSE = 3;
+            var NOMBRES_MES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+                'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 
             // Iconos, trazo único, sin dependencias externas.
             var ICONOS = {
@@ -673,7 +757,9 @@
                 reloj: '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/>',
                 check: '<path d="M21 11.5V12a9 9 0 1 1-5.5-8.3"/><polyline points="21 4.5 12 14 9 11"/>',
                 chispa: '<path d="M12 2.5l1.7 6.3 6.3 1.7-6.3 1.7L12 18.5l-1.7-6.3-6.3-1.7 6.3-1.7z"/>',
-                chat: '<path d="M4 4.5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-4.5 3.5V17.5H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" fill="currentColor" stroke="none"/>'
+                chat: '<path d="M4 4.5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-4.5 3.5V17.5H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" fill="currentColor" stroke="none"/>',
+                chevron: '<polyline points="6 9 12 15 18 9"/>',
+                archivo: '<path d="M3 7h18v13H3z"/><path d="M3 7l2-4h14l2 4"/><line x1="10" y1="12" x2="14" y2="12"/>'
             };
 
             function icono(nombre, extraClase) {
@@ -694,11 +780,19 @@
             var resumenEl = document.getElementById('resumen');
             var toastEl = document.getElementById('toast');
             var ultimaActualizacionEl = document.getElementById('ultimaActualizacion');
+            var filtrosEl = document.getElementById('filtros');
+            var buscadorEl = document.getElementById('buscador');
+            var filtroMesEl = document.getElementById('filtroMes');
+            var filtroTipoEl = document.getElementById('filtroTipo');
 
             var pestanaActiva = 'pendientes';
             var ultimosLeads = [];
             var toastTimer = null;
             var ultimaCarga = null;
+            var expandidas = {};
+            var filtroTexto = '';
+            var filtroMes = '';
+            var filtroTipo = '';
 
             /* La fecha llega como "dd/MM HH:mm" (sin año). Se asume el año
                actual; si el resultado queda en el futuro, es que la
@@ -739,6 +833,29 @@
                 var d = parsearFecha(lead.fecha);
                 if (!d) return 0;
                 return Math.floor((Date.now() - d.getTime()) / 86400000);
+            }
+
+            function tipoDe(lead) {
+                return String(lead.tipo || '').indexOf('prueba') !== -1 ? 'prueba' : 'contacto';
+            }
+
+            function claveMes(d) {
+                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+            }
+
+            function coincideFiltro(lead) {
+                if (filtroTipo && filtroTipo !== tipoDe(lead)) return false;
+                if (filtroMes) {
+                    var d = parsearFecha(lead.fecha);
+                    if (!d || claveMes(d) !== filtroMes) return false;
+                }
+                if (filtroTexto) {
+                    var q = filtroTexto.toLowerCase();
+                    var enNombre = String(lead.nombre || '').toLowerCase().indexOf(q) !== -1;
+                    var enTelefono = String(lead.telefono || '').indexOf(q) !== -1;
+                    if (!enNombre && !enTelefono) return false;
+                }
+                return true;
             }
 
             function enlaceWhatsApp(telefono, nombre) {
@@ -787,8 +904,8 @@
             }
 
             function pintarResumen(leads) {
-                var pendientes = leads.filter(function (l) { return !l.accion; }).length;
-                var gestionadas = leads.filter(function (l) { return l.accion; }).length;
+                var pendientes = leads.filter(function (l) { return !l.accion && !l.archivada; }).length;
+                var gestionadas = leads.filter(function (l) { return l.accion && !l.archivada; }).length;
                 var hoy = leads.filter(esDeHoy).length;
                 resumenEl.innerHTML =
                     tile('lista', '', leads.length, 'Total') +
@@ -800,8 +917,9 @@
             function pintarPestanas(leads) {
                 pestanasEl.innerHTML = '';
                 var cuentas = {
-                    pendientes: leads.filter(function (l) { return !l.accion; }).length,
-                    gestionadas: leads.filter(function (l) { return l.accion; }).length,
+                    pendientes: leads.filter(function (l) { return !l.accion && !l.archivada; }).length,
+                    gestionadas: leads.filter(function (l) { return l.accion && !l.archivada; }).length,
+                    archivadas: leads.filter(function (l) { return l.archivada; }).length,
                     todas: leads.length
                 };
                 PESTANAS.forEach(function (p) {
@@ -835,7 +953,7 @@
                 var pruebas = leads.filter(function (l) { return String(l.tipo || '').indexOf('prueba') !== -1; }).length;
                 var contactos = total - pruebas;
 
-                var sinGestionar = leads.filter(function (l) { return !l.accion; }).length;
+                var sinGestionar = leads.filter(function (l) { return !l.accion && !l.archivada; }).length;
                 var ofertas = leads.filter(function (l) { return l.aceptaOfertas === 'Sí'; }).length;
 
                 var html = '<div class="stats-grid">' +
@@ -870,12 +988,28 @@
                 estadisticasEl.innerHTML = html;
             }
 
+            function pintarFiltroMes(leads) {
+                var meses = {};
+                leads.forEach(function (l) {
+                    var d = parsearFecha(l.fecha);
+                    if (d) meses[claveMes(d)] = d;
+                });
+                var claves = Object.keys(meses).sort().reverse();
+                var valorActual = filtroMesEl.value;
+                filtroMesEl.innerHTML = '<option value="">Todos los meses</option>' + claves.map(function (clave) {
+                    var d = meses[clave];
+                    return '<option value="' + clave + '">' + NOMBRES_MES[d.getMonth()] + ' ' + d.getFullYear() + '</option>';
+                }).join('');
+                if (claves.indexOf(valorActual) !== -1) filtroMesEl.value = valorActual;
+            }
+
             function pintarLeads(leads) {
                 ultimosLeads = leads;
                 pintarResumen(leads);
                 pintarPestanas(leads);
 
                 if (pestanaActiva === 'estadisticas') {
+                    filtrosEl.style.display = 'none';
                     listaEl.style.display = 'none';
                     vacioEl.style.display = 'none';
                     estadisticasEl.style.display = 'block';
@@ -883,13 +1017,16 @@
                     return;
                 }
                 estadisticasEl.style.display = 'none';
+                filtrosEl.style.display = 'flex';
                 listaEl.style.display = 'grid';
+                pintarFiltroMes(leads);
 
                 listaEl.innerHTML = '';
                 var visibles = leads.filter(function (l) {
-                    if (pestanaActiva === 'pendientes') return !l.accion;
-                    if (pestanaActiva === 'gestionadas') return !!l.accion;
-                    return true; // 'todas'
+                    if (pestanaActiva === 'pendientes') { if (l.accion || l.archivada) return false; }
+                    else if (pestanaActiva === 'gestionadas') { if (!l.accion || l.archivada) return false; }
+                    else if (pestanaActiva === 'archivadas') { if (!l.archivada) return false; }
+                    return coincideFiltro(l);
                 });
 
                 /* En Pendientes, la más urgente (la que lleva más tiempo sin
@@ -911,10 +1048,11 @@
                 visibles.forEach(function (lead) {
                   try {
                     var dias = diasSinGestionar(lead);
-                    var esFrio = !lead.accion && dias >= DIAS_PARA_ENFRIARSE;
+                    var esFrio = !lead.accion && !lead.archivada && dias >= DIAS_PARA_ENFRIARSE;
 
                     var card = document.createElement('div');
-                    card.className = 'card' + (lead.accion ? ' resuelto' : '') + (esFrio ? ' frio' : '');
+                    card.className = 'card' + (lead.accion ? ' resuelto' : '') + (esFrio ? ' frio' : '') +
+                        (expandidas[lead.fila] ? ' abierta' : '');
 
                     var tipoTexto = String(lead.tipo || '');
                     var etiquetas = '';
@@ -939,8 +1077,12 @@
                             '" data-valor="' + escapar(op) + '">' + op + '</button>';
                     }).join('');
 
+                    var botonArchivar = '<button class="btn archivar-btn' + (lead.archivada ? ' elegido' : '') +
+                        '" data-fila="' + lead.fila + '">' + icono('archivo') +
+                        (lead.archivada ? 'Desarchivar' : 'Archivar') + '</button>';
+
                     card.innerHTML =
-                        '<div class="card__cabecera">' +
+                        '<div class="card__cabecera" data-fila="' + lead.fila + '">' +
                         '<div class="avatar">' + escapar(iniciales(lead.nombre)) + '</div>' +
                         '<div class="card__id">' +
                         '<div class="card__nombre">' + (escapar(lead.nombre) || '(sin nombre)') + '</div>' +
@@ -948,13 +1090,16 @@
                         (esFrio ? '<div class="aviso-frio">' + icono('reloj') + dias + ' días sin responder</div>' : '') +
                         '</div>' +
                         badgeEstado +
+                        icono('chevron', 'card__chevron') +
                         '</div>' +
+                        '<div class="card__detalle">' +
                         '<div class="card__meta">' + etiquetas + '</div>' +
                         '<div class="card__mensaje">' + (escapar(lead.mensaje) || '<em>Sin mensaje</em>') + '</div>' +
                         '<textarea class="card__nota" data-fila="' + lead.fila + '" placeholder="Notas para ti (privadas)…">' + escapar(lead.nota) + '</textarea>' +
                         '<div class="card__acciones">' +
                         (wa ? '<a class="btn whatsapp" href="' + wa + '" target="_blank" rel="noopener">' + icono('chat') + 'WhatsApp</a>' : '') +
-                        botonesEstado +
+                        botonesEstado + botonArchivar +
+                        '</div>' +
                         '</div>';
 
                     listaEl.appendChild(card);
@@ -1009,10 +1154,55 @@
                 });
             }
 
+            /* Archivar es reversible (tocarlo otra vez desarchiva), igual que
+               los estados — Cipri pidió poder quitar de en medio lo que ya
+               no le importa sin perder el dato por si se equivoca. */
+            function archivarLead(fila) {
+                var lead = ultimosLeads.filter(function (l) { return l.fila === fila; })[0];
+                if (!lead) return;
+                lead.archivada = !lead.archivada;
+                var nuevoValor = lead.archivada ? 'Sí' : '';
+
+                pintarLeads(ultimosLeads);
+                mostrarToast(lead.archivada ? 'Archivada' : 'Desarchivada');
+
+                var clave = localStorage.getItem(CLAVE_GUARDADA);
+                fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ accion: 'actualizar', clave: clave, fila: fila, valor: nuevoValor, campo: 'archivada' })
+                }).catch(function () {
+                    mostrarToast('No se pudo guardar. Prueba a Actualizar.');
+                });
+            }
+
             listaEl.addEventListener('click', function (e) {
-                var b = e.target.closest('.estado-btn');
-                if (!b) return;
-                cambiarEstado(Number(b.dataset.fila), b.dataset.valor);
+                var estadoBtn = e.target.closest('.estado-btn');
+                if (estadoBtn) {
+                    cambiarEstado(Number(estadoBtn.dataset.fila), estadoBtn.dataset.valor);
+                    return;
+                }
+                var archivarBtn = e.target.closest('.archivar-btn');
+                if (archivarBtn) {
+                    archivarLead(Number(archivarBtn.dataset.fila));
+                    return;
+                }
+                var cabecera = e.target.closest('.card__cabecera');
+                if (cabecera) {
+                    var fila = Number(cabecera.dataset.fila);
+                    expandidas[fila] = !expandidas[fila];
+                    pintarLeads(ultimosLeads);
+                }
+            });
+
+            filtrosEl.addEventListener('input', function () {
+                filtroTexto = buscadorEl.value.trim();
+                pintarLeads(ultimosLeads);
+            });
+            filtrosEl.addEventListener('change', function (e) {
+                if (e.target === filtroMesEl) filtroMes = filtroMesEl.value;
+                if (e.target === filtroTipoEl) filtroTipo = filtroTipoEl.value;
+                pintarLeads(ultimosLeads);
             });
 
             // 'blur' no burbujea — hace falta capturarlo en la fase de captura.

@@ -129,13 +129,16 @@ function doPost(e) {
     return ContentService.createTextOutput('mal');
   }
 
-  // Actualizar el estado (o la nota) de un lead desde el panel, protegido
-  // por clave. "campo" dice qué columna toca: 'estado' (por defecto) o 'nota'.
+  // Actualizar el estado, la nota o el archivado de un lead desde el panel,
+  // protegido por clave. "campo" dice qué columna toca: 'estado' (por
+  // defecto), 'nota' o 'archivada'.
   if (d.accion === 'actualizar') {
     if (d.clave !== CLAVE_PANEL) {
       return json({ ok: false, error: 'clave incorrecta' });
     }
-    var col = d.campo === 'nota' ? columnaNotas(hoja) : columnaAccion(hoja);
+    var col = d.campo === 'nota' ? columnaNotas(hoja)
+      : d.campo === 'archivada' ? columnaArchivada(hoja)
+      : columnaAccion(hoja);
     hoja.getRange(d.fila, col).setValue(d.valor || '');
     return json({ ok: true });
   }
@@ -190,6 +193,7 @@ function doGet(e) {
   var iFecha = cabecera.indexOf('Fecha');
   var iNotas = cabecera.indexOf('Notas');
   var iAccion = columnaAccion(hoja) - 1;
+  var iArchivada = columnaArchivada(hoja) - 1;
 
   var leads = [];
   for (var f = 1; f < datos.length; f++) {
@@ -210,7 +214,8 @@ function doGet(e) {
       mensaje: fila[iMensaje] || '',
       aceptaOfertas: fila[iOfertas] || '',
       accion: fila[iAccion] || '',
-      nota: iNotas !== -1 ? String(fila[iNotas] || '') : ''
+      nota: iNotas !== -1 ? String(fila[iNotas] || '') : '',
+      archivada: fila[iArchivada] === 'Sí'
     });
   }
   leads.reverse(); // los más recientes primero
@@ -225,6 +230,17 @@ function columnaAccion(hoja) {
   if (i !== -1) return i + 1;
   var col = hoja.getLastColumn() + 1;
   hoja.getRange(1, col).setValue('Acción panel').setFontWeight('bold');
+  return col;
+}
+
+// Igual que columnaAccion, pero para marcar una solicitud como archivada
+// (Sí/vacío) sin borrarla de la hoja.
+function columnaArchivada(hoja) {
+  var cabecera = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0];
+  var i = cabecera.indexOf('Archivada');
+  if (i !== -1) return i + 1;
+  var col = hoja.getLastColumn() + 1;
+  hoja.getRange(1, col).setValue('Archivada').setFontWeight('bold');
   return col;
 }
 
@@ -275,6 +291,10 @@ Las cuatro últimas columnas (antes de "Acepta ofertas") son tuyas:
 | **Vino** | `sí` / `no` |
 | **Se apuntó** | `sí` / `no` |
 | **Notas** | Lo que te haga falta recordar — desde el 19 de agosto de 2026 se escribe sola desde el cuadro de notas de cada tarjeta del panel, sin que tengas que abrir la hoja |
+
+Verás también una columna **Archivada** al final (la crea el script solo, como
+"Acción panel"): dice `Sí` cuando archivas una solicitud desde el panel — no
+se borra nada, solo se aparta de las pestañas Pendientes/Gestionadas.
 
 Con eso, al final del mes sabes cuántos pidieron prueba, cuántos vinieron y
 cuántos se quedaron. Ese número es el que dice si la web funciona.
