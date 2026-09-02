@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/galeria", "destination": "/#academy", "permanent": true },
+    { "source": "/servicios", "destination": "/#schedule", "permanent": true }
+  ]
+}
