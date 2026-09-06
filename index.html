@@ -2913,6 +2913,19 @@
                 // queda visible: no hay pantalla en negro en ningún caso.
                 v.play().catch(function () { });
 
+                // Igual que los vídeos del carrusel de abajo (#reels): en cuanto
+                // sale de la pantalla se para, y sigue donde estaba al volver a
+                // aparecer. Ahorra batería y datos sin que se note.
+                new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            v.play().catch(function () { });
+                        } else {
+                            v.pause();
+                        }
+                    });
+                }, { threshold: 0 }).observe(v);
+
                 // Solo en escritorio: botón para activar el sonido del vídeo a
                 // propósito (clic = el gesto que los navegadores exigen).
                 if (!esMovil) {
@@ -4422,7 +4435,9 @@ entenderás ya qué significan las Ítacas.`;
                 { src: 'images/Itaca/Gym7.webp', label: 'Detalles' },
                 { src: 'images/Itaca/Gym8.webp', label: 'Disciplina' },
                 { src: 'images/Itaca/Gym9.webp', label: 'Comunidad' },
-                { src: 'images/Itaca/Gym10.webp', label: 'Niños' }
+                { src: 'images/Itaca/Gym10.webp', label: 'Niños' },
+                { src: 'images/Itaca/Gym11.webp', label: 'Sonrisas' },
+                { src: 'images/Itaca/Gym12.webp', label: 'Equipo' }
             ];
 
             // Valores por defecto: así una línea nueva puede ser solo `{ src: '...' }`
