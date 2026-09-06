@@ -243,6 +243,28 @@
             object-fit: cover;
         }
 
+        .hero-sound {
+            position: absolute;
+            right: .9rem;
+            bottom: .9rem;
+            z-index: 2;
+            width: 2.6rem;
+            height: 2.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .92);
+            color: var(--ink);
+            border: 1px solid var(--rule);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .15);
+        }
+
+        .hero-sound svg {
+            width: 17px;
+            height: 17px;
+        }
+
         .hero__txt {
             padding: 1.9rem 0 0;
             display: flex;
@@ -1320,8 +1342,30 @@
                     var p = document.getElementById('heroPoster');
                     if (p) p.remove();
                 }, { once: true });
-                document.getElementById('heroMedia').appendChild(v);
+                var media = document.getElementById('heroMedia');
+                media.appendChild(v);
                 v.play().catch(function () { });
+
+                // Este vídeo sí lleva sonido de verdad (el anterior no tenía
+                // pista de audio). Arranca mudo, como exige cualquier móvil,
+                // con un botón para activarlo a propósito.
+                var btn = document.createElement('button');
+                btn.className = 'hero-sound';
+                btn.type = 'button';
+                btn.setAttribute('aria-label', 'Activar sonido');
+                btn.innerHTML =
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="mute-off" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="mute-on"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
+                var iconOff = btn.querySelector('.mute-off');
+                var iconOn = btn.querySelector('.mute-on');
+                btn.addEventListener('click', function () {
+                    v.muted = !v.muted;
+                    iconOff.style.display = v.muted ? 'none' : 'block';
+                    iconOn.style.display = v.muted ? 'block' : 'none';
+                    btn.setAttribute('aria-label', v.muted ? 'Activar sonido' : 'Silenciar');
+                    v.play().catch(function () { });
+                });
+                media.appendChild(btn);
             }
             if (document.readyState === 'complete') setTimeout(cargarVideo, 200);
             else window.addEventListener('load', function () { setTimeout(cargarVideo, 200); });
