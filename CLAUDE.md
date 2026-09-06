@@ -158,15 +158,17 @@ El agente reacciona **inmediatamente**:
 Al iniciar cada sesión, este es el estado:
 
 ```
-ITACA JIU JITSU — Estado de Salud (actualizado 2026-08-04, auditoría prepublicación)
+ITACA JIU JITSU — Estado de Salud (actualizado 2026-09-06, vídeo de portada + fotos nuevas)
 ═════════════════════════════════════════════════════════════
 ✅ Código funciona:  index.html + movil.html + js/ + legal/, sin errores
 ✅ Horario:          una sola fuente (js/itaca-horario.js), ya no duplicado
 ✅ Formularios:      Web3Forms activo (clave puesta), casilla de consentimiento en los dos
+✅ Portada:          vídeo real en escritorio y móvil, con botón de sonido y pausa fuera de pantalla
+✅ Fotos:            12 en el carrusel del gimnasio, 3 instructores con fotos de estudio nuevas
 ⚠️  Deuda técnica:   ver DECISIONS.md — DT-1, DT-2 y DT-4 resueltas, queda DT-3 (y DT-5, DT-6 nuevas)
 📊 Pruebas:         No hay suite automática (manual en navegador + Playwright puntual)
 🔴 Bloqueadores:    ninguno crítico — ver DT-5 (revisión legal de terminos.html) como pendiente importante
-📦 Deploy:          Vercel preview OK en cada push a claude/new-session-oa3wjo, PR #1 abierto. main no existe todavía
+📦 Deploy:          main en producción (www.itacajiujitsu.com), PR #15 fusionado con squash. claude/new-session-oa3wjo repartido de main tras cada fusión
 ```
 
 ### 4. Memoria de Sesión vs Persistente
@@ -354,7 +356,7 @@ No dependen de que la IA se acuerde: los ejecuta la herramienta.
 ### Flujo de ramas
 Rama de trabajo: `claude/new-session-oa3wjo`. Los PR se fusionan con **squash**.
 
-⚠️ **El repositorio todavía no tiene rama `main`.** Se creó vacío y la rama de trabajo es la única que existe. En cuanto haya `main`, tras cada fusión **parte siempre de `main` actualizado**:
+`main` ya existe y es lo que sirve Vercel en producción (`www.itacajiujitsu.com`). Tras cada fusión **parte siempre de `main` actualizado**:
 `git fetch origin main && git checkout -B <rama> origin/main`
 Si no, la rama arrastra commits duplicados y provoca conflictos. Ver la skill `flujo-de-trabajo`.
 
