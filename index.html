@@ -676,6 +676,14 @@
             border-color: white;
         }
 
+        /* El botón de sonido lo crea el JS del hero solo en escritorio; esto es
+           un cinturón de seguridad si la ventana se hace estrecha después. */
+        @media (max-width: 760px) {
+            .video-control {
+                display: none;
+            }
+        }
+
         .scroll-indicator {
             position: absolute;
             bottom: 3rem;
@@ -2869,38 +2877,76 @@
     <main>
     <!-- Hero -->
     <section class="hero" id="home">
-        <!-- Escritorio: foto. El vídeo que había (Itaca_Hero_Video.mp4) es una
-             animación de logo, casi todo negro: como fondo en bucle no vale.
-             Falta grabar uno apaisado del gimnasio para poner aquí. -->
+        <!-- Foto de respaldo mientras decide el JS de abajo qué vídeo poner
+             (o si se queda así, si algo falla). -->
         <img class="hero-video" id="hero-photo" src="images/Itaca/Gym1.webp"
             alt="Entrenamiento en Itaca Jiu Jitsu">
         <script>
-            // Móvil: vídeo vertical grabado a 9:16. El de escritorio es 1920x800 y
-            // en una pantalla estrecha solo se vería el 19% del centro del
-            // fotograma. Se cambia aquí, junto al elemento, para que empiece a
-            // cargar sin esperar al resto de la página; y se crea solo en móvil,
-            // así un escritorio nunca descarga los 4 MB del vídeo.
+            // Escritorio y móvil usan vídeos distintos (proporciones distintas),
+            // y los dos arrancan silenciados: ningún navegador deja sonar un
+            // vídeo sin que la persona haga clic antes. Se cambia aquí, junto al
+            // elemento, para que empiece a cargar sin esperar al resto de la
+            // página.
             (function () {
-                if (!window.matchMedia('(max-width: 760px)').matches) return;
+                var esMovil = window.matchMedia('(max-width: 760px)').matches;
                 var img = document.getElementById('hero-photo');
                 if (!img) return;
                 var v = document.createElement('video');
                 v.className = 'hero-video';
                 v.id = 'hero-video';
-                // `muted` antes que `autoplay`: ningún móvil arranca solo un vídeo
-                // con sonido, y si no está silenciado se queda congelado.
                 v.muted = true;
                 v.defaultMuted = true;
                 ['autoplay', 'loop', 'playsinline', 'muted'].forEach(function (a) {
                     v.setAttribute(a, '');
                 });
-                v.preload = 'metadata';
-                v.poster = 'images/Itaca/Portada-movil.jpg';
-                v.src = 'videos/Itaca_Hero_Mobile.mp4';
+                if (esMovil) {
+                    v.preload = 'metadata';
+                    v.poster = 'images/Itaca/Portada-movil.jpg';
+                    v.src = 'videos/Itaca_Hero_Mobile.mp4';
+                } else {
+                    v.preload = 'auto';
+                    v.poster = 'images/Itaca/Gym1.webp';
+                    v.src = 'videos/Itaca_Hero_Desktop.mp4';
+                }
                 img.replaceWith(v);
                 // Si el navegador se resiste al autoplay, la foto de poster se
                 // queda visible: no hay pantalla en negro en ningún caso.
                 v.play().catch(function () { });
+
+                // Igual que los vídeos del carrusel de abajo (#reels): en cuanto
+                // sale de la pantalla se para, y sigue donde estaba al volver a
+                // aparecer. Ahorra batería y datos sin que se note.
+                new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            v.play().catch(function () { });
+                        } else {
+                            v.pause();
+                        }
+                    });
+                }, { threshold: 0 }).observe(v);
+
+                // Solo en escritorio: botón para activar el sonido del vídeo a
+                // propósito (clic = el gesto que los navegadores exigen).
+                if (!esMovil) {
+                    var btn = document.createElement('button');
+                    btn.className = 'video-control';
+                    btn.type = 'button';
+                    btn.setAttribute('aria-label', 'Activar sonido');
+                    btn.innerHTML =
+                        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mute-off" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>' +
+                        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mute-on"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
+                    var iconOff = btn.querySelector('.mute-off');
+                    var iconOn = btn.querySelector('.mute-on');
+                    btn.addEventListener('click', function () {
+                        v.muted = !v.muted;
+                        iconOff.style.display = v.muted ? 'none' : 'block';
+                        iconOn.style.display = v.muted ? 'block' : 'none';
+                        btn.setAttribute('aria-label', v.muted ? 'Activar sonido' : 'Silenciar');
+                        v.play().catch(function () { });
+                    });
+                    v.insertAdjacentElement('afterend', btn);
+                }
             })();
         </script>
         <div class="hero-overlay"></div>
@@ -4386,7 +4432,12 @@ entenderás ya qué significan las Ítacas.`;
                 { src: 'images/Itaca/Gym4.webp', label: 'Equipamiento' },
                 { src: 'images/Itaca/Gym5.webp', label: 'Jiu Jitsu' },
                 { src: 'images/Itaca/Gym6.webp', label: 'Recepción' },
-                { src: 'images/Itaca/Gym7.webp', label: 'Detalles' }
+                { src: 'images/Itaca/Gym7.webp', label: 'Detalles' },
+                { src: 'images/Itaca/Gym8.webp', label: 'Disciplina' },
+                { src: 'images/Itaca/Gym9.webp', label: 'Comunidad' },
+                { src: 'images/Itaca/Gym10.webp', label: 'Niños' },
+                { src: 'images/Itaca/Gym11.webp', label: 'Sonrisas' },
+                { src: 'images/Itaca/Gym12.webp', label: 'Equipo' }
             ];
 
             // Valores por defecto: así una línea nueva puede ser solo `{ src: '...' }`
