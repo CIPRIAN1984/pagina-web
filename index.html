@@ -742,10 +742,33 @@
             width: 100%;
             height: 100%;
             min-height: 520px;
-            padding: 3rem 2rem 3rem;
+            /* Sin relleno lateral: la columna de texto de la izquierda va pegada
+               al borde del contenedor, así que si el poema lleva 2rem por dentro
+               el margen derecho de la página sale 32px más grande que el
+               izquierdo y la sección parece descentrada. */
+            padding: 3rem 0;
             display: flex;
             flex-direction: column;
             justify-content: center;
+        }
+
+        /* El poema va centrado línea a línea y sus versos son cortos: dentro de
+           una columna de 660px sobraban 140px de aire a cada lado, y ese aire
+           hacía que el margen derecho de la página se viera mucho mayor que el
+           izquierdo (donde el texto sí llega al borde del contenedor). Se le da
+           a la caja el ancho de su verso más largo y se pega a la derecha, así
+           los dos márgenes laterales quedan iguales.
+
+           25rem = 400px con 5% de holgura sobre el verso más largo (379px con
+           Crimson Pro a 1.13rem, medido en navegador). El ancho es fijo y no
+           depende del contenido a propósito: el poema se escribe letra a letra
+           y una caja que se adaptara al texto crecería mientras teclea. Si se
+           cambia el poema o su tipografía, vuelve a medir el verso más largo. */
+        @media (min-width: 1025px) {
+            #itaca-poem {
+                max-width: 25rem;
+                margin-left: auto;
+            }
         }
 
         #itaca-poem h2 {
@@ -2277,6 +2300,14 @@
 
             .editorial-content {
                 margin: 0 auto;
+            }
+
+            /* Apilado, los dos bloques van centrados. Sin este tope el poema
+               ocupaba todo el ancho y su firma, alineada a la derecha, se salía
+               más que el bloque de texto de arriba. */
+            #itaca-poem {
+                max-width: 25rem;
+                margin-inline: auto;
             }
 
             .reels-grid {
