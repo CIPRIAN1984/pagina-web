@@ -5,35 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script>
-        // Reparto entre las dos versiones. Va en la cabecera, antes de que se
-        // parsee nada del cuerpo: puesto más abajo, la redirección cortaba el
-        // parseo a media página y el navegador se quedaba colgado.
-        //
-        // `?full=1` es la vía de escape: quien pide la versión completa desde el
-        // móvil se queda en ella durante toda la visita. Se recuerda en la
-        // pestaña, no en una cookie, así que no hace falta aviso de cookies.
-        (function () {
-            try {
-                if (location.search.indexOf('full=1') > -1 ||
-                    sessionStorage.getItem('itaca-completa') === '1') {
-                    sessionStorage.setItem('itaca-completa', '1');
-                    return;
-                }
-                if (window.matchMedia('(max-width: 760px)').matches) {
-                    location.replace('movil.html' + location.hash);
-                }
-            } catch (e) {
-                /* Si algo falla, se queda en esta versión: nunca se bloquea el acceso. */
-            }
-        })();
-    </script>
+    <!-- Esta es la única web, en el móvil y en el ordenador. Aquí había un
+         reparto que mandaba los móviles a movil.html, una segunda versión con
+         paneles. Se retiró en septiembre de 2026: dos webs con el mismo
+         contenido significaban arreglar cada cosa dos veces, y la de móvil
+         gustaba menos. movil.html sigue existiendo pero solo para devolver
+         aquí a quien llegue con un enlace viejo. -->
     <title>ITACA JIU JITSU | Brazilian Jiu Jitsu en Logroño</title>
     <meta name="description"
         content="Escuela de Brazilian Jiu Jitsu en Logroño. Horarios, clases para niños y adultos, y clase de prueba gratuita.">
-    <!-- Pareja móvil de esta página, para que los buscadores no las traten
-         como contenido duplicado. -->
-    <link rel="alternate" media="only screen and (max-width: 760px)" href="https://www.itacajiujitsu.com/movil.html">
     <link rel="canonical" href="https://www.itacajiujitsu.com/">
     <!-- Vista previa al compartir en redes/WhatsApp. og:image reutiliza una
          foto real del gimnasio (recortada a 1200×630) en vez de un diseño
@@ -676,11 +656,15 @@
             border-color: white;
         }
 
-        /* El botón de sonido lo crea el JS del hero solo en escritorio; esto es
-           un cinturón de seguridad si la ventana se hace estrecha después. */
+        /* En el móvil el botón sube: abajo a la derecha lo tapaba la barra fija
+           de acciones (llamar / clase de prueba / WhatsApp). */
         @media (max-width: 760px) {
             .video-control {
-                display: none;
+                bottom: auto;
+                top: calc(4.5rem + env(safe-area-inset-top));
+                right: 1.15rem;
+                width: 44px;
+                height: 44px;
             }
         }
 
@@ -784,7 +768,13 @@
         .poem-body {
             font-family: 'Crimson Pro', serif;
             font-weight: 300;
-            font-size: 1.13rem;
+            /* El verso más largo mide 365px a 1.13rem. En un teléfono estrecho la
+               columna se queda en ~350px y los versos se partían por la mitad,
+               que en un poema canta muchísimo. Por debajo de unos 430px la letra
+               encoge con la pantalla; a partir de ahí se queda en 1.13rem.
+               Si se cambia el poema o su tipografía, vuelve a medir el verso más
+               largo y ajusta el 4.2vw. */
+            font-size: clamp(0.82rem, 4.2vw, 1.13rem);
             line-height: 1.85;
             white-space: pre-wrap;
             min-height: 2em;
@@ -2964,9 +2954,11 @@
                     });
                 }, { threshold: 0 }).observe(v);
 
-                // Solo en escritorio: botón para activar el sonido del vídeo a
-                // propósito (clic = el gesto que los navegadores exigen).
-                if (!esMovil) {
+                // Botón para activar el sonido a propósito (el clic o el toque es
+                // el gesto que los navegadores exigen para dejar sonar un vídeo).
+                // Va en las dos, móvil y escritorio: los dos vídeos de portada
+                // tienen audio de verdad.
+                {
                     var btn = document.createElement('button');
                     btn.className = 'video-control';
                     btn.type = 'button';
