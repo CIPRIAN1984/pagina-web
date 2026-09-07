@@ -3,7 +3,21 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 980 y no `width=device-width` a propósito, por decisión de Cipri
+         (7 de septiembre de 2026): quiere que el teléfono muestre la web de
+         ordenador entera, empequeñecida para caber, que es exactamente lo que
+         hace el "modo ordenador" del navegador. Con `device-width` el móvil
+         entraba por las media queries de 760px y salía la versión reorganizada
+         (botones apilados, vídeo vertical, barra inferior), que no es la que
+         quiere. 980 es el ancho que usa el modo ordenador de Chrome, así que
+         reproduce lo que él grabó, incluida la rejilla de dos columnas de
+         instructores (media query de 1024px).
+
+         ⚠️ Contrapartida asumida y avisada: el texto se ve pequeño y hay que
+         acercar con los dedos para leerlo cómodamente. No se pone
+         `user-scalable=no` ni `maximum-scale` justamente por eso: el zoom con
+         los dedos tiene que seguir funcionando. -->
+    <meta name="viewport" content="width=980">
 
     <!-- Esta es la única web, en el móvil y en el ordenador. Aquí había un
          reparto que mandaba los móviles a movil.html, una segunda versión con
@@ -656,8 +670,10 @@
             border-color: white;
         }
 
-        /* En el móvil el botón sube: abajo a la derecha lo tapaba la barra fija
-           de acciones (llamar / clase de prueba / WhatsApp). */
+        /* Solo se aplica en una ventana de ordenador muy estrecha: los teléfonos
+           maquetan a 980px (ver el viewport de la cabecera) y no llegan aquí.
+           Ahí abajo a la derecha lo taparía la barra fija de acciones, así que
+           el botón sube. */
         @media (max-width: 760px) {
             .video-control {
                 bottom: auto;

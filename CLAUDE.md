@@ -310,6 +310,13 @@ Lo que había antes: `index.html` mandaba a `movil.html` por debajo de 760px y `
 
 ⚠️ **Por qué se retiró, para no reproponerlo:** dos webs con el mismo contenido significaban tocar cada cosa dos veces (una foto nueva, un cambio de horario, un arreglo de diseño) y que se contradijeran; y la de móvil, con sus paneles, gustaba menos que la editorial. El contenido de aquella app sigue en el historial de git si alguna vez hace falta.
 
+⚠️ **El `<meta name="viewport">` es `width=980`, no `width=device-width`.** Decisión de producto de Cipri (7 de septiembre de 2026) tras grabarse la web en el móvil en "modo ordenador": quiere ver **la web de ordenador entera, empequeñecida para caber**, no una versión reorganizada. 980 es el ancho que usa el modo ordenador de Chrome, así que reproduce exactamente lo que él grabó: botones de portada en fila, instructores y reels en dos columnas (media query de 1024px), vídeo de portada horizontal.
+
+Consecuencias asumidas y avisadas, **no son fallos que haya que "arreglar"**:
+- El texto se ve pequeño y hay que acercar con los dedos. Por eso no se pone `user-scalable=no` ni `maximum-scale`: el zoom tiene que funcionar.
+- Las media queries de **760px y 900px ya no se activan nunca en un teléfono**. Eso deja fuera la barra inferior fija de llamar/clase de prueba/WhatsApp (`.action-bar`, regla de 900px) y el vídeo vertical de portada. Siguen en el código y se activan en una ventana de ordenador estrecha.
+- Google puede marcar la web como "no apta para móviles" y eso puede penalizar en las búsquedas de "jiu jitsu Logroño", que es para lo que existe la web. Avisado a Cipri; si algún día baja el tráfico de búsqueda, mirar aquí primero.
+
 ⚠️ **Al retirarlo hubo que tocar tres cosas en `index.html`**, que son las que hay que vigilar si se cambia la portada o el poema:
 - El **botón de sonido de la portada** (`.video-control`) existía solo en escritorio. Ahora sale también en el móvil, arriba a la derecha: abajo lo tapaba la barra fija de acciones.
 - La **portada de móvil** ya cargaba sola el vídeo vertical por debajo de 760px (`Itaca_Hero_Mobile.mp4`); eso no hubo que tocarlo.
