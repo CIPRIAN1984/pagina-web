@@ -1273,9 +1273,10 @@
         }
 
         /* Instructors */
+        /* Antes esta sección se salía del contenedor de 1400px (max-width:100%)
+           y llegaba de borde a borde. En una pantalla ancha rompía la columna
+           que siguen todas las demás secciones, así que ahora usa la misma. */
         #instructors .container {
-            max-width: 100%;
-            padding: 0;
             margin-top: 3rem;
         }
 
@@ -2296,7 +2297,8 @@
             }
         }
 
-        /* Por debajo de 1180 px el menú de enlaces ya no cabe entre el logo y el
+        /* El menú de enlaces pasa a hamburguesa mucho antes, en 1600px (ver la
+           regla de arriba): aquí ya no se toca. */
         @media (max-width: 768px) {
 
             .hero-buttons {
@@ -2317,6 +2319,9 @@
                 -webkit-overflow-scrolling: touch;
                 scrollbar-width: none;
                 margin-top: var(--space-md);
+                /* La sección ya lleva su margen lateral; aquí se anula para que
+                   la fila deslizable llegue al borde y se vea que hay más. */
+                margin-inline: calc(var(--gutter) * -1);
                 padding-inline: var(--gutter);
                 padding-bottom: var(--space-2xs);
             }
@@ -3131,7 +3136,7 @@
     </section>
 
     <!-- Instructors -->
-    <section class="section section-dark" id="instructors" style="padding-bottom: 0; padding-left: 0; padding-right: 0;">
+    <section class="section section-dark" id="instructors" style="padding-bottom: 0;">
         <div class="text-center reveal">
             <span class="eyebrow">Quién enseña</span>
             <h2>Instructores</h2>
