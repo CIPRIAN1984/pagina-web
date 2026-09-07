@@ -24,9 +24,19 @@
                     sessionStorage.setItem('itaca-movil', '1');
                     return;
                 }
-                if (window.matchMedia('(min-width: 900px)').matches) {
+                var ancha = window.matchMedia('(min-width: 900px)');
+                if (ancha.matches) {
                     location.replace('index.html' + location.hash);
+                    return;
                 }
+                // Antes esto solo se miraba al cargar. Quien agrandaba la
+                // ventana (o cambiaba el tamaño en las herramientas del
+                // navegador) se quedaba aquí para siempre, viendo la versión de
+                // móvil estirada a 1900px. Ahora se vuelve a mirar cuando el
+                // ancho cruza la frontera.
+                ancha.addEventListener('change', function (e) {
+                    if (e.matches) { location.replace('index.html' + location.hash); }
+                });
             } catch (e) {
                 /* Si algo falla, se queda en esta versión: nunca se bloquea el acceso. */
             }
@@ -951,6 +961,34 @@
             *::before {
                 animation: none !important;
                 transition: none !important;
+            }
+        }
+
+        /* Esta versión es para el móvil y normalmente nadie la ve ancha: por
+           encima de 900px el reparto manda a index.html. Pero ese reparto solo
+           se comprueba al cargar, así que hay tres formas de acabar viéndola en
+           una pantalla grande: agrandar la ventana sin recargar, entrar con
+           ?movil=1 a propósito, o que el navegador no ejecute el JavaScript.
+           Sin tope de anchura el contenido se estira de lado a lado con un
+           margen de 22px y parece rota. Se le pone la anchura de un móvil
+           grande y se centra: así en el peor caso se ve como una app centrada,
+           que es un fallo que no se nota. */
+        @media (min-width: 620px) {
+
+            main,
+            .foot,
+            .panel__bar,
+            .panel__body {
+                max-width: 560px;
+                margin-inline: auto;
+                width: 100%;
+            }
+
+            /* La barra de arriba mantiene su fondo de borde a borde (es
+               pegajosa y detrás pasa el contenido); lo que se centra es lo que
+               lleva dentro. */
+            .top {
+                padding-inline: max(var(--gutter), calc((100% - 560px) / 2));
             }
         }
     </style>
