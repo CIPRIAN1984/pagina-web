@@ -5,6 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#ffffff">
+
+    <script>
+        // Vuelta a la versión de escritorio. El reparto de index.html solo iba
+        // de ida (ancho -> móvil): quien pedía "modo ordenador" desde el móvil
+        // recargaba ESTA página, se quedaba aquí y seguía viendo el vídeo de
+        // móvil aunque hubiera pedido la otra versión.
+        //
+        // El corte es 900px, no 761px, a propósito: entre 761 y 899 no redirige
+        // ninguna de las dos. Ese hueco muerto evita el ping-pong si el ancho
+        // baila unos píxeles (aparece o desaparece la barra de scroll) justo en
+        // la frontera. El modo ordenador de Chrome usa 980px, así que entra de
+        // sobra.
+        (function () {
+            try {
+                if (location.search.indexOf('movil=1') > -1 ||
+                    sessionStorage.getItem('itaca-movil') === '1') {
+                    sessionStorage.setItem('itaca-movil', '1');
+                    return;
+                }
+                if (window.matchMedia('(min-width: 900px)').matches) {
+                    location.replace('index.html' + location.hash);
+                }
+            } catch (e) {
+                /* Si algo falla, se queda en esta versión: nunca se bloquea el acceso. */
+            }
+        })();
+    </script>
+
     <title>ITACA JIU JITSU | Brazilian Jiu Jitsu en Logroño</title>
     <meta name="description"
         content="Escuela de Brazilian Jiu Jitsu en Logroño. Horarios, clases para niños y adultos, y clase de prueba gratuita.">
