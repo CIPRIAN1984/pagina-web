@@ -720,7 +720,7 @@
         }
 
         /* Con el vídeo en marcha, el triángulo de play sobra. */
-        .reel.suena::after {
+        .reel.reproduciendo::after {
             display: none;
         }
 
@@ -1470,26 +1470,44 @@
             // Si alguien enciende el sonido, el siguiente vídeo sigue con
             // sonido: si no, al bajar un poco se apagaba solo y parecía roto.
             var sonidoReels = false;
+            var fichaElegida = null;
+
+            /* La rejilla es de DOS columnas, así que se reproduce la fila que
+               se está mirando: los dos vídeos de esa fila a la vez.
+
+               Antes solo arrancaba "el que más se ve" y los dos de una misma
+               fila se ven exactamente igual, así que siempre ganaba el primero
+               del código — el de la izquierda — y los de la derecha no se
+               reproducían nunca. Dos a la vez (una fila) y no los cuatro: entre
+               todos pesan 18 MB. */
+            var A_LA_VEZ = 2;
 
             function decidirReel() {
-                var mejor = null;
-                var mayor = 0.5;  // si ninguno se ve al menos a medias, no arranca nada
-                fichasReel.forEach(function (ficha) {
-                    var r = visibilidadReel[ficha.dataset.video] || 0;
-                    if (r > mayor) { mayor = r; mejor = ficha; }
+                var visibles = fichasReel.filter(function (ficha) {
+                    return (visibilidadReel[ficha.dataset.video] || 0) > 0.5;
+                }).sort(function (a, b) {
+                    return (visibilidadReel[b.dataset.video] || 0) - (visibilidadReel[a.dataset.video] || 0);
                 });
+
+                // Si han tocado una ficha, esa manda aunque no sea la que más se ve.
+                if (fichaElegida) {
+                    var yaEstaba = visibles.indexOf(fichaElegida);
+                    if (yaEstaba > -1) visibles.splice(yaEstaba, 1);
+                    visibles.unshift(fichaElegida);
+                }
+
+                var enMarcha = visibles.slice(0, A_LA_VEZ);
+                // El sonido es de una sola: dos vídeos a la vez no se entienden.
+                var principal = enMarcha[0] || null;
+
                 fichasReel.forEach(function (ficha) {
-                    if (ficha === mejor) {
-                        ficha.classList.add('suena');
-                        ficha.video.muted = !sonidoReels;
-                        ficha.boton.pintar();
-                        ficha.video.play().catch(function () { });
-                    } else {
-                        ficha.video.pause();
-                        ficha.video.muted = true;
-                        ficha.boton.pintar();
-                        ficha.classList.remove('suena');
-                    }
+                    var toca = enMarcha.indexOf(ficha) > -1;
+                    ficha.classList.toggle('reproduciendo', toca);
+                    ficha.classList.toggle('suena', ficha === principal);
+                    ficha.video.muted = !(ficha === principal && sonidoReels);
+                    ficha.boton.pintar();
+                    if (toca) ficha.video.play().catch(function () { });
+                    else ficha.video.pause();
                 });
             }
 
@@ -1497,10 +1515,12 @@
                 // Al salir se vuelve a empezar en silencio: nadie espera que
                 // suene algo por reabrir una sección.
                 sonidoReels = false;
+                fichaElegida = null;
                 fichasReel.forEach(function (ficha) {
                     ficha.video.pause();
                     ficha.video.muted = true;
                     ficha.boton.pintar();
+                    ficha.classList.remove('reproduciendo');
                     ficha.classList.remove('suena');
                 });
             }
@@ -1537,24 +1557,28 @@
                         });
                     });
                     ficha.appendChild(ficha.boton);
+
+                    // El triángulo de play era solo un dibujo: al tocarlo no
+                    // pasaba nada. Ahora tocar una ficha la pone en marcha,
+                    // aunque no sea la que más se ve.
+                    ficha.addEventListener('click', function () {
+                        fichaElegida = ficha;
+                        decidirReel();
+                    });
                 });
 
-                // Con "reducir movimiento" activado no arranca nada solo: se
-                // toca la ficha para verla.
-                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                    fichasReel.forEach(function (ficha) {
-                        ficha.addEventListener('click', function () {
-                            ficha.classList.add('suena');
-                            ficha.video.play().catch(function () { });
-                        });
-                    });
-                    return;
-                }
+                // Con "reducir movimiento" activado no arranca nada solo: hay
+                // que tocar la ficha, que es lo que hace el clic de arriba.
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
                 var obs = new IntersectionObserver(function (entradas) {
                     entradas.forEach(function (e) {
                         visibilidadReel[e.target.dataset.video] = e.isIntersecting ? e.intersectionRatio : 0;
                     });
+                    // La ficha tocada deja de mandar en cuanto se va de la
+                    // pantalla; si no, seguiría sonando medio escondida y
+                    // quitándole el sitio a la fila que sí estás mirando.
+                    if (fichaElegida && !(visibilidadReel[fichaElegida.dataset.video] > 0.5)) fichaElegida = null;
                     decidirReel();
                 }, {
                     root: document.querySelector('#p-videos .panel__body'),
