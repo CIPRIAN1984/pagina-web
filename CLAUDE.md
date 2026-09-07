@@ -158,17 +158,19 @@ El agente reacciona **inmediatamente**:
 Al iniciar cada sesión, este es el estado:
 
 ```
-ITACA JIU JITSU — Estado de Salud (actualizado 2026-09-06, vídeo de portada + fotos nuevas)
+ITACA JIU JITSU — Estado de Salud (actualizado 2026-09-07, portadas con sonido)
 ═════════════════════════════════════════════════════════════
 ✅ Código funciona:  index.html + movil.html + js/ + legal/, sin errores
 ✅ Horario:          una sola fuente (js/itaca-horario.js), ya no duplicado
 ✅ Formularios:      Web3Forms activo (clave puesta), casilla de consentimiento en los dos
-✅ Portada:          vídeo real en escritorio y móvil, con botón de sonido y pausa fuera de pantalla
+✅ Portada:          vídeo real en las dos versiones, cada una con el suyo y con botón de
+                     sonido propio; se pausa al salir de pantalla; el poster de cada una es
+                     el primer fotograma de su vídeo, así que no hay salto al cargar
 ✅ Fotos:            12 en el carrusel del gimnasio, 3 instructores con fotos de estudio nuevas
 ⚠️  Deuda técnica:   ver DECISIONS.md — DT-1, DT-2 y DT-4 resueltas, queda DT-3 (y DT-5, DT-6 nuevas)
 📊 Pruebas:         No hay suite automática (manual en navegador + Playwright puntual)
 🔴 Bloqueadores:    ninguno crítico — ver DT-5 (revisión legal de terminos.html) como pendiente importante
-📦 Deploy:          main en producción (www.itacajiujitsu.com), PR #15 fusionado con squash. claude/new-session-oa3wjo repartido de main tras cada fusión
+📦 Deploy:          main en producción (www.itacajiujitsu.com), último PR fusionado el #18 con squash. claude/new-session-oa3wjo se reparte de main tras cada fusión
 ```
 
 ### 4. Memoria de Sesión vs Persistente
