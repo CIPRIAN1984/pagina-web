@@ -2877,9 +2877,11 @@
     <main>
     <!-- Hero -->
     <section class="hero" id="home">
-        <!-- Foto de respaldo mientras decide el JS de abajo qué vídeo poner
-             (o si se queda así, si algo falla). -->
-        <img class="hero-video" id="hero-photo" src="images/Itaca/Gym1.webp"
+        <!-- Respaldo mientras decide el JS de abajo qué vídeo poner (o si se
+             queda así, si algo falla). Es el primer fotograma del propio vídeo
+             de escritorio: si fuera otra foto, se vería un salto feo el primer
+             instante, justo antes de que arranque el vídeo. -->
+        <img class="hero-video" id="hero-photo" src="images/Itaca/Portada-escritorio.jpg"
             alt="Entrenamiento en Itaca Jiu Jitsu">
         <script>
             // Escritorio y móvil usan vídeos distintos (proporciones distintas),
@@ -2905,7 +2907,7 @@
                     v.src = 'videos/Itaca_Hero_Mobile.mp4';
                 } else {
                     v.preload = 'auto';
-                    v.poster = 'images/Itaca/Gym1.webp';
+                    v.poster = 'images/Itaca/Portada-escritorio.jpg';
                     v.src = 'videos/Itaca_Hero_Desktop.mp4';
                 }
                 img.replaceWith(v);
