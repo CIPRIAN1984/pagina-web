@@ -5,6 +5,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#ffffff">
+
+    <script>
+        // Vuelta a la versión de escritorio. El reparto de index.html solo iba
+        // de ida (ancho -> móvil): quien pedía "modo ordenador" desde el móvil
+        // recargaba ESTA página, se quedaba aquí y seguía viendo el vídeo de
+        // móvil aunque hubiera pedido la otra versión.
+        //
+        // El corte es 900px, no 761px, a propósito: entre 761 y 899 no redirige
+        // ninguna de las dos. Ese hueco muerto evita el ping-pong si el ancho
+        // baila unos píxeles (aparece o desaparece la barra de scroll) justo en
+        // la frontera. El modo ordenador de Chrome usa 980px, así que entra de
+        // sobra.
+        (function () {
+            try {
+                if (location.search.indexOf('movil=1') > -1 ||
+                    sessionStorage.getItem('itaca-movil') === '1') {
+                    sessionStorage.setItem('itaca-movil', '1');
+                    return;
+                }
+                var ancha = window.matchMedia('(min-width: 900px)');
+                if (ancha.matches) {
+                    location.replace('index.html' + location.hash);
+                    return;
+                }
+                // Antes esto solo se miraba al cargar. Quien agrandaba la
+                // ventana (o cambiaba el tamaño en las herramientas del
+                // navegador) se quedaba aquí para siempre, viendo la versión de
+                // móvil estirada a 1900px. Ahora se vuelve a mirar cuando el
+                // ancho cruza la frontera.
+                ancha.addEventListener('change', function (e) {
+                    if (e.matches) { location.replace('index.html' + location.hash); }
+                });
+            } catch (e) {
+                /* Si algo falla, se queda en esta versión: nunca se bloquea el acceso. */
+            }
+        })();
+    </script>
+
     <title>ITACA JIU JITSU | Brazilian Jiu Jitsu en Logroño</title>
     <meta name="description"
         content="Escuela de Brazilian Jiu Jitsu en Logroño. Horarios, clases para niños y adultos, y clase de prueba gratuita.">
@@ -683,6 +721,45 @@
             filter: drop-shadow(0 1px 4px rgba(0, 0, 0, .5));
         }
 
+        .reel video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Con el vídeo en marcha, el triángulo de play sobra. */
+        .reel.reproduciendo::after {
+            display: none;
+        }
+
+        .reel__sound {
+            position: absolute;
+            right: .5rem;
+            bottom: .5rem;
+            z-index: 2;
+            width: 2.1rem;
+            height: 2.1rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .92);
+            color: var(--ink);
+            border: 1px solid var(--rule);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
+        }
+
+        .reel.suena .reel__sound {
+            display: flex;
+        }
+
+        .reel__sound svg {
+            width: 15px;
+            height: 15px;
+        }
+
         .map {
             width: 100%;
             aspect-ratio: 4/3;
@@ -884,6 +961,34 @@
             *::before {
                 animation: none !important;
                 transition: none !important;
+            }
+        }
+
+        /* Esta versión es para el móvil y normalmente nadie la ve ancha: por
+           encima de 900px el reparto manda a index.html. Pero ese reparto solo
+           se comprueba al cargar, así que hay tres formas de acabar viéndola en
+           una pantalla grande: agrandar la ventana sin recargar, entrar con
+           ?movil=1 a propósito, o que el navegador no ejecute el JavaScript.
+           Sin tope de anchura el contenido se estira de lado a lado con un
+           margen de 22px y parece rota. Se le pone la anchura de un móvil
+           grande y se centra: así en el peor caso se ve como una app centrada,
+           que es un fallo que no se nota. */
+        @media (min-width: 620px) {
+
+            main,
+            .foot,
+            .panel__bar,
+            .panel__body {
+                max-width: 560px;
+                margin-inline: auto;
+                width: 100%;
+            }
+
+            /* La barra de arriba mantiene su fondo de borde a borde (es
+               pegajosa y detrás pasa el contenido); lo que se centra es lo que
+               lleva dentro. */
+            .top {
+                padding-inline: max(var(--gutter), calc((100% - 560px) / 2));
             }
         }
     </style>
@@ -1088,11 +1193,13 @@
                 <h2 class="display display--sm" style="margin-top:.5rem">Itaca en<br>movimiento</h2>
                 <p class="prose panel__lede">Entrenamientos reales, grabados en el tatami.</p>
             </div>
+            <!-- El vídeo de cada ficha lo monta el JS al abrir este panel, no
+                 antes: así quien no entra aquí no se descarga nada. -->
             <div class="reels">
-                <div class="reel"><img src="images/posters/Boris_instagram.webp" alt="" loading="lazy"></div>
-                <div class="reel"><img src="images/posters/Cipri_instagram.webp" alt="" loading="lazy"></div>
-                <div class="reel"><img src="images/posters/Marta_instagram.webp" alt="" loading="lazy"></div>
-                <div class="reel"><img src="images/posters/Itaca_gi_instagram.webp" alt="" loading="lazy"></div>
+                <div class="reel" data-video="videos/Boris_instagram.mp4"><img src="images/posters/Boris_instagram.webp" alt="" loading="lazy"></div>
+                <div class="reel" data-video="videos/Cipri_instagram.mp4"><img src="images/posters/Cipri_instagram.webp" alt="" loading="lazy"></div>
+                <div class="reel" data-video="videos/Marta_instagram.mp4"><img src="images/posters/Marta_instagram.webp" alt="" loading="lazy"></div>
+                <div class="reel" data-video="videos/Itaca_gi_instagram.mp4"><img src="images/posters/Itaca_gi_instagram.webp" alt="" loading="lazy"></div>
             </div>
         </div>
     </section>
@@ -1327,12 +1434,46 @@
         (function () {
             'use strict';
 
-            /* Portada: el vídeo entra DESPUÉS de pintar la página, y no entra en
-               absoluto con ahorro de datos o conexión lenta. La foto pesa 42 KB. */
-            function cargarVideo() {
+            /* Con ahorro de datos o conexión lenta no se carga ningún vídeo:
+               se queda la foto, que pesa una fracción. */
+            function conexionFloja() {
                 var c = navigator.connection || {};
-                if (c.saveData) return;
-                if (/^(slow-)?2g$/.test(c.effectiveType || '')) return;
+                if (c.saveData) return true;
+                return /^(slow-)?2g$/.test(c.effectiveType || '');
+            }
+
+            /* Botón de mudo/sonido. Lo comparten la portada y los vídeos de
+               "Itaca en movimiento" para que se comporten igual: el vídeo
+               arranca siempre en silencio (ningún móvil deja sonar uno solo) y
+               esto es lo que permite activarlo a propósito. */
+            function botonSonido(v, clase, alCambiar) {
+                var btn = document.createElement('button');
+                btn.className = clase;
+                btn.type = 'button';
+                btn.innerHTML =
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="mute-off"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="mute-on"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
+                var iconOff = btn.querySelector('.mute-off');
+                var iconOn = btn.querySelector('.mute-on');
+                btn.pintar = function () {
+                    iconOff.style.display = v.muted ? 'none' : 'block';
+                    iconOn.style.display = v.muted ? 'block' : 'none';
+                    btn.setAttribute('aria-label', v.muted ? 'Activar sonido' : 'Silenciar');
+                };
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    v.muted = !v.muted;
+                    if (alCambiar) alCambiar(!v.muted);
+                    btn.pintar();
+                    v.play().catch(function () { });
+                });
+                btn.pintar();
+                return btn;
+            }
+
+            /* Portada: el vídeo entra DESPUÉS de pintar la página. */
+            function cargarVideo() {
+                if (conexionFloja()) return;
                 var v = document.createElement('video');
                 v.muted = true; v.defaultMuted = true;
                 ['autoplay', 'loop', 'playsinline', 'muted'].forEach(function (a) { v.setAttribute(a, ''); });
@@ -1347,28 +1488,142 @@
                 v.play().catch(function () { });
 
                 // Este vídeo sí lleva sonido de verdad (el anterior no tenía
-                // pista de audio). Arranca mudo, como exige cualquier móvil,
-                // con un botón para activarlo a propósito.
-                var btn = document.createElement('button');
-                btn.className = 'hero-sound';
-                btn.type = 'button';
-                btn.setAttribute('aria-label', 'Activar sonido');
-                btn.innerHTML =
-                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="mute-off" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>' +
-                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="mute-on"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
-                var iconOff = btn.querySelector('.mute-off');
-                var iconOn = btn.querySelector('.mute-on');
-                btn.addEventListener('click', function () {
-                    v.muted = !v.muted;
-                    iconOff.style.display = v.muted ? 'none' : 'block';
-                    iconOn.style.display = v.muted ? 'block' : 'none';
-                    btn.setAttribute('aria-label', v.muted ? 'Activar sonido' : 'Silenciar');
-                    v.play().catch(function () { });
-                });
-                media.appendChild(btn);
+                // pista de audio), de ahí el botón.
+                media.appendChild(botonSonido(v, 'hero-sound'));
             }
             if (document.readyState === 'complete') setTimeout(cargarVideo, 200);
             else window.addEventListener('load', function () { setTimeout(cargarVideo, 200); });
+
+            /* "Itaca en movimiento": aquí solo había pósters fijos. En
+               escritorio los vídeos arrancan al pasar el ratón; en un móvil no
+               hay ratón, así que arranca solo el que está a la vista.
+
+               Se reproduce UNO cada vez, no los cuatro: entre todos pesan 18 MB
+               y la mayoría entra con datos del móvil. Y no se monta nada hasta
+               que se abre este panel, igual que el mapa: quien no entre aquí no
+               descarga ni un byte de vídeo. */
+            var reelsMontados = false;
+            var fichasReel = [];
+            var visibilidadReel = {};
+            // Si alguien enciende el sonido, el siguiente vídeo sigue con
+            // sonido: si no, al bajar un poco se apagaba solo y parecía roto.
+            var sonidoReels = false;
+            var fichaElegida = null;
+
+            /* La rejilla es de DOS columnas, así que se reproduce la fila que
+               se está mirando: los dos vídeos de esa fila a la vez.
+
+               Antes solo arrancaba "el que más se ve" y los dos de una misma
+               fila se ven exactamente igual, así que siempre ganaba el primero
+               del código — el de la izquierda — y los de la derecha no se
+               reproducían nunca. Dos a la vez (una fila) y no los cuatro: entre
+               todos pesan 18 MB. */
+            var A_LA_VEZ = 2;
+
+            function decidirReel() {
+                var visibles = fichasReel.filter(function (ficha) {
+                    return (visibilidadReel[ficha.dataset.video] || 0) > 0.5;
+                }).sort(function (a, b) {
+                    return (visibilidadReel[b.dataset.video] || 0) - (visibilidadReel[a.dataset.video] || 0);
+                });
+
+                // Si han tocado una ficha, esa manda aunque no sea la que más se ve.
+                if (fichaElegida) {
+                    var yaEstaba = visibles.indexOf(fichaElegida);
+                    if (yaEstaba > -1) visibles.splice(yaEstaba, 1);
+                    visibles.unshift(fichaElegida);
+                }
+
+                var enMarcha = visibles.slice(0, A_LA_VEZ);
+                // El sonido es de una sola: dos vídeos a la vez no se entienden.
+                var principal = enMarcha[0] || null;
+
+                fichasReel.forEach(function (ficha) {
+                    var toca = enMarcha.indexOf(ficha) > -1;
+                    ficha.classList.toggle('reproduciendo', toca);
+                    ficha.classList.toggle('suena', ficha === principal);
+                    ficha.video.muted = !(ficha === principal && sonidoReels);
+                    ficha.boton.pintar();
+                    if (toca) ficha.video.play().catch(function () { });
+                    else ficha.video.pause();
+                });
+            }
+
+            function pararReels() {
+                // Al salir se vuelve a empezar en silencio: nadie espera que
+                // suene algo por reabrir una sección.
+                sonidoReels = false;
+                fichaElegida = null;
+                fichasReel.forEach(function (ficha) {
+                    ficha.video.pause();
+                    ficha.video.muted = true;
+                    ficha.boton.pintar();
+                    ficha.classList.remove('reproduciendo');
+                    ficha.classList.remove('suena');
+                });
+            }
+
+            function montarReels() {
+                if (reelsMontados) return;
+                reelsMontados = true;
+                if (conexionFloja()) return;  // se quedan los pósters, sin descargar vídeo
+
+                fichasReel = [].slice.call(document.querySelectorAll('.reel[data-video]'));
+                if (!fichasReel.length) return;
+
+                fichasReel.forEach(function (ficha) {
+                    var poster = ficha.querySelector('img');
+                    var v = document.createElement('video');
+                    v.muted = true; v.defaultMuted = true;
+                    ['loop', 'playsinline', 'muted'].forEach(function (a) { v.setAttribute(a, ''); });
+                    v.preload = 'none';  // no se descarga hasta que le toca reproducirse
+                    if (poster) v.poster = poster.getAttribute('src');
+                    v.src = ficha.dataset.video;
+                    ficha.appendChild(v);
+                    ficha.video = v;
+
+                    // Al encender el sonido de uno, los demás se callan: dos
+                    // vídeos sonando a la vez no se entienden.
+                    ficha.boton = botonSonido(v, 'reel__sound', function (sonando) {
+                        sonidoReels = sonando;
+                        if (!sonando) return;
+                        fichasReel.forEach(function (otra) {
+                            if (otra !== ficha && !otra.video.muted) {
+                                otra.video.muted = true;
+                                otra.boton.pintar();
+                            }
+                        });
+                    });
+                    ficha.appendChild(ficha.boton);
+
+                    // El triángulo de play era solo un dibujo: al tocarlo no
+                    // pasaba nada. Ahora tocar una ficha la pone en marcha,
+                    // aunque no sea la que más se ve.
+                    ficha.addEventListener('click', function () {
+                        fichaElegida = ficha;
+                        decidirReel();
+                    });
+                });
+
+                // Con "reducir movimiento" activado no arranca nada solo: hay
+                // que tocar la ficha, que es lo que hace el clic de arriba.
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                var obs = new IntersectionObserver(function (entradas) {
+                    entradas.forEach(function (e) {
+                        visibilidadReel[e.target.dataset.video] = e.isIntersecting ? e.intersectionRatio : 0;
+                    });
+                    // La ficha tocada deja de mandar en cuanto se va de la
+                    // pantalla; si no, seguiría sonando medio escondida y
+                    // quitándole el sitio a la fila que sí estás mirando.
+                    if (fichaElegida && !(visibilidadReel[fichaElegida.dataset.video] > 0.5)) fichaElegida = null;
+                    decidirReel();
+                }, {
+                    root: document.querySelector('#p-videos .panel__body'),
+                    threshold: [0, 0.25, 0.5, 0.75, 1]
+                });
+                fichasReel.forEach(function (ficha) { obs.observe(ficha); });
+            }
 
             /* Paneles */
             var abierto = null;
@@ -1376,6 +1631,7 @@
             function abrir(nombre, empujarHistorial) {
                 var el = document.getElementById('p-' + nombre);
                 if (!el) return;
+                if (nombre !== 'videos') pararReels();  // saltar a otro panel también calla los vídeos
                 if (abierto) abierto.classList.remove('open');
                 el.classList.add('open');
                 el.setAttribute('aria-hidden', 'false');
@@ -1387,12 +1643,21 @@
                     var m = document.getElementById('mapa');
                     if (m && !m.src) m.src = m.dataset.src;
                 }
+                if (nombre === 'videos') {
+                    montarReels();
+                    // Al volver a entrar, el observador no vuelve a dispararse
+                    // solo (no ha habido scroll), así que se decide a mano.
+                    decidirReel();
+                }
                 /* El botón atrás del móvil cierra el panel en vez de salir. */
                 if (empujarHistorial !== false) history.pushState({ panel: nombre }, '', '#' + nombre);
             }
 
             function cerrar() {
                 if (!abierto) return;
+                // Sin esto, un vídeo con el sonido puesto se sigue oyendo con
+                // el panel ya cerrado.
+                pararReels();
                 abierto.classList.remove('open');
                 abierto.setAttribute('aria-hidden', 'true');
                 abierto = null;
