@@ -2992,11 +2992,18 @@
         <img class="hero-video" id="hero-photo" src="images/Itaca/Portada-escritorio.jpg"
             alt="Entrenamiento en Itaca Jiu Jitsu">
         <script>
-            // Escritorio y móvil usan vídeos distintos (proporciones distintas),
-            // y los dos arrancan silenciados: ningún navegador deja sonar un
-            // vídeo sin que la persona haga clic antes. Se cambia aquí, junto al
-            // elemento, para que empiece a cargar sin esperar al resto de la
-            // página.
+            // ⚠️ UN SOLO VÍDEO DE PORTADA, EL ORIGINAL, EN TODAS LAS PANTALLAS.
+            // Decisión de Cipri (8 de septiembre de 2026): "no quiero dos vídeos
+            // diferentes, debe haber solo 1, el original". Antes el móvil cargaba
+            // `Itaca_Hero_Mobile.mp4` (vertical) y eso hacía que la web pareciera
+            // dos webs distintas aunque ya fuera una sola. El vertical sigue en
+            // `videos/` por si algún día se recupera; no se borra.
+            //
+            // Contrapartida asumida: el vídeo es horizontal (1920×800) y en un
+            // teléfono `object-fit: cover` recorta mucho por los lados.
+            //
+            // Arranca silenciado porque ningún navegador deja sonar un vídeo sin
+            // un gesto de la persona; para eso está el botón de sonido de abajo.
             (function () {
                 var esMovil = window.matchMedia('(max-width: 760px)').matches;
                 var img = document.getElementById('hero-photo');
@@ -3009,15 +3016,11 @@
                 ['autoplay', 'loop', 'playsinline', 'muted'].forEach(function (a) {
                     v.setAttribute(a, '');
                 });
-                if (esMovil) {
-                    v.preload = 'metadata';
-                    v.poster = 'images/Itaca/Portada-movil.jpg';
-                    v.src = 'videos/Itaca_Hero_Mobile.mp4';
-                } else {
-                    v.preload = 'auto';
-                    v.poster = 'images/Itaca/Portada-escritorio.jpg';
-                    v.src = 'videos/Itaca_Hero_Desktop.mp4';
-                }
+                v.poster = 'images/Itaca/Portada-escritorio.jpg';
+                v.src = 'videos/Itaca_Hero_Desktop.mp4';
+                // El archivo pesa 8,4 MB: en el móvil no se precarga entero de
+                // golpe, que casi todo el mundo entra con datos.
+                v.preload = esMovil ? 'metadata' : 'auto';
                 img.replaceWith(v);
                 // Si el navegador se resiste al autoplay, la foto de poster se
                 // queda visible: no hay pantalla en negro en ningún caso.
