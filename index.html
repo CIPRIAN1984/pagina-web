@@ -3,21 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- 980 y no `width=device-width` a propósito, por decisión de Cipri
-         (7 de septiembre de 2026): quiere que el teléfono muestre la web de
-         ordenador entera, empequeñecida para caber, que es exactamente lo que
-         hace el "modo ordenador" del navegador. Con `device-width` el móvil
-         entraba por las media queries de 760px y salía la versión reorganizada
-         (botones apilados, vídeo vertical, barra inferior), que no es la que
-         quiere. 980 es el ancho que usa el modo ordenador de Chrome, así que
-         reproduce lo que él grabó, incluida la rejilla de dos columnas de
-         instructores (media query de 1024px).
-
-         ⚠️ Contrapartida asumida y avisada: el texto se ve pequeño y hay que
-         acercar con los dedos para leerlo cómodamente. No se pone
-         `user-scalable=no` ni `maximum-scale` justamente por eso: el zoom con
-         los dedos tiene que seguir funcionando. -->
-    <meta name="viewport" content="width=980">
+    <!-- `device-width` y no un ancho fijo: cada pantalla usa su propia versión a
+         través de las media queries (móvil, tablet y escritorio). Durante unas
+         horas esto fue `width=980` para que el teléfono enseñara la versión de
+         tablet empequeñecida; se revirtió el 8 de septiembre de 2026 porque esa
+         mentira apagaba de golpe todos los cortes por debajo de 1024px y con
+         ellos la letra legible, la barra de acciones y el vídeo vertical.
+         No se pone `user-scalable=no` ni `maximum-scale`: el zoom con los dedos
+         tiene que funcionar siempre. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Esta es la única web, en el móvil y en el ordenador. Aquí había un
          reparto que mandaba los móviles a movil.html, una segunda versión con
@@ -1824,7 +1818,13 @@
         .footer-simple .footer-links {
             display: flex;
             flex-direction: row;
-            gap: 2rem;
+            /* Los cuatro enlaces miden 447px en una sola fila y no cabían en un
+               teléfono: se salían por los dos lados y aparecía barra horizontal
+               en toda la página por debajo de 480px. En pantalla ancha caben de
+               sobra y esto no cambia nada. */
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.9rem 2rem;
         }
 
         .footer-simple .footer-links a {
@@ -2873,6 +2873,72 @@
 
             .modal-title {
                 font-size: 3.5rem;
+            }
+        }
+
+        /* ── Móvil con carácter editorial ───────────────────────────────────
+           A Cipri le gusta la versión de escritorio y no la de móvil, y la
+           diferencia no era el contenido: era el acabado. En el móvil todo
+           llevaba esquinas redondeadas (fichas 14px, vídeos 16px, fotos 18px)
+           y pestañas en forma de píldora, con huecos entre bloques flotando
+           sobre el fondo. Eso es lenguaje de aplicación. La editorial va a
+           esquina viva, de borde a borde y con los bloques tocándose.
+
+           Este bloque va el último del CSS a propósito: solo cambia el
+           acabado, no la maquetación ni el comportamiento. Las fichas se
+           siguen deslizando con el dedo, que en un móvil es lo correcto. */
+        @media (max-width: 768px) {
+
+            /* Esquina viva en todo lo que antes flotaba. */
+            .instructors-grid .instructor-card,
+            .reel-item,
+            .card,
+            .gallery__item {
+                border-radius: 0;
+            }
+
+            /* Las fichas de instructores se tocan y llegan al borde de la
+               pantalla, como el tríptico de escritorio. La siguiente asoma
+               justo lo suficiente para que se vea que hay más. */
+            .instructors-grid {
+                gap: 0;
+                padding-inline: 0;
+                margin-inline: calc(var(--gutter) * -1);
+                scroll-padding-left: 0;
+            }
+
+            .instructors-grid .instructor-card {
+                flex-basis: 86vw;
+                scroll-snap-align: start;
+            }
+
+            /* Los vídeos, igual: fila a sangre, sin huecos ni bordes. */
+            .reels-grid {
+                gap: 0;
+                margin-inline: calc(var(--gutter) * -1);
+                padding-inline: 0;
+            }
+
+            .reels-grid .reel-item {
+                flex-basis: 78vw;
+                scroll-snap-align: start;
+            }
+
+            /* Las pestañas del horario dejan de ser píldoras: rótulo con
+               subrayado, que es como se marca una sección en un impreso. */
+            .day-tab {
+                border-radius: 0;
+                border: 0;
+                border-bottom: 2px solid transparent;
+                background: transparent;
+                padding-inline: 0;
+                margin-right: 1.6rem;
+            }
+
+            .day-tab[aria-selected="true"] {
+                background: transparent;
+                color: var(--text-dark);
+                border-bottom-color: var(--text-dark);
             }
         }
     </style>
