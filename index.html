@@ -2907,20 +2907,31 @@
                 scroll-padding-left: 0;
             }
 
+            /* 62vw y no 86: a ficha casi de pantalla completa, cada instructor
+               parecía una página aparte y no se veía que hubiera más. A este
+               ancho entra uno entero y medio, que es lo que dice "esto se
+               desliza" sin necesidad de ninguna flecha. */
             .instructors-grid .instructor-card {
-                flex-basis: 86vw;
+                flex-basis: 62vw;
                 scroll-snap-align: start;
             }
 
-            /* Los vídeos, igual: fila a sangre, sin huecos ni bordes. */
+            /* Los vídeos, igual: fila a sangre, sin huecos ni bordes.
+               `width: auto` es imprescindible: la regla base lleva `width: 100%`,
+               que clava el ancho al del contenedor, así que el margen negativo
+               movía la fila a la izquierda pero no la ensanchaba y se quedaba a
+               un gutter del borde derecho. */
             .reels-grid {
                 gap: 0;
+                width: auto;
                 margin-inline: calc(var(--gutter) * -1);
                 padding-inline: 0;
             }
 
+            /* Más estrechos que las fichas de instructores porque son 9:16: a
+               78vw un solo vídeo medía más que la pantalla de alto. */
             .reels-grid .reel-item {
-                flex-basis: 78vw;
+                flex-basis: 52vw;
                 scroll-snap-align: start;
             }
 
@@ -4526,6 +4537,70 @@ entenderás ya qué significan las Ítacas.`;
                     });
                 }
             });
+
+            // ── Reels que se lanzan solos donde no hay ratón ──────────────────
+            /* En un móvil no hay `mouseenter`, así que los cuatro recuadros se
+               quedaban congelados en su primer fotograma. Aquí se reproducen
+               solos los que están a la vista y se paran en cuanto salen de la
+               pantalla, que es lo que pidió Cipri.
+
+               Solo DOS a la vez, y solo los que se ven de verdad: entre los
+               cuatro vídeos pesan 18 MB y casi todo el mundo entra con datos del
+               móvil. Van siempre en silencio; para oírlos se toca el recuadro y
+               se abre el visor a pantalla completa, que ya existía.
+
+               Se activa solo donde no hay ratón, para no pisar el hover de
+               escritorio, y se respeta "reducir movimiento" del sistema. */
+            (function () {
+                var sinRaton = window.matchMedia('(hover: none)').matches;
+                var menosMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                var fichas = Array.prototype.slice.call(document.querySelectorAll('.reel-item'));
+                if (!sinRaton || menosMovimiento || !fichas.length) return;
+
+                var A_LA_VEZ = 2;
+                var visibilidad = new Map();
+
+                function decidir() {
+                    // De los que se ven más de la mitad, los más visibles primero.
+                    var candidatos = fichas
+                        .filter(function (f) { return (visibilidad.get(f) || 0) > 0.5; })
+                        .sort(function (a, b) { return visibilidad.get(b) - visibilidad.get(a); })
+                        .slice(0, A_LA_VEZ);
+
+                    fichas.forEach(function (ficha) {
+                        var v = ficha.querySelector('video');
+                        if (!v) return;
+                        if (candidatos.indexOf(ficha) > -1) {
+                            v.muted = true;
+                            v.play().catch(function () { });
+                        } else if (!v.paused) {
+                            v.pause();
+                            v.currentTime = 1;
+                        }
+                    });
+                }
+
+                var obs = new IntersectionObserver(function (entradas) {
+                    entradas.forEach(function (e) { visibilidad.set(e.target, e.intersectionRatio); });
+                    decidir();
+                }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
+                fichas.forEach(function (f) { obs.observe(f); });
+
+                // Red de seguridad: al salir la sección entera, se paran todos.
+                // El observador de arriba puede no disparar si el scroll es muy
+                // rápido y quedaría un vídeo sonando fuera de pantalla.
+                var seccion = document.getElementById('reels');
+                if (seccion) {
+                    new IntersectionObserver(function (entradas) {
+                        if (entradas[0].isIntersecting) return;
+                        fichas.forEach(function (ficha) {
+                            var v = ficha.querySelector('video');
+                            if (v && !v.paused) { v.pause(); v.currentTime = 1; }
+                            visibilidad.set(ficha, 0);
+                        });
+                    }, { threshold: 0 }).observe(seccion);
+                }
+            })();
 
             // ── Carousel Zoom ─────────────────────────────────────────────────────────────
             /* ══════════════════════════════════════════════════════════════════
