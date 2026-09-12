@@ -2916,23 +2916,23 @@
                 scroll-snap-align: start;
             }
 
-            /* Los vídeos, igual: fila a sangre, sin huecos ni bordes.
+            /* Los vídeos van en rejilla de 2×2, no en fila deslizable: son
+               cuatro, así que entran justos en dos filas de dos y se ven todos
+               de una vez, a sangre y sin nada cortado. Deslizándose se veían
+               "uno y medio", con el segundo partido por la mitad.
+
                `width: auto` es imprescindible: la regla base lleva `width: 100%`,
                que clava el ancho al del contenedor, así que el margen negativo
-               movía la fila a la izquierda pero no la ensanchaba y se quedaba a
-               un gutter del borde derecho. */
+               movía la rejilla a la izquierda pero no la ensanchaba y se quedaba
+               a un gutter del borde derecho. */
             .reels-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                overflow-x: visible;
                 gap: 0;
                 width: auto;
                 margin-inline: calc(var(--gutter) * -1);
                 padding-inline: 0;
-            }
-
-            /* Más estrechos que las fichas de instructores porque son 9:16: a
-               78vw un solo vídeo medía más que la pantalla de alto. */
-            .reels-grid .reel-item {
-                flex-basis: 52vw;
-                scroll-snap-align: start;
             }
 
             /* Las pestañas del horario dejan de ser píldoras: rótulo con
