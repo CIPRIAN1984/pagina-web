@@ -2897,23 +2897,52 @@
                 border-radius: 0;
             }
 
-            /* Las fichas de instructores se tocan y llegan al borde de la
-               pantalla, como el tríptico de escritorio. La siguiente asoma
-               justo lo suficiente para que se vea que hay más. */
+            /* Rejilla de 2 columnas, a sangre, en vez de fila deslizable: con
+               3 fichas (hoy) deslizando solo se veía "una y media" y nadie
+               entendía que había que arrastrar. Cipri: "puedes hacer otra
+               cosa para que se vean mejor hasta que metemos a otros
+               profesores" (13 sept 2026).
+
+               El truco `:last-child:nth-child(odd)` hace que, cuando sobra
+               una ficha suelta, ocupe la fila entera en vez de dejar un hueco
+               vacío al lado — así no hace falta tocar esto cada vez que se
+               añada o quite un profesor: con 3 sale 2+1 ancho, con 4 sale
+               2×2 perfecto, con 5 vuelve a sobrar una y se ensancha, etc. */
             .instructors-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                overflow-x: visible;
                 gap: 0;
                 padding-inline: 0;
                 margin-inline: calc(var(--gutter) * -1);
-                scroll-padding-left: 0;
             }
 
-            /* 62vw y no 86: a ficha casi de pantalla completa, cada instructor
-               parecía una página aparte y no se veía que hubiera más. A este
-               ancho entra uno entero y medio, que es lo que dice "esto se
-               desliza" sin necesidad de ninguna flecha. */
+            .instructors-grid .instructor-card:last-child:nth-child(odd) {
+                grid-column: 1 / -1;
+            }
+
+            /* La ficha de 2 columnas es más estrecha que las de escritorio
+               (3 columnas) o tablet (2 columnas, pero mucho más anchas), así
+               que con el mismo tamaño de letra la biografía de Boris —la más
+               larga de las tres— no cabía: el texto se centra en vertical
+               (`.instructor-content` usa `translate(-50%,-50%)`) y lo que no
+               cabe se recorta por arriba y por abajo a la vez, sin avisar.
+               Ficha más alta + letra más pequeña le hacen sitio. */
             .instructors-grid .instructor-card {
-                flex-basis: 62vw;
-                scroll-snap-align: start;
+                aspect-ratio: 3 / 4.6;
+            }
+
+            .instructors-grid .instructor-content {
+                width: 88%;
+            }
+
+            .instructors-grid .instructor-card h3 {
+                font-size: clamp(1.6rem, 7vw, 2.2rem);
+            }
+
+            .instructors-grid .instructor-card p {
+                font-size: 0.82rem;
+                line-height: 1.45;
             }
 
             /* Los vídeos van en rejilla de 2×2, no en fila deslizable: son
