@@ -266,6 +266,7 @@
         }
 
         .btn-outline {
+            background-color: transparent;
             border-color: var(--bg-white);
             color: var(--bg-white);
         }
@@ -277,6 +278,7 @@
         }
 
         .btn-dark-outline {
+            background-color: transparent;
             border-color: var(--text-dark);
             color: var(--text-dark);
         }
@@ -1760,6 +1762,22 @@
             border-radius: 4px;
         }
 
+        /* El fondo de esta sección es casi negro, el mismo color que el
+           relleno de .btn-primary en el resto de la web: un botón primario
+           normal se volvería invisible aquí. Se invierte a blanco relleno
+           para que la Clase de Prueba siga siendo la opción destacada. */
+        .cta-final .btn-primary {
+            background-color: var(--bg-white);
+            color: var(--text-dark);
+            border-color: var(--bg-white);
+        }
+
+        .cta-final .btn-primary:hover,
+        .cta-final .btn-primary:focus {
+            background-color: transparent;
+            color: var(--bg-white);
+        }
+
         @media (max-width: 900px) {
             .cta-final {
                 padding: var(--space-xl) var(--gutter);
@@ -3130,8 +3148,8 @@
             <p>Técnica bien explicada, entrenamiento exigente y gente que te ayuda a mejorar. Aquí se empieza de cero.
             </p>
             <div class="hero-buttons">
-                <a href="#" class="btn btn-primary modal-trigger">Hazte Miembro</a>
-                <a href="#" class="btn btn-outline trial-trigger">Clase de Prueba</a>
+                <a href="#" class="btn btn-primary trial-trigger">Clase de Prueba</a>
+                <a href="#" class="btn btn-outline modal-trigger">Hazte Miembro</a>
             </div>
         </div>
     </section>
@@ -3577,8 +3595,8 @@
             <div class="cta-content">
                 <p>La primera clase es de prueba y no cuesta nada. Ven, mira cómo se entrena y decide después.</p>
                 <div class="hero-buttons">
+                    <button class="btn btn-primary trial-trigger">Clase de prueba</button>
                     <button class="btn btn-outline modal-trigger">Hazte miembro</button>
-                    <button class="btn btn-outline trial-trigger">Clase de prueba</button>
                 </div>
             </div>
         </div>
