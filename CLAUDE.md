@@ -158,19 +158,25 @@ El agente reacciona **inmediatamente**:
 Al iniciar cada sesión, este es el estado:
 
 ```
-ITACA JIU JITSU — Estado de Salud (actualizado 2026-09-07, portadas con sonido)
+ITACA JIU JITSU — Estado de Salud (actualizado 2026-09-14, clase de prueba con fechas reales)
 ═════════════════════════════════════════════════════════════
 ✅ Código funciona:  index.html (única web) + js/ + legal/, sin errores
-✅ Horario:          una sola fuente (js/itaca-horario.js), ya no duplicado
-✅ Formularios:      Web3Forms activo (clave puesta), casilla de consentimiento en los dos
-✅ Portada:          vídeo real en las dos versiones, cada una con el suyo y con botón de
-                     sonido propio; se pausa al salir de pantalla; el poster de cada una es
-                     el primer fotograma de su vídeo, así que no hay salto al cargar
-✅ Fotos:            12 en el carrusel del gimnasio, 3 instructores con fotos de estudio nuevas
+✅ Horario:          una sola fuente (js/itaca-horario.js); expone también proximasClases()
+                     para el formulario de clase de prueba
+✅ Formularios:      Web3Forms activo (clave puesta), casilla de consentimiento en los dos,
+                     casilla de "quiero recibir ofertas" aparte para email de marketing.
+                     Clase de prueba: ya no pide fecha en blanco, elige directo entre las
+                     próximas clases reales de su categoría
+✅ Portada:          un solo vídeo (Itaca_Hero_Desktop.mp4) en todas las pantallas, con botón
+                     de sonido propio también en móvil; se pausa al salir de pantalla
+✅ Responsive:       tres versiones de verdad (escritorio / tablet / móvil) con viewport
+                     correcto (width=device-width); móvil a esquina viva, sin border-radius
+✅ Fotos:            12 en el carrusel del gimnasio, 3 instructores con fotos de estudio
 ⚠️  Deuda técnica:   ver DECISIONS.md — DT-1, DT-2 y DT-4 resueltas, queda DT-3 (y DT-5, DT-6 nuevas)
 📊 Pruebas:         No hay suite automática (manual en navegador + Playwright puntual)
 🔴 Bloqueadores:    ninguno crítico — ver DT-5 (revisión legal de terminos.html) como pendiente importante
-📦 Deploy:          main en producción (www.itacajiujitsu.com), último PR fusionado el #18 con squash. claude/new-session-oa3wjo se reparte de main tras cada fusión
+📦 Deploy:          main en producción (www.itacajiujitsu.com), último PR fusionado el #27 con
+                     squash. claude/new-session-oa3wjo se reparte de main tras cada fusión
 ```
 
 ### 4. Memoria de Sesión vs Persistente
@@ -245,6 +251,8 @@ No hay base de datos. Lo que hace las veces de "modelo de datos" son los archivo
 | Web de escritorio | `index.html` | Estilos y JavaScript incluidos. |
 | Reenvío de la web vieja de móvil | `movil.html` | **Ya no es una web.** Son 50 líneas que mandan a `index.html` conservando el ancla. Existe solo para que los enlaces antiguos y lo indexado por Google no den error 404. La app de móvil que había aquí está en el historial de git. |
 | Horario de clases | `js/itaca-horario.js` | **Única fuente.** Lo lee `index.html` para pintar la tabla/pestañas y para filtrar las clases del formulario de clase de prueba. |
+
+⚠️ **El formulario de clase de prueba (14 de septiembre de 2026) ya no pide elegir una fecha en un calendario en blanco.** Antes se elegía una fecha cualquiera y solo DESPUÉS se sabía si ese día había clase para la categoría elegida ("ese día no hay clase, prueba con otra fecha"); era un fallo real señalado desde fuera del proyecto. Ahora el desplegable "PRÓXIMA CLASE DISPONIBLE" enseña directamente las próximas 6 clases reales (con fecha de verdad) para la categoría marcada, generadas por `ItacaHorario.proximasClases(categoria, cuantas)` a partir del mismo `CLASES` de siempre — no hay una copia nueva que desincronizar. Cada `<option>` lleva la fecha en `data-fecha`; el JS del formulario la lee de ahí (`trialClassSelect.selectedOptions[0].dataset.fecha`) en vez de un campo de fecha aparte. Para una categoría infantil (una sola clase a la semana) llegar a 6 opciones puede tardar semanas — es correcto, no un fallo.
 | Envío de formularios | `js/itaca-formularios.js` | Aquí vive `CONFIG.claveWeb3Forms`, el teléfono, el email y (si se activa) la URL de la hoja de cálculo de seguimiento — ver `docs/hoja-de-calculo.md`. |
 | Textos legales | `legal/privacidad.html`, `legal/terminos.html` | Páginas aparte, no modales, así el texto existe una sola vez. Enlazadas desde la casilla de consentimiento de ambos formularios. |
 | Panel de solicitudes | `panel/index.html` | Uso interno de Cipri, no la web pública: tarjetas con quién ha escrito, botón de WhatsApp, notas privadas por solicitud, aviso de las que llevan más de 3 días sin gestionar, y pestañas Pendientes/Gestionadas/Estadísticas/Todas. `noindex` + `Disallow` en `robots.txt`, protegido por una clave (`CLAVE_PANEL`) que solo vive en el script de Google, nunca en el repositorio. Lee y escribe contra el mismo Apps Script que guarda los leads — ver `docs/hoja-de-calculo.md`. Instalable como app (`panel/manifest.json` + `panel/icon-192.png` / `icon-512.png`), sin service worker a propósito. |

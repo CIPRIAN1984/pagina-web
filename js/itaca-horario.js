@@ -83,6 +83,51 @@ window.ItacaHorario = (function () {
             .map(function (c) { return c.hora.split(' - ')[0] + ' - ' + c.nombre; });
     }
 
+    var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+        'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+    /* Las próximas `cuantas` clases reales (con fecha de verdad) para una
+       categoría, a partir de hoy. Antes el formulario de clase de prueba
+       pedía elegir una fecha en un calendario en blanco y solo DESPUÉS
+       enseñaba si esa fecha tenía o no clase para la categoría elegida —
+       fácil acabar en "ese día no hay clase, prueba con otra fecha". Con
+       esto la persona ve directamente cuándo es la próxima clase que le
+       vale y la elige, sin adivinar.
+
+       `cuantas` no es una promesa de "tantas fechas en tantos días": las
+       categorías infantiles tienen una sola clase a la semana, así que
+       llegar a 6 puede tardar semanas — es correcto, simplemente no hay
+       más opciones antes. El tope de 90 días es solo una red de seguridad
+       para no dar vueltas sin fin si algún día una categoría se queda sin
+       ninguna clase asignada. */
+    function proximasClases(categoria, cuantas) {
+        var resultado = [];
+        var hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        var TOPE_DIAS = 90;
+        for (var i = 0; i < TOPE_DIAS && resultado.length < cuantas; i++) {
+            var fecha = new Date(hoy);
+            fecha.setDate(hoy.getDate() + i);
+            var indiceSemana = fecha.getDay();
+            if (indiceSemana === 0) continue; // domingo: cerrado
+            var dia = DIAS[indiceSemana - 1];
+            clasesDe(dia).forEach(function (c) {
+                if (c.para !== categoria || resultado.length >= cuantas) return;
+                var y = fecha.getFullYear();
+                var m = String(fecha.getMonth() + 1).padStart(2, '0');
+                var d = String(fecha.getDate()).padStart(2, '0');
+                var horaInicio = c.hora.split(' - ')[0];
+                resultado.push({
+                    fechaISO: y + '-' + m + '-' + d,
+                    etiqueta: dia + ' ' + fecha.getDate() + ' de ' + MESES[fecha.getMonth()] +
+                        ' · ' + horaInicio + ' · ' + c.nombre,
+                    clase: horaInicio + ' - ' + c.nombre
+                });
+            });
+        }
+        return resultado;
+    }
+
     var DIAS_EN = {
         'Lunes': 'Monday', 'Martes': 'Tuesday', 'Miércoles': 'Wednesday',
         'Jueves': 'Thursday', 'Viernes': 'Friday', 'Sábado': 'Saturday'
@@ -113,6 +158,7 @@ window.ItacaHorario = (function () {
         clasesDe: clasesDe,
         diaDeFecha: diaDeFecha,
         clasesParaReserva: clasesParaReserva,
+        proximasClases: proximasClases,
         horarioSchemaOrg: horarioSchemaOrg,
         /* Índice del día de hoy dentro de DIAS; el domingo cae en lunes. */
         indiceHoy: function () {

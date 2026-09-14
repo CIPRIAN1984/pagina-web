@@ -3716,17 +3716,16 @@
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="trialDate">FECHA <span>*</span></label>
-                        <input type="date" id="trialDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="trialClassSelect">CLASE DISPONIBLE <span>*</span></label>
-                        <select id="trialClassSelect" required>
-                            <option value="">Selecciona modalidad y fecha</option>
-                        </select>
-                    </div>
+                <!-- Antes había aquí un calendario en blanco (elegir fecha) y solo
+                     DESPUÉS se sabía si ese día había clase para la categoría
+                     elegida. Ahora la lista ya enseña las próximas clases reales:
+                     se elige directamente, sin adivinar. La fecha de cada opción
+                     va en su atributo `data-fecha` (ver el JS más abajo). -->
+                <div class="form-group">
+                    <label for="trialClassSelect">PRÓXIMA CLASE DISPONIBLE <span>*</span></label>
+                    <select id="trialClassSelect" required>
+                        <option value="">Primero elige adulto o niño</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -4052,14 +4051,8 @@ entenderás ya qué significan las Ítacas.`;
             const subCategoriaNino = document.getElementById('subCategoriaNino');
             const nino4a6 = document.getElementById('nino4a6');
             const nino7a10 = document.getElementById('nino7a10');
-            const trialDate = document.getElementById('trialDate');
             const trialClassSelect = document.getElementById('trialClassSelect');
             const trialForm = document.getElementById('trialForm');
-
-            // No se puede pedir una clase de prueba para un día que ya ha pasado.
-            const hoy = new Date();
-            const hoyISO = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
-            trialDate.min = hoyISO;
 
             trialTriggers.forEach(trigger => {
                 trigger.addEventListener('click', (e) => {
@@ -4105,41 +4098,43 @@ entenderás ya qué significan las Ítacas.`;
 
             nino4a6.addEventListener('change', updateAvailableClasses);
             nino7a10.addEventListener('change', updateAvailableClasses);
-            trialDate.addEventListener('change', updateAvailableClasses);
 
+            // Las clases salen de js/itaca-horario.js, que es el único sitio
+            // donde se editan. Antes había aquí una copia que podía quedarse
+            // desfasada respecto a la tabla de horarios de más arriba.
+            //
+            // Antes se pedía elegir una fecha en un calendario en blanco y
+            // SOLO DESPUÉS se sabía si ese día había clase para la categoría
+            // elegida — fácil acabar en "ese día no hay clase, prueba con
+            // otra fecha". Ahora la lista enseña directamente las próximas
+            // clases reales (con fecha de verdad) para la categoría, y la
+            // fecha de cada una viaja en `data-fecha` de su <option>.
             function updateAvailableClasses() {
-                if (!trialDate.value) {
-                    trialClassSelect.innerHTML = '<option value="">Primero selecciona una fecha</option>';
-                    return;
-                }
-
-                // Las clases salen de js/itaca-horario.js, que es el único sitio
-                // donde se editan. Antes había aquí una copia que podía quedarse
-                // desfasada respecto a la tabla de horarios de más arriba.
                 let categoria = null;
                 if (tipoAdulto.checked) categoria = 'adulto';
                 else if (tipoNino.checked && nino4a6.checked) categoria = 'nino46';
                 else if (tipoNino.checked && nino7a10.checked) categoria = 'nino710';
 
                 if (!categoria) {
-                    trialClassSelect.innerHTML = '<option value="">Primero selecciona una modalidad</option>';
+                    trialClassSelect.innerHTML = '<option value="">Primero elige adulto o niño</option>';
                     return;
                 }
 
-                const optionsConfig = ItacaHorario.clasesParaReserva(trialDate.value, categoria);
+                const proximas = ItacaHorario.proximasClases(categoria, 6);
 
                 trialClassSelect.innerHTML = '';
-                if (optionsConfig.length > 0) {
-                    optionsConfig.forEach(opt => {
+                if (proximas.length > 0) {
+                    proximas.forEach(c => {
                         const el = document.createElement('option');
-                        el.value = opt;
-                        el.textContent = opt;
+                        el.value = c.clase;
+                        el.textContent = c.etiqueta;
+                        el.dataset.fecha = c.fechaISO;
                         trialClassSelect.appendChild(el);
                     });
                 } else {
                     const el = document.createElement('option');
                     el.value = "";
-                    el.textContent = "No hay clases ese día para tu categoría";
+                    el.textContent = "De momento no hay clases para esta categoría";
                     trialClassSelect.appendChild(el);
                 }
             }
@@ -4239,7 +4234,7 @@ entenderás ya qué significan las Ítacas.`;
 
                 if (!trialClassSelect.value) {
                     mostrarEstado(trialStatus, 'error',
-                        'Ese día no hay clases para la categoría que has elegido. Prueba con otra fecha.');
+                        'De momento no hay clases próximas para la categoría que has elegido.');
                     return;
                 }
 
@@ -4247,7 +4242,7 @@ entenderás ya qué significan las Ítacas.`;
                 const email = document.getElementById('trialEmail').value.trim();
                 const telefono = document.getElementById('trialTelefono').value.trim();
                 const cat = tipoAdulto.checked ? 'Adulto' : 'Niño (' + (nino4a6.checked ? '4 a 6 años' : '7 a 10 años') + ')';
-                const fecha = trialDate.value;
+                const fecha = trialClassSelect.selectedOptions[0].dataset.fecha;
                 const clase = trialClassSelect.value;
                 const canal = canalElegido('ContactoPreferidoPrueba');
                 const marketing = document.getElementById('trialMarketing').checked;
