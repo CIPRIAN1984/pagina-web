@@ -2901,13 +2901,23 @@
                3 fichas (hoy) deslizando solo se veía "una y media" y nadie
                entendía que había que arrastrar. Cipri: "puedes hacer otra
                cosa para que se vean mejor hasta que metemos a otros
-               profesores" (13 sept 2026).
+               profesores" (13 sept 2026), y al día siguiente: "la foto
+               grande debe ser la de Cipri, como head coach, y Boris y Marta
+               más pequeño".
 
-               El truco `:last-child:nth-child(odd)` hace que, cuando sobra
-               una ficha suelta, ocupe la fila entera en vez de dejar un hueco
-               vacío al lado — así no hace falta tocar esto cada vez que se
-               añada o quite un profesor: con 3 sale 2+1 ancho, con 4 sale
-               2×2 perfecto, con 5 vuelve a sobrar una y se ensancha, etc. */
+               El primero de la lista (Cipri, es el head coach — ver el HTML
+               de #instructors) ocupa siempre la fila entera, grande. El
+               resto se reparte en parejas de 2 columnas debajo.
+
+               El truco `:last-child:nth-child(even)` hace que, si el último
+               profesor se queda sin pareja, ocupe la fila entera en vez de
+               dejar un hueco vacío al lado — así no hace falta tocar esto al
+               añadir o quitar profesores. Es `(even)` y no `(odd)` porque
+               ahora Cipri ya ocupa la posición 1 él solo: con 3 fichas en
+               total (Cipri + 2), el último está en la posición 3 (impar) y
+               no sobra nadie — Boris y Marta llenan la pareja. Con 4 fichas
+               (Cipri + 3), el último está en la posición 4 (par) y sí sobra,
+               así que se ensancha. Sigue así indefinidamente. */
             .instructors-grid {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
@@ -2917,7 +2927,14 @@
                 margin-inline: calc(var(--gutter) * -1);
             }
 
-            .instructors-grid .instructor-card:last-child:nth-child(odd) {
+            .instructors-grid .instructor-card:first-child {
+                grid-column: 1 / -1;
+                /* Menos alta que las fichas pequeñas de abajo: a todo el
+                   ancho del teléfono, 3/4.6 la dejaría desproporcionada. */
+                aspect-ratio: 3 / 4;
+            }
+
+            .instructors-grid .instructor-card:last-child:nth-child(even) {
                 grid-column: 1 / -1;
             }
 
@@ -2927,7 +2944,8 @@
                larga de las tres— no cabía: el texto se centra en vertical
                (`.instructor-content` usa `translate(-50%,-50%)`) y lo que no
                cabe se recorta por arriba y por abajo a la vez, sin avisar.
-               Ficha más alta + letra más pequeña le hacen sitio. */
+               Ficha más alta + letra más pequeña le hacen sitio. No afecta a
+               la de Cipri, que tiene su propio aspect-ratio arriba. */
             .instructors-grid .instructor-card {
                 aspect-ratio: 3 / 4.6;
             }
