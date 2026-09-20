@@ -20,7 +20,15 @@
    ════════════════════════════════════════════════════════════════════════ */
 
 /* La contraseña del panel. Cámbiala por una tuya antes de guardar.
-   Vive solo aquí, dentro de tu cuenta de Google: nunca en la web. */
+   Vive solo aquí, dentro de tu cuenta de Google: nunca en la web.
+
+   ⚠️ LAS COMILLAS SIMPLES SON OBLIGATORIAS: 'tuclave', no tuclave.
+   Sin ellas Google cree que es el nombre de una variable, el script
+   revienta entero y — esto es lo grave — publica el error en una página
+   que ve CUALQUIERA que abra la dirección del script, con tu clave
+   escrita dentro ("ReferenceError: tuclave is not defined"). Pasó el 20
+   de septiembre de 2026 y hubo que cambiar la clave. Si la palabra no se
+   pone de color en el editor, las comillas faltan. */
 var CLAVE_PANEL = 'CAMBIA-ESTO-POR-TU-CLAVE';
 
 var CABECERA = [

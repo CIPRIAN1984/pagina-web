@@ -158,7 +158,7 @@ El agente reacciona **inmediatamente**:
 Al iniciar cada sesión, este es el estado:
 
 ```
-ITACA JIU JITSU — Estado de Salud (actualizado 2026-09-14, clase de prueba con fechas reales)
+ITACA JIU JITSU — Estado de Salud (actualizado 2026-09-20, panel arreglado y verificado)
 ═════════════════════════════════════════════════════════════
 ✅ Código funciona:  index.html (única web) + js/ + legal/, sin errores
 ✅ Horario:          una sola fuente (js/itaca-horario.js); expone también proximasClases()
@@ -171,14 +171,15 @@ ITACA JIU JITSU — Estado de Salud (actualizado 2026-09-14, clase de prueba con
                      de sonido propio también en móvil; se pausa al salir de pantalla
 ✅ Panel:            panel/index.html habla con el script de Google por GET + fetch (también
                      para guardar). Script completo en docs/apps-script.js — es la fuente de
-                     verdad; lo publicado en Google tiene que ser ese archivo ENTERO
+                     verdad; lo publicado en Google tiene que ser ese archivo ENTERO.
+                     Verificado funcionando por Cipri en producción el 20 de septiembre de 2026
 ✅ Responsive:       tres versiones de verdad (escritorio / tablet / móvil) con viewport
                      correcto (width=device-width); móvil a esquina viva, sin border-radius
 ✅ Fotos:            12 en el carrusel del gimnasio, 3 instructores con fotos de estudio
 ⚠️  Deuda técnica:   ver DECISIONS.md — DT-1, DT-2 y DT-4 resueltas, queda DT-3 (y DT-5, DT-6 nuevas)
 📊 Pruebas:         No hay suite automática (manual en navegador + Playwright puntual)
 🔴 Bloqueadores:    ninguno crítico — ver DT-5 (revisión legal de terminos.html) como pendiente importante
-📦 Deploy:          main en producción (www.itacajiujitsu.com), último PR fusionado el #27 con
+📦 Deploy:          main en producción (www.itacajiujitsu.com), último PR fusionado el #30 con
                      squash. claude/new-session-oa3wjo se reparte de main tras cada fusión
 ```
 
@@ -317,6 +318,7 @@ Los dos tienen **casilla de consentimiento obligatoria** con enlace a la políti
 4. **Nunca meter claves ni contraseñas en `index.html`.** Es un archivo estático: cualquier visitante puede leerlo entero con dos clics. Si algún día hace falta una clave (envío de correo, reservas), va en un servicio de servidor, nunca en la página.
 5. **Los datos de menores son datos sensibles.** Cualquier cosa que los recoja, los muestre o los envíe pasa por la skill de seguridad.
 6. **No borrar fotos ni vídeos originales.** Son los archivos del gimnasio; puede que no haya copia.
+7. **Un error de sintaxis en el script de Google publica la clave del panel.** Apps Script devuelve los errores en una página que ve cualquiera que abra la dirección del script — y esa dirección es pública, está en el código de la web. El 20 de septiembre de 2026 la clave se pegó sin comillas (`var CLAVE_PANEL = laclave;` en vez de `'laclave'`) y el mensaje `ReferenceError: <la clave> is not defined` quedó expuesto a cualquiera que abriera esa dirección. **Si el script falla alguna vez con un error que contenga la clave, se cambia la clave, no solo el error.** Por eso `docs/apps-script.js` trae la función `comprobar()`: se ejecuta desde el editor y caza el fallo antes de publicarlo.
 
 ---
 
