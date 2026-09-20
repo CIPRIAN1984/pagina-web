@@ -24,7 +24,7 @@ window.Itaca = (function () {
         /* Copia de cada solicitud en una hoja de Google, para el seguimiento.
            Vacío = desactivado; el correo funciona igual. Los pasos para
            obtener esta dirección están en docs/hoja-de-calculo.md */
-        urlHojaCalculo: 'https://script.google.com/macros/s/AKfycbzkxSft2RHxEVnRhmJx1_5e27PucYNp8Q_Aig3Z8MkWmSs_JiJcj4XIu3cCSvYAHMgk/exec',
+        urlHojaCalculo: 'https://script.google.com/macros/s/AKfycbznoclHahK9i4BwcAn8vgy8IgoZ1M41a2oORVuyE29fJHQdBj2B1E5HBbH5WezNgNoF/exec',
 
         email: 'itacajiujitsu@gmail.com',
         telefono: '664 78 41 21',
