@@ -27,66 +27,36 @@ La hoja ya está creada en tu Drive, dentro de la carpeta *Material Pagina Web*:
 
 ## Paso 2 — Pegar el script
 
-1. En el menú de arriba: **Extensiones** → **Apps Script**.
-2. Se abre una pestaña nueva con un recuadro de código que pone
-   `function myFunction() {}`. **Bórralo todo.**
-3. Pega **exactamente** esto en su lugar:
+**El script entero vive en `docs/apps-script.js`.** Ese archivo es la fuente de
+verdad: lo que esté publicado en Google tiene que ser exactamente eso, completo.
 
-```javascript
-function doPost(e) {
-  var hoja = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+1. Abre `docs/apps-script.js` en GitHub y pulsa el botón de copiar (*Copy raw file*).
+2. En la hoja de cálculo: **Extensiones** → **Apps Script**.
+3. Borra **todo** lo que haya en el recuadro de código y pega lo que has copiado.
+4. Cambia la primera línea útil: donde pone `'CAMBIA-ESTO-POR-TU-CLAVE'`, escribe
+   la contraseña del panel (una palabra que solo sepas tú). Si ya tenías una
+   puesta y el panel te funcionaba, vuelve a poner **la misma**.
+5. Pulsa el **disquete** (Guardar proyecto).
 
-  // La primera vez escribe la fila de títulos.
-  if (hoja.getLastRow() === 0) {
-    hoja.appendRow([
-      'Fecha', 'Tipo', 'Nombre', 'Email', 'Teléfono', 'Contestar por',
-      'Categoría', 'Día', 'Clase', 'Mensaje',
-      'Contactado', 'Vino', 'Se apuntó', 'Notas', 'Acepta ofertas'
-    ]);
-    hoja.getRange(1, 1, 1, 15).setFontWeight('bold');
-    hoja.setFrozenRows(1);
-  }
+> ⚠️ **Pega el archivo entero, siempre.** En septiembre de 2026 se pegaron
+> versiones a medias que solo traían `doGet`. Al desaparecer `doPost`, la web
+> dejó de guardar las solicitudes en la hoja durante días — y como el correo
+> seguía llegando, no se notó. El panel tampoco podía marcar ni archivar nada.
 
-  var d = {};
-  try {
-    d = JSON.parse(e.postData.contents);
-  } catch (err) {
-    return ContentService.createTextOutput('mal');
-  }
+### Comprobarlo antes de publicar
 
-  hoja.appendRow([
-    new Date(),
-    d.tipo || '',
-    d.Nombre || '',
-    d.Email || '',
-    d['Teléfono'] || '',
-    d['Contestar por'] || '',
-    d['Categoría'] || '',
-    d.Fecha || '',
-    d.Clase || '',
-    d.Mensaje || '',
-    '', '', '', '',
-    d['Acepta ofertas'] || 'No'
-  ]);
+En el editor de Apps Script, arriba hay un desplegable con el nombre de la
+función. Elige **`comprobar`** y pulsa **Ejecutar**. En el registro de abajo
+tiene que salir *"Script completo. Solicitudes en la hoja: N"*.
 
-  return ContentService.createTextOutput('ok');
-}
-```
-
-4. Pulsa el icono del **disquete** (Guardar proyecto).
-
-> **Si ya tenías el script funcionando de antes** (esto se añadió el 14 de
-> agosto de 2026, después del primer despliegue): pega este código encima del
-> que ya tenías, guarda, y sigue el **Paso 3** de nuevo pero eligiendo
-> **"Editar" → Versión: Nueva versión** en vez de crear una implementación
-> distinta — así la URL no cambia y no hace falta tocar el código de la web.
-> Como el encabezado de la fila 1 ya se escribió una vez, no se vuelve a
-> generar solo: añade a mano **"Acepta ofertas"** en la celda **O1** de la
-> hoja.
+Si sale *"Falta doGet"* o *"Falta doPost"*, el pegado se quedó a medias: vuelve
+al paso 3. Si falla aquí, no sigas: publicarlo no lo va a arreglar.
 
 ---
 
 ## Paso 3 — Publicarlo
+
+**La primera vez:**
 
 1. Arriba a la derecha: botón azul **Implementar** → **Nueva implementación**.
 2. Pulsa el engranaje de la izquierda (*Seleccionar tipo*) → **Aplicación web**.
@@ -101,173 +71,47 @@ function doPost(e) {
    la aplicación es tuya. Pulsa **Configuración avanzada** → **Ir a Solicitudes
    web (no seguro)** → **Permitir**.
 7. Al final te da una **URL de la aplicación web**, larga, que empieza por
-   `https://script.google.com/macros/s/...` y acaba en `/exec`.
+   `https://script.google.com/macros/s/...` y acaba en `/exec`. Pásamela.
 
-**Cópiala y pásamela.** Yo la pongo en la web y a partir de ahí se apunta solo.
+**Las siguientes veces, cuando cambies el script:**
+
+**Implementar** → **Gestionar implementaciones** → el **lápiz** → *Versión:*
+**Nueva versión** → **Implementar**.
+
+> Hazlo siempre así. Si creas una *implementación nueva* en vez de una *versión
+> nueva*, la dirección cambia y hay que tocar el código de la web en dos sitios
+> (`panel/index.html` y `js/itaca-formularios.js`). Con "versión nueva" la
+> dirección no cambia y no hay que tocar nada.
 
 ---
 
-## Paso 4 — El panel de leads (sin abrir la hoja)
+## Paso 4 — El panel de solicitudes
 
 Cipri pidió (14 de agosto de 2026) una forma de trabajar sin tener que abrir la
 hoja de cálculo: un panel con tarjetas, un botón directo de WhatsApp y un botón
 para marcar qué toca hacer con cada solicitud. Vive en `panel/index.html`, no
 sale en ningún menú de la web ni en buscadores.
 
-Para que funcione hace falta ampliar el script una vez más. **Pega esto encima
-de lo que ya tenías** (incluye todo lo de antes, más el panel):
+Entra en `www.itacajiujitsu.com/panel/`, la primera vez te pedirá la clave que
+pusiste en el paso 2 (se queda guardada en el navegador, no hay que escribirla
+cada vez), y ya tienes las tarjetas.
 
-```javascript
-var CLAVE_PANEL = 'CAMBIA-ESTO-POR-TU-CLAVE';
+### Cómo habla el panel con el script (para quien lo toque en el futuro)
 
-function doPost(e) {
-  var hoja = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-  var d = {};
-  try {
-    d = JSON.parse(e.postData.contents);
-  } catch (err) {
-    return ContentService.createTextOutput('mal');
-  }
+El panel pregunta **siempre por GET, con `fetch`** — también para guardar los
+cambios, no solo para leerlos. Es a propósito: Google responde a las GET del
+script con la cabecera `Access-Control-Allow-Origin: *`, así que el navegador
+las deja pasar desde `www.itacajiujitsu.com` sin ningún rodeo.
 
-  // Actualizar el estado, la nota o el archivado de un lead desde el panel,
-  // protegido por clave. "campo" dice qué columna toca: 'estado' (por
-  // defecto), 'nota' o 'archivada'.
-  if (d.accion === 'actualizar') {
-    if (d.clave !== CLAVE_PANEL) {
-      return json({ ok: false, error: 'clave incorrecta' });
-    }
-    var col = d.campo === 'nota' ? columnaNotas(hoja)
-      : d.campo === 'archivada' ? columnaArchivada(hoja)
-      : columnaAccion(hoja);
-    hoja.getRange(d.fila, col).setValue(d.valor || '');
-    return json({ ok: true });
-  }
+⚠️ **No volver a JSONP** (cargar la respuesta con una etiqueta `<script>`).
+Google sirve la respuesta con `X-Content-Type-Options: nosniff`, y en cuanto el
+tipo de contenido no es exactamente JavaScript, el navegador se niega a
+ejecutarla y lo único que se ve es *"no se ha podido conectar"*, sin ninguna
+pista de por qué. Eso costó media docena de despliegues en septiembre de 2026.
 
-  // La primera vez escribe la fila de títulos.
-  if (hoja.getLastRow() === 0) {
-    hoja.appendRow([
-      'Fecha', 'Tipo', 'Nombre', 'Email', 'Teléfono', 'Contestar por',
-      'Categoría', 'Día', 'Clase', 'Mensaje',
-      'Contactado', 'Vino', 'Se apuntó', 'Notas', 'Acepta ofertas'
-    ]);
-    hoja.getRange(1, 1, 1, 15).setFontWeight('bold');
-    hoja.setFrozenRows(1);
-  }
-
-  hoja.appendRow([
-    new Date(),
-    d.tipo || '',
-    d.Nombre || '',
-    d.Email || '',
-    d['Teléfono'] || '',
-    d['Contestar por'] || '',
-    d['Categoría'] || '',
-    d.Fecha || '',
-    d.Clase || '',
-    d.Mensaje || '',
-    '', '', '', '',
-    d['Acepta ofertas'] || 'No'
-  ]);
-
-  return ContentService.createTextOutput('ok');
-}
-
-// El panel pide los leads con esto (GET, protegido por clave).
-function doGet(e) {
-  if (!e.parameter.clave || e.parameter.clave !== CLAVE_PANEL) {
-    return json({ ok: false, error: 'clave incorrecta' });
-  }
-  var hoja = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-  var datos = hoja.getDataRange().getValues();
-  var cabecera = datos[0];
-  var iNombre = cabecera.indexOf('Nombre');
-  var iEmail = cabecera.indexOf('Email');
-  var iTelefono = cabecera.indexOf('Teléfono');
-  var iContestar = cabecera.indexOf('Contestar por');
-  var iTipo = cabecera.indexOf('Tipo');
-  var iMensaje = cabecera.indexOf('Mensaje');
-  var iCategoria = cabecera.indexOf('Categoría');
-  var iDia = cabecera.indexOf('Día');
-  var iClase = cabecera.indexOf('Clase');
-  var iOfertas = cabecera.indexOf('Acepta ofertas');
-  var iFecha = cabecera.indexOf('Fecha');
-  var iNotas = cabecera.indexOf('Notas');
-  var iAccion = columnaAccion(hoja) - 1;
-  var iArchivada = columnaArchivada(hoja) - 1;
-
-  var leads = [];
-  for (var f = 1; f < datos.length; f++) {
-    var fila = datos[f];
-    if (!fila[iNombre] && !fila[iEmail]) continue; // fila en blanco, se salta
-    var fecha = fila[iFecha];
-    leads.push({
-      fila: f + 1,
-      fecha: fecha instanceof Date ? Utilities.formatDate(fecha, Session.getScriptTimeZone(), 'dd/MM HH:mm') : String(fecha || ''),
-      tipo: fila[iTipo] || '',
-      nombre: fila[iNombre] || '',
-      email: fila[iEmail] || '',
-      telefono: fila[iTelefono] || '',
-      contestarPor: fila[iContestar] || '',
-      categoria: fila[iCategoria] || '',
-      dia: fila[iDia] || '',
-      clase: fila[iClase] || '',
-      mensaje: fila[iMensaje] || '',
-      aceptaOfertas: fila[iOfertas] || '',
-      accion: fila[iAccion] || '',
-      nota: iNotas !== -1 ? String(fila[iNotas] || '') : '',
-      archivada: fila[iArchivada] === 'Sí'
-    });
-  }
-  leads.reverse(); // los más recientes primero
-  return json({ ok: true, leads: leads });
-}
-
-// Busca la columna "Acción panel"; si no existe todavía, la crea al final.
-// Así el panel no se rompe aunque otra herramienta cambie el orden de columnas.
-function columnaAccion(hoja) {
-  var cabecera = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0];
-  var i = cabecera.indexOf('Acción panel');
-  if (i !== -1) return i + 1;
-  var col = hoja.getLastColumn() + 1;
-  hoja.getRange(1, col).setValue('Acción panel').setFontWeight('bold');
-  return col;
-}
-
-// Igual que columnaAccion, pero para marcar una solicitud como archivada
-// (Sí/vacío) sin borrarla de la hoja.
-function columnaArchivada(hoja) {
-  var cabecera = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0];
-  var i = cabecera.indexOf('Archivada');
-  if (i !== -1) return i + 1;
-  var col = hoja.getLastColumn() + 1;
-  hoja.getRange(1, col).setValue('Archivada').setFontWeight('bold');
-  return col;
-}
-
-// La columna "Notas" ya existe desde el primer día (para escribir a mano en
-// la hoja); el panel ahora también lee y escribe ahí, así no hay dos sitios
-// distintos para las notas de una misma solicitud.
-function columnaNotas(hoja) {
-  var cabecera = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0];
-  var i = cabecera.indexOf('Notas');
-  return i !== -1 ? i + 1 : columnaAccion(hoja); // no debería pasar nunca
-}
-
-function json(obj) {
-  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
-}
-```
-
-**Antes de guardar**, cambia la primera línea: donde pone
-`'CAMBIA-ESTO-POR-TU-CLAVE'`, pon una palabra o frase que solo tú conozcas (es
-la contraseña del panel — nadie más la sabe, ni siquiera queda escrita en el
-código de la web). Guarda con el disquete, y publica una **versión nueva**
-igual que las veces anteriores (**Implementar → Gestionar implementaciones →
-lápiz → Versión: Nueva versión → Implementar**). La URL no cambia.
-
-Con eso, entra en `www.itacajiujitsu.com/panel/`, la primera vez te pedirá esa
-clave (se queda guardada en el navegador, no hay que escribirla cada vez), y
-ya tienes las tarjetas.
+⚠️ **Las respuestas se construyen con `JSON.stringify`, nunca a mano.** Un texto
+como `{ ok: false }`, sin comillas en las claves, no es JSON válido y el panel
+no puede leerlo aunque parezca correcto a simple vista.
 
 ---
 
