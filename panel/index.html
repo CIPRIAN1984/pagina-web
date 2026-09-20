@@ -1336,37 +1336,48 @@
                 vacioEl.style.display = 'none';
 
                 var clave = localStorage.getItem(CLAVE_GUARDADA);
-                fetch(URL_SCRIPT + '?clave=' + encodeURIComponent(clave))
-                    .then(function (r) { return r.json(); })
-                    .then(function (res) {
-                        listaEl.style.opacity = '';
-                        estadisticasEl.style.opacity = '';
-                        if (!res.ok) {
-                            if (res.error === 'clave incorrecta') {
-                                localStorage.removeItem(CLAVE_GUARDADA);
-                                mostrarPuerta(true);
-                                return;
-                            }
-                            estadoEl.textContent = 'No se ha podido cargar: ' + (res.error || 'error desconocido');
-                            estadoEl.style.display = 'block';
+                var cbName = 'panelCallback_' + Date.now();
+                window[cbName] = function(res) {
+                    listaEl.style.opacity = '';
+                    estadisticasEl.style.opacity = '';
+                    if (!res.ok) {
+                        if (res.error === 'clave incorrecta') {
+                            localStorage.removeItem(CLAVE_GUARDADA);
+                            mostrarPuerta(true);
                             return;
                         }
-                        estadoEl.style.display = 'none';
-                        pintarLeads(res.leads || []);
-                        avisarNuevos(res.leads || []);
-                        ultimaCarga = new Date();
-                        ultimaActualizacionEl.textContent = textoRelativo(ultimaCarga);
-                    })
-                    .catch(function () {
-                        listaEl.style.opacity = '';
-                        estadisticasEl.style.opacity = '';
-                        if (hayDatosPrevios) {
-                            mostrarToast('No se pudo actualizar. Sigues viendo los datos de antes.');
-                        } else {
-                            estadoEl.textContent = 'No se ha podido conectar. Comprueba tu conexión y pulsa Actualizar.';
-                            estadoEl.style.display = 'block';
-                        }
-                    });
+                        estadoEl.textContent = 'No se ha podido cargar: ' + (res.error || 'error desconocido');
+                        estadoEl.style.display = 'block';
+                        return;
+                    }
+                    estadoEl.style.display = 'none';
+                    pintarLeads(res.leads || []);
+                    avisarNuevos(res.leads || []);
+                    ultimaCarga = new Date();
+                    ultimaActualizacionEl.textContent = textoRelativo(ultimaCarga);
+                    delete window[cbName];
+                    document.body.removeChild(script);
+                };
+                window[cbName].error = function() {
+                    listaEl.style.opacity = '';
+                    estadisticasEl.style.opacity = '';
+                    if (hayDatosPrevios) {
+                        mostrarToast('No se pudo actualizar. Sigues viendo los datos de antes.');
+                    } else {
+                        estadoEl.textContent = 'No se ha podido conectar. Comprueba tu conexión y pulsa Actualizar.';
+                        estadoEl.style.display = 'block';
+                    }
+                    delete window[cbName];
+                    if (document.body.contains(script)) document.body.removeChild(script);
+                };
+                var script = document.createElement('script');
+                script.src = URL_SCRIPT + '?clave=' + encodeURIComponent(clave) + '&callback=' + cbName;
+                script.onerror = window[cbName].error;
+                script.onload = function() {
+                    if (!window[cbName]) return;
+                    window[cbName].error();
+                };
+                document.body.appendChild(script);
             }
 
             actualizarBtn.addEventListener('click', cargar);
