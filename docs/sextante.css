@@ -1,0 +1,442 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   SEXTANTE — sistema visual para paneles de trabajo
+   Extraído del panel de solicitudes de Itaca (panel/index.html), 20 de
+   septiembre de 2026. Para reutilizar en otros cuadros de mando.
+
+   Referencia navegable, con vistas previas en vivo de cada componente:
+   sistema de diseño «Sextante» en los artefactos de Cipri.
+
+   CÓMO SE USA: copia este archivo al proyecto nuevo, enlaza la tipografía
+   Archivo de Google Fonts y usa las variables y las clases de abajo. No
+   depende de ninguna librería.
+
+   LAS TRES REGLAS, que es lo único que hay que respetar:
+   1. ESQUINA VIVA. --radio-cero vale 0 y se aplica a todo. Las piezas se
+      separan con líneas finas, nunca con sombras ni bordes redondeados.
+      Basta con que una pieza se redondee para que el conjunto se desmonte.
+   2. MONOESPACIADA PARA LO QUE SE MIDE (cifras, fechas, rótulos, etiquetas
+      de interfaz, en mayúsculas y separadas) y de display para lo que se
+      LEE (titulares, nombres, frases). Pregúntate siempre: ¿esto se mide o
+      se lee?
+   3. EL COLOR SOLO INFORMA. Verde en marcha, ámbar atención, rojo se
+      enfría, cian dato. Si algo no comunica un estado, va en gris.
+
+   ⚠️ NUNCA pongas en mayúsculas una frase larga. Las mayúsculas son para
+   etiquetas de dos o tres palabras; un mensaje de error en mayúsculas no
+   hay quien lo lea.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+    /* ── Superficies ───────────────────────────────────────────────── */
+    --fondo: #05070a;        /* fondo de la página */
+    --panel-000: #0a0e13;    /* paneles y tarjetas en reposo */
+    --panel-100: #0f151c;    /* con el ratón encima o abierta */
+    --panel-200: #141c25;    /* piezas pequeñas sobre un panel */
+
+    /* Azuladas a propósito: un gris neutro sobre este fondo parece
+       suciedad; estas parecen luz. */
+    --linea: rgba(125, 165, 200, .16);
+    --linea-fuerte: rgba(125, 165, 200, .32);
+
+    /* ── Texto ─────────────────────────────────────────────────────── */
+    --texto: #e2e9f0;        /* principal */
+    --texto-medio: #8493a3;  /* secundario */
+    --texto-tenue: #5a6875;  /* rótulos y unidades — nunca para leer entero */
+
+    /* ── Señales (verde, ámbar, rojo) y dato (cian) ────────────────── */
+    --verde: #2ee6a8;        --verde-suave: rgba(46, 230, 168, .12);
+    --ambar: #ffb03a;        --ambar-suave: rgba(255, 176, 58, .12);
+    --rojo: #ff5f5f;         --rojo-suave: rgba(255, 95, 95, .12);
+    --cian: #57d9ff;         --cian-suave: rgba(87, 217, 255, .12);
+
+    /* ── Tipografía ────────────────────────────────────────────────── */
+    --display: Archivo, system-ui, -apple-system, sans-serif;
+    /* La monoespaciada del sistema a propósito: no añade ninguna descarga
+       y en cada máquina sale la que mejor se ve. */
+    --mono: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas,
+            "Liberation Mono", monospace;
+
+    /* ── Espaciado y radio ─────────────────────────────────────────── */
+    --espacio-1: 4px;  --espacio-2: 8px;  --espacio-3: 12px;
+    --espacio-4: 16px; --espacio-5: 24px; --espacio-6: 36px;
+    --radio-cero: 0px;
+
+    --sombra-flotante: 0 20px 50px rgba(0, 0, 0, .7);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; border-radius: var(--radio-cero); }
+
+body {
+    font-family: var(--display);
+    background: var(--fondo);
+    color: var(--texto);
+    line-height: 1.5;
+    min-height: 100vh;
+    /* Retícula tenue: sensación de plano técnico sin competir con el
+       contenido. En móvil se aprieta a 44px. */
+    background-image:
+        linear-gradient(var(--linea) 1px, transparent 1px),
+        linear-gradient(90deg, var(--linea) 1px, transparent 1px);
+    background-size: 64px 64px, 64px 64px;
+    background-position: -1px -1px;
+}
+
+/* Viñeta: apaga la retícula en los bordes para que no maree. */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(ellipse at 50% 0%, transparent 0%,
+                rgba(5, 7, 10, .55) 60%, var(--fondo) 100%);
+}
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* ── Estilos de texto ──────────────────────────────────────────────── */
+.sx-titulo-xl { font-size: 34px; line-height: 34px; font-weight: 900; letter-spacing: -.02em; }
+.sx-titulo    { font-size: 20px; line-height: 22px; font-weight: 800; }
+.sx-nombre    { font-size: 16px; line-height: 18px; font-weight: 800; letter-spacing: -.01em; }
+.sx-marca     { font-size: 17px; line-height: 17px; font-weight: 900; letter-spacing: .3em; }
+.sx-cuerpo    { font-size: 14px; line-height: 22px; }
+
+.sx-cifra    { font-family: var(--mono); font-size: 30px; line-height: 30px; font-weight: 700;
+               letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.sx-dato     { font-family: var(--mono); font-size: 11px; line-height: 16px; letter-spacing: .12em; }
+.sx-etiqueta { font-family: var(--mono); font-size: 9px; line-height: 12px; font-weight: 500;
+               letter-spacing: .18em; text-transform: uppercase; }
+.sx-rotulo   { font-family: var(--mono); font-size: 9px; line-height: 12px; font-weight: 500;
+               letter-spacing: .24em; text-transform: uppercase; }
+
+/* ── Panel con escuadras ───────────────────────────────────────────── */
+.sx-panel {
+    position: relative;
+    background: var(--panel-000);
+    border: 1px solid var(--linea);
+    padding: var(--espacio-4);
+}
+
+/* Las cuatro escuadras: lo que convierte un rectángulo en la ventana de
+   un instrumento. ⚠️ Pegadas POR DENTRO del borde (0, no -1px): a ancho
+   completo, un píxel que sobresalga por la derecha provoca scroll
+   horizontal en toda la página. */
+.sx-panel::before, .sx-panel::after {
+    content: '';
+    position: absolute;
+    width: 9px; height: 9px;
+    pointer-events: none;
+    border-color: var(--linea-fuerte);
+    border-style: solid;
+}
+.sx-panel::before { top: 0; left: 0; border-width: 1px 0 0 1px; }
+.sx-panel::after { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+
+/* ── Rótulo de sección ─────────────────────────────────────────────── */
+.sx-seccion {
+    display: flex;
+    align-items: center;
+    gap: var(--espacio-2);
+    color: var(--texto-tenue);
+    margin-bottom: var(--espacio-3);
+}
+.sx-seccion::before { content: '▸'; color: var(--verde); }
+.sx-seccion::after { content: ''; flex: 1; height: 1px; background: var(--linea); }
+.sx-seccion--dato::before { color: var(--cian); }
+
+/* ── Contadores ────────────────────────────────────────────────────── */
+/* Pegados con gap:1px sobre fondo linea: las divisiones salen hairline de
+   verdad, sin bordes dobles. */
+.sx-contadores {
+    display: grid;
+    gap: 1px;
+    background: var(--linea);
+    border: 1px solid var(--linea);
+}
+.sx-contador {
+    position: relative;
+    background: var(--panel-000);
+    padding: var(--espacio-3) var(--espacio-3) var(--espacio-4);
+}
+.sx-contador::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--texto-tenue);
+}
+.sx-contador--verde::before { background: var(--verde); }
+.sx-contador--verde .sx-cifra { color: var(--verde); }
+.sx-contador--ambar::before { background: var(--ambar); }
+.sx-contador--ambar .sx-cifra { color: var(--ambar); }
+.sx-contador__pie { color: var(--texto-tenue); margin-top: var(--espacio-1); }
+
+/* ── Punto que late (conexión viva) ────────────────────────────────── */
+.sx-pulso {
+    width: 6px; height: 6px;
+    flex: 0 0 auto;
+    background: var(--verde);
+    animation: sx-latido 2.4s ease-out infinite;
+}
+@keyframes sx-latido {
+    0%   { box-shadow: 0 0 0 0 rgba(46, 230, 168, .6); }
+    70%  { box-shadow: 0 0 0 7px rgba(46, 230, 168, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(46, 230, 168, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .sx-pulso { animation: none; } }
+
+/* ── Ficha de registro ─────────────────────────────────────────────── */
+.sx-ficha {
+    position: relative;
+    background: var(--panel-000);
+    border: 1px solid var(--linea);
+    transition: border-color .15s, background .15s;
+}
+/* Franja de urgencia: lo primero que lee el ojo. */
+.sx-ficha::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--ambar);
+}
+.sx-ficha--hecha::before { background: var(--verde); }
+.sx-ficha--fria::before { background: var(--rojo); }
+.sx-ficha:hover { border-color: var(--linea-fuerte); background: var(--panel-100); }
+
+/* ⚠️ Rejilla de dos filas, no una fila de flex. Si el distintivo de estado
+   comparte fila con el nombre le roba el ancho y los nombres largos se
+   parten en dos líneas. Abajo y a todo lo ancho, el nombre siempre cabe. */
+.sx-ficha__cabecera {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+        "avatar identidad chevron"
+        "estado estado    estado";
+    align-items: center;
+    gap: var(--espacio-3);
+    padding: var(--espacio-3) var(--espacio-4) var(--espacio-3) 18px;
+    cursor: pointer;
+}
+.sx-ficha__avatar {
+    grid-area: avatar;
+    width: 34px; height: 34px;
+    display: grid;
+    place-items: center;
+    background: var(--panel-200);
+    border: 1px solid var(--linea);
+    color: var(--cian);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+}
+.sx-ficha__identidad { grid-area: identidad; min-width: 0; }
+.sx-ficha__nombre { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── Distintivos de estado ─────────────────────────────────────────── */
+/* Una franja, no una píldora. */
+.sx-estado {
+    grid-area: estado;
+    display: flex;
+    align-items: center;
+    gap: var(--espacio-1);
+    padding: 7px 10px;
+    background: var(--ambar-suave);
+    border-left: 2px solid var(--ambar);
+    color: var(--ambar);
+}
+.sx-estado--hecho { background: var(--verde-suave); border-left-color: var(--verde); color: var(--verde); }
+.sx-estado--frio { background: var(--rojo-suave); border-left-color: var(--rojo); color: var(--rojo); }
+
+.sx-etq {
+    padding: 4px var(--espacio-2);
+    background: var(--panel-200);
+    border: 1px solid var(--linea);
+    color: var(--texto-medio);
+}
+.sx-etq--dato { color: var(--cian); border-color: rgba(87, 217, 255, .3); }
+.sx-etq--si { color: var(--verde); border-color: rgba(46, 230, 168, .3); }
+
+/* ── Pestañas ──────────────────────────────────────────────────────── */
+/* Verticales en escritorio; en móvil, una fila que se desliza. */
+.sx-pestanas { display: flex; flex-direction: column; border: 1px solid var(--linea); }
+.sx-pestana {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--espacio-2);
+    width: 100%;
+    padding: 10px 13px;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--linea);
+    color: var(--texto-medio);
+    text-align: left;
+    cursor: pointer;
+    transition: color .15s, background .15s;
+}
+.sx-pestana:last-child { border-bottom: 0; }
+.sx-pestana::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: transparent;
+    transition: background .15s;
+}
+.sx-pestana:hover { color: var(--texto); background: var(--panel-100); }
+.sx-pestana--activa { color: var(--verde); background: var(--verde-suave); }
+.sx-pestana--activa::before { background: var(--verde); }
+.sx-pestana__cuenta { margin-left: auto; color: var(--texto-tenue); font-variant-numeric: tabular-nums; }
+.sx-pestana--activa .sx-pestana__cuenta { color: var(--verde); }
+
+/* ── Botones ───────────────────────────────────────────────────────── */
+.sx-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--espacio-1);
+    padding: 9px 13px;
+    background: transparent;
+    border: 1px solid var(--linea);
+    color: var(--texto-medio);
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color .15s, color .15s, background .15s;
+}
+.sx-btn:hover { border-color: var(--linea-fuerte); color: var(--texto); background: var(--panel-200); }
+/* Acción principal: como mucho una por grupo. */
+.sx-btn--senal { border-color: rgba(46, 230, 168, .4); color: var(--verde); }
+.sx-btn--senal:hover { background: var(--verde-suave); border-color: var(--verde); }
+/* Elegido por el usuario. Cian y no verde: el sistema no aprueba nada,
+   es que tú lo elegiste. */
+.sx-btn--elegido { background: var(--cian-suave); border-color: var(--cian); color: var(--cian); }
+
+/* ── Campos ────────────────────────────────────────────────────────── */
+/* Pegados entre sí: la barra de filtros parece una sola pieza dividida. */
+.sx-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    background: var(--linea);
+    border: 1px solid var(--linea);
+}
+.sx-filtros input, .sx-filtros select {
+    min-width: 0;
+    padding: 11px 13px;
+    background: var(--panel-000);
+    border: 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+}
+.sx-filtros input { flex: 3 1 220px; }
+.sx-filtros select { flex: 1 1 150px; text-transform: uppercase; color: var(--texto-medio); }
+.sx-filtros input::placeholder {
+    color: var(--texto-tenue);
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+/* Borde discontinuo: dice "esto lo escribes tú". */
+.sx-nota {
+    width: 100%;
+    min-height: 68px;
+    resize: vertical;
+    padding: 11px 13px;
+    background: var(--fondo);
+    border: 1px dashed var(--linea-fuerte);
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.6;
+}
+/* El foco se ve siempre: en un panel que se opera a diario, moverse con
+   el tabulador es normal. */
+:focus-visible { outline: 1px solid var(--cian); outline-offset: -2px; }
+
+/* ── Medidor segmentado ────────────────────────────────────────────── */
+/* Por tramos y no liso: se lee como un instrumento, y además se pueden
+   CONTAR los tramos, que es más preciso que estimar una longitud. */
+.sx-medidor {
+    height: 10px;
+    border: 1px solid var(--linea);
+    background: repeating-linear-gradient(90deg, var(--panel-200) 0 6px, transparent 6px 9px);
+}
+.sx-medidor__relleno {
+    height: 100%;
+    /* Siempre cian: es un dato medido, no un juicio. Un medidor no debe
+       ponerse verde al llegar arriba. */
+    background: repeating-linear-gradient(90deg, var(--cian) 0 6px, transparent 6px 9px);
+    transition: width .4s ease;
+}
+
+/* ── Aviso temporal ────────────────────────────────────────────────── */
+/* Lo único del sistema que lleva sombra: es lo único que flota de verdad. */
+.sx-aviso {
+    position: fixed;
+    left: 50%; bottom: var(--espacio-5);
+    transform: translate(-50%, 200%);
+    z-index: 50;
+    padding: 11px 18px;
+    background: var(--panel-200);
+    border: 1px solid var(--linea-fuerte);
+    border-left: 3px solid var(--verde);
+    box-shadow: var(--sombra-flotante);
+    transition: transform .25s ease;
+}
+.sx-aviso--visible { transform: translate(-50%, 0); }
+
+/* ── Armazón: consola + tablero ────────────────────────────────────── */
+.sx-armazon {
+    display: grid;
+    min-height: 100vh;
+    /* ⚠️ minmax(0,1fr) y no 'auto': si no, la columna se ajusta al hijo
+       más ancho y aparece scroll horizontal en toda la página. */
+    grid-template-columns: minmax(0, 1fr);
+}
+.sx-consola, .sx-tablero { min-width: 0; }
+.sx-consola {
+    border-bottom: 1px solid var(--linea);
+    background: linear-gradient(180deg, var(--panel-000) 0%, rgba(10, 14, 19, .6) 100%);
+    padding: var(--espacio-4);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--espacio-3);
+}
+.sx-tablero { padding: var(--espacio-4) var(--espacio-4) 64px; }
+
+@media (min-width: 1100px) {
+    .sx-armazon { grid-template-columns: 300px minmax(0, 1fr); align-items: start; }
+    .sx-consola {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        border-bottom: 0;
+        border-right: 1px solid var(--linea);
+        gap: var(--espacio-5);
+    }
+    .sx-tablero { padding: var(--espacio-6) var(--espacio-6) 80px; }
+    .sx-contadores { grid-template-columns: 1fr 1fr; }
+    .sx-rejilla { display: grid; gap: var(--espacio-4);
+                  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); align-items: start; }
+}
+
+/* En el teléfono la consola tiene que ocupar lo mínimo: lo primero que se
+   ve debe ser el trabajo, no la cabecera. */
+@media (max-width: 1099px) {
+    body { background-size: 44px 44px, 44px 44px; }
+    .sx-contadores { grid-template-columns: repeat(4, 1fr); }
+    .sx-contador { padding: 10px 8px; text-align: center; }
+    .sx-contador::before { width: 100%; height: 2px; bottom: auto; }
+    .sx-contador .sx-cifra { font-size: 22px; }
+    .sx-pestanas { flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+    .sx-pestanas::-webkit-scrollbar { display: none; }
+    .sx-pestana { border-bottom: 0; border-right: 1px solid var(--linea); white-space: nowrap; }
+    .sx-pestana:last-child { border-right: 0; }
+    .sx-pestana::before { top: auto; bottom: 0; right: 0; width: auto; height: 2px; }
+    .sx-rejilla { display: grid; gap: var(--espacio-4); grid-template-columns: 1fr; }
+}
