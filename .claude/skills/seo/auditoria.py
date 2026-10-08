@@ -55,6 +55,8 @@ class Lector(HTMLParser):
         self.metas, self.links, self.imgs, self.anclas = [], [], [], []
         self.h1, self._en_h1, self.html_lang = [], False, None
         self.jsonld, self._en_jsonld, self._buf = [], False, ""
+        # Scripts en línea y externos: la web genera su JSON-LD con JavaScript.
+        self.scripts, self._en_script, self.scripts_src = [], False, []
         self.ids = set()
 
     def handle_starttag(self, tag, attrs):
@@ -78,6 +80,11 @@ class Lector(HTMLParser):
             self.h1.append("")
         elif tag == "script" and (a.get("type") or "").lower() == "application/ld+json":
             self._en_jsonld, self._buf = True, ""
+        elif tag == "script" and a.get("src"):
+            self.scripts_src.append(a["src"])
+        elif tag == "script":
+            self._en_script = True
+            self.scripts.append("")
 
     def handle_endtag(self, tag):
         if tag == "title":
@@ -87,6 +94,8 @@ class Lector(HTMLParser):
         elif tag == "script" and self._en_jsonld:
             self.jsonld.append(self._buf)
             self._en_jsonld = False
+        elif tag == "script":
+            self._en_script = False
 
     def handle_data(self, data):
         if self._en_titulo:
@@ -95,6 +104,8 @@ class Lector(HTMLParser):
             self.h1[-1] += data
         if self._en_jsonld:
             self._buf += data
+        if self._en_script:
+            self.scripts[-1] += data
 
 
 def meta(lector, **filtro):
@@ -102,6 +113,68 @@ def meta(lector, **filtro):
         if all((m.get(k) or "").lower() == v.lower() for k, v in filtro.items()):
             return m.get("content") or ""
     return None
+
+
+def jsonld_generado(lec):
+    """La web no escribe el JSON-LD en el HTML: lo crea un script al cargar,
+    porque el horario sale de js/itaca-horario.js. Google ejecuta JavaScript y
+    lo ve; un lector de HTML no. Aquí se ejecuta ese script con node, con un
+    navegador de mentira, para sacar el JSON-LD de verdad y comprobarlo.
+
+    Devuelve la lista de bloques generados, o None si ningún script lo crea.
+    Si node no está o el script falla, devuelve el aviso como GRAVE: el bloque
+    existe pero no se ha podido comprobar que salga bien."""
+    bloques = [s for s in lec.scripts if "application/ld+json" in s]
+    if not bloques:
+        return None
+    externos = []
+    for src in lec.scripts_src:
+        url = urllib.parse.urljoin(BASE, src)
+        if urllib.parse.urlparse(url).netloc != urllib.parse.urlparse(BASE).netloc:
+            continue
+        cod, _, cuerpo, _ = pedir(url)
+        if cod == 200:
+            externos.append(cuerpo.decode("utf-8", "replace"))
+    simulador = r"""
+const salida = [];
+const nodo = () => ({ style: {}, dataset: {}, classList: { add() {}, remove() {}, toggle() {} },
+  setAttribute() {}, addEventListener() {}, appendChild() {}, querySelectorAll: () => [] });
+globalThis.window = globalThis;
+globalThis.document = {
+  createElement: () => nodo(),
+  head: { appendChild: (n) => { if (n.type === 'application/ld+json') salida.push(n.textContent); } },
+  body: nodo(), documentElement: nodo(),
+  getElementById: () => null, querySelector: () => null, querySelectorAll: () => [],
+  addEventListener() {}
+};
+const trozos = JSON.parse(require('fs').readFileSync(0, 'utf8'));
+for (const t of trozos.externos) { try { (0, eval)(t); } catch (e) {} }
+for (const t of trozos.bloques) { (0, eval)(t); }
+process.stdout.write(JSON.stringify(salida));
+"""
+    import subprocess
+    try:
+        r = subprocess.run(["node", "-e", simulador], input=json.dumps({"externos": externos, "bloques": bloques}),
+                           capture_output=True, text=True, timeout=30)
+        generados = json.loads(r.stdout) if r.returncode == 0 else None
+    except (OSError, ValueError, subprocess.TimeoutExpired) as e:
+        generados, r = None, type("R", (), {"stderr": str(e)})
+    if not generados:
+        errores = [l.strip() for l in (r.stderr or "").splitlines() if "Error" in l]
+        anotar("GRAVE", "El script que crea los datos estructurados (JSON-LD) no ha funcionado",
+               errores[0][:160] if errores else "no generó nada")
+        return []
+    for g in generados:
+        try:
+            d = json.loads(g)
+        except ValueError:
+            continue
+        faltan = [k for k in ("name", "address", "telephone", "url") if not d.get(k)]
+        if faltan:
+            anotar("AVISO", "A los datos estructurados les falta información", ", ".join(faltan))
+        if "openingHoursSpecification" in d and not d["openingHoursSpecification"]:
+            anotar("AVISO", "Los datos estructurados no llevan el horario", "openingHoursSpecification vacío")
+    return generados
 
 
 def revisar_portada():
@@ -151,7 +224,11 @@ def revisar_portada():
             anotar("AVISO", f"Falta {prop} (vista previa al compartir en WhatsApp/Instagram)")
 
     if not lec.jsonld:
-        anotar("AVISO", "No hay datos estructurados (JSON-LD) de negocio local")
+        generado = jsonld_generado(lec)
+        if generado is None:
+            anotar("AVISO", "No hay datos estructurados (JSON-LD) de negocio local")
+        else:
+            lec.jsonld.extend(generado)
     for bloque in lec.jsonld:
         try:
             json.loads(bloque)
