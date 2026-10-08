@@ -22,12 +22,16 @@ la web, entienda qué es Itaca y acabe escribiendo. Todo se mide contra eso.
 
 ## Paso a paso
 
-1. **Prepara el repositorio.** Si no estás dentro de `ciprian1984/pagina-web`,
-   añádelo con `add_repo` (acceso `push`) y clónalo. Parte siempre de `main`
-   actualizado (`git fetch origin main && git checkout -B <tu rama> origin/main`).
-   Usa la rama que te asigne la sesión; si no hay ninguna, `seo/AAAA-MM-DD`.
-   No uses `claude/new-session-oa3wjo`: es la de las sesiones con Cipri y
-   podrías pisar su trabajo.
+1. **Prepara el repositorio.** La rutina te despierta dentro de la sesión de
+   trabajo con Cipri, que ya tiene `ciprian1984/pagina-web` con permiso para
+   publicar. Antes de nada, `git status`: si hay cambios sin guardar que no
+   son tuyos, **no los toques** y no sigas; dilo en el informe. Si está limpio,
+   parte de `main` actualizado en la rama de la sesión
+   (`git fetch origin main && git checkout -B claude/new-session-oa3wjo origin/main`).
+
+   ⚠️ No la lances como sesión nueva cada vez: se probó el 5 de octubre de
+   2026 y una sesión nueva de rutina **no tiene el repositorio** ni forma de
+   añadirlo, así que no puede publicar nada.
 2. **Lee** `CLAUDE.md` (sobre todo §1 "decisiones que no se reproponen",
    §4 datos personales y §5 seguridad) y la última entrada de
    `docs/seo-historial.md`, para comparar con lo que hubo.
@@ -54,7 +58,10 @@ Cosas técnicas que el visitante **no lee** y que no cambian lo que la web dice:
 - Datos estructurados (JSON-LD) de negocio local — **solo con datos que ya
   estén en la web o en `CLAUDE.md`** (nombre, dirección `C. Barigüelo 4, 26009
   Logroño`, teléfono, email, horario de `js/itaca-horario.js`, redes). Nada
-  inventado: si un dato no está, no se pone.
+  inventado: si un dato no está, no se pone. **Ya existen**: los crea un
+  pequeño script al final de `index.html` (tipo `ExerciseGym`, con el horario
+  sacado de `ItacaHorario.horarioSchemaOrg()`). No los dupliques escribiendo
+  otro bloque en el HTML: corrige ese script.
 - `sitemap.xml`, `robots.txt`, la etiqueta `canonical`, redirecciones en
   `vercel.json`.
 - Etiquetas para compartir (`og:*`) cuando falten, copiando título y
@@ -144,6 +151,12 @@ Para que funcione, la cuenta de servicio tiene que estar añadida como usuario
 en Search Console → Configuración → Usuarios y permisos.
 
 ## Lo ya sabido (no lo reportes como nuevo cada semana)
+
+- **Los datos de negocio para Google (JSON-LD) se crean con JavaScript, no
+  están escritos en el HTML.** Google los ve porque ejecuta la página.
+  `auditoria.py` los saca ejecutando ese script con `node`; si dice que no
+  hay, es que de verdad han desaparecido o se han roto. (La primera versión
+  de la auditoría solo leía el HTML y daba un falso aviso de que faltaban.)
 
 - **La web sirve archivos internos** (`CLAUDE.md`, `docs/`, `.claude/`). No es
   un problema de SEO sino de seguridad, y está pendiente de que Cipri dé el

@@ -39,6 +39,8 @@ para tener con qué comparar.
   (5 clics).
 
 **Revisión técnica de la web**, 5 de octubre de 2026 (`auditoria.py`): sin
-fallos graves. Avisos: faltan los datos estructurados de negocio local
-(JSON-LD), y la web sirve archivos internos del proyecto (`CLAUDE.md`,
-`docs/`, `.claude/`).
+fallos graves. Aviso: la web sirve archivos internos del proyecto
+(`CLAUDE.md`, `docs/`, `.claude/`). Los datos de negocio para Google
+(JSON-LD, tipo gimnasio con dirección, teléfono y horario) **sí están**: los
+crea un script al cargar la página. La primera auditoría dijo que faltaban
+porque solo leía el HTML; corregido el 6 de octubre.
