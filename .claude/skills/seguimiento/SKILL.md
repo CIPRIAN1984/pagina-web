@@ -14,7 +14,8 @@ olvidar", se añade aquí en el momento — no queda solo en el chat de esa sesi
 
 Desde el 5 de octubre de 2026 no hace falta acordarse de nada: la skill `seo`
 (`.claude/skills/seo/`) se ejecuta sola cada lunes con una rutina programada
-que abre una sesión nueva, revisa la web publicada, arregla lo técnico, y el
+dentro de la conversación de trabajo con Cipri (una sesión nueva no tiene
+el repositorio), revisa la web publicada, arregla lo técnico, y el
 primer lunes de cada mes lee Search Console por su cuenta y anota la
 evolución en `docs/seo-historial.md`. A Cipri solo le llega el informe.
 
