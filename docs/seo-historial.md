@@ -12,6 +12,7 @@ conclusiones de un solo mes. A partir de tres meses, sí hay tendencia.
 | Mes | Clics | Impresiones | Posición media | «jiu jitsu logroño» | Páginas indexadas | Notas |
 |---|---|---|---|---|---|---|
 | oct 2026 | — | — | — | — | — | Propiedad dada de alta el 2 de octubre. Todavía no hay datos: tardan 2-3 días en aparecer y unas 4 semanas en tener sentido. |
+| nov 2026 | — | — | — | — | — | Sin datos: la rutina no tiene la llave de Search Console (`GSC_SERVICE_ACCOUNT_JSON`). Falta configurarla para tener números. |
 
 ## Punto de partida (antes de que la web estuviera en Search Console)
 
